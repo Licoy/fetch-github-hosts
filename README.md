@@ -6,7 +6,7 @@
 ## 使用方法
 ### Unix/Linux
 ```shell
-sed -i "/# fetch-github-host begin/Q" /etc/hosts && curl https://hosts.gitcdn.top/hosts.txt >> /etc/hosts
+sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl https://hosts.gitcdn.top/hosts.txt >> /etc/hosts
 ```
 > 提示：可以设置定时任务定时获取更新即可
 

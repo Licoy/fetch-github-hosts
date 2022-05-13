@@ -41,14 +41,14 @@ $github_urls = ["alive.github.com",
 ];
 
 $github_hosts = [];
-$hosts_content = "# fetch-github-host begin\n";
+$hosts_content = "# fetch-github-hosts begin\n";
 foreach ($github_urls as $url) {
     $item = [gethostbyname($url), $url];
     $github_hosts[] = $item;
     $hosts_content .= str_pad($item[0], 28) . $item[1] . "\n";
 }
 $utc_date = date('c');
-$hosts_content .= "# last fetch time: $utc_date\n# update url: https://hosts.gitcdn.top/hosts.txt\n# fetch-github-host end\n\n";
+$hosts_content .= "# last fetch time: $utc_date\n# update url: https://hosts.gitcdn.top/hosts.txt\n# fetch-github-hosts end\n\n";
 
 $template = file_get_contents('index-template.php');
 file_put_contents('index.php', str_replace('<!--time-->', $utc_date, $template));
