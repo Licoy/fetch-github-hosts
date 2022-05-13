@@ -40,14 +40,6 @@ $github_urls = ["alive.github.com",
     "objects.githubusercontent.com"
 ];
 
-function hosts_write($filename, $content)
-{
-    $fs = fopen($filename, 'w+');
-    fwrite($fs, $content);
-    fflush($fs);
-    fclose($fs);
-}
-
 $github_hosts = [];
 $hosts_content = "# fetch-github-host begin\n";
 foreach ($github_urls as $url) {
@@ -60,8 +52,8 @@ $hosts_content .= "# last fetch time: $utc_date\n# update url: https://hosts.git
 
 $template = file_get_contents('index-template.php');
 file_put_contents('index.php', str_replace('<!--time-->', $utc_date, $template));
-hosts_write('hosts.txt', $hosts_content);
-hosts_write('hosts.json', json_encode($github_hosts));
+file_put_contents('hosts.txt', $hosts_content);
+file_put_contents('hosts.json', json_encode($github_hosts));
 
 echo "fetch success! ($utc_date)";
 
