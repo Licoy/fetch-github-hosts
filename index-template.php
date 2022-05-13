@@ -20,7 +20,7 @@
 </p>
 <h3>使用方法</h3>
 <h4>Unix/Linux</h4>
-<span><code>sed -i "/# fetch-github-host begin/Q" /etc/hosts && curl https://hosts.gitcdn.top/hosts.txt >> /etc/hosts</code></span>
+<span><code>sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl https://hosts.gitcdn.top/hosts.txt >> /etc/hosts</code></span>
 <p>提示：可以设置定时任务定时获取更新即可</p>
 <h4>Chrome</h4>
 <span>使用 <a href="https://github.com/gauseen/faster-hosts" target="_blank">FasterHosts</a> 插件</span>
