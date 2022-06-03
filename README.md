@@ -1,9 +1,8 @@
 ## 介绍
-`fetch-github-hosts`是主要为解决研究及学习人员访问`Github`过慢或其他问题而提供的免费的`Github hosts`同步服务。
+`fetch-github-hosts` 是主要为解决研究及学习人员访问 `Github` 过慢或其他问题而提供的免费的 `Github Hosts` 同步服务。
 
-本项目部分参考于 [Github520](https://github.com/521xueweihan/GitHub520) ，
-但与之不同的是前者是通过`ipaddress.com`获取`github.com`的`hosts`， 
-而此项目是通过部署本身的服务器来获取`github.com`的`hosts`，所以在IP节点上会存在一定的差异。
+## 原理
+此项目是通过部署此项目本身的服务器来获取 `github.com` 的 `hosts`，而不是通过第三方ip地址接口来进行获取，例如 `ipaddress.com` 等
 
 ## 使用方法
 ### 手动
