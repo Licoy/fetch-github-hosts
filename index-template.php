@@ -9,10 +9,7 @@
 </head>
 <body>
     <h2 id="">介绍</h2>
-    <p><code>fetch-github-hosts</code>是主要为解决研究及学习人员访问<code>Github</code>过慢或其他问题而提供的免费的<code>Github hosts</code>同步服务。</p>
-    <p>本项目部分参考于 <a target="_blank" href="https://github.com/521xueweihan/GitHub520">Github520</a> ，
-        但与之不同的是前者是通过<code>ipaddress.com</code>获取<code>github.com</code>的<code>hosts</code>，
-        而此项目是通过部署本身的服务器来获取<code>github.com</code>的<code>hosts</code>，所以在IP节点上会存在一定的差异。</p>
+    <p><code>fetch-github-hosts</code> 是主要为解决研究及学习人员访问 <code>Github</code> 过慢或其他问题而提供的免费的 <code>Github Hosts</code> 同步服务。</p>
     <p>最近获取时间：
         <span style="color:green">
             <!--time-->
@@ -21,50 +18,52 @@
         [<a href="/hosts.txt" target="_blank">hosts.txt</a>]
         [<a href="/hosts.json" target="_blank">hosts.json</a>]
     </p>
-    <h2 id="-1">使用方法</h2>
-    <h3 id="-2">手动</h3>
+    <h2 id="-1">原理</h2>
+    <p>此项目是通过部署此项目本身的服务器来获取 <code>github.com</code> 的 <code>hosts</code>，而不是通过第三方ip地址接口来进行获取，例如 <code>ipaddress.com</code> 等</p>
+    <h2 id="-2">使用方法</h2>
+    <h3 id="-3">手动</h3>
     <h4 id="hosts">添加hosts</h4>
     <p>访问 <a href="https://hosts.gitcdn.top/hosts.txt">https://hosts.gitcdn.top/hosts.txt</a> ，
-        将其全部内容粘贴到你的hosts文件中，即可。</p>
+    将其全部内容粘贴到你的hosts文件中，即可。</p>
     <ul>
-        <li><code>Linux / MacOS</code> hosts路径：<code>/etc/hosts</code></li>
-        <li><code>Windows</code> hosts路径：<code>C:\Windows\System32\drivers\etc\hosts</code></li>
+    <li><code>Linux / MacOS</code> hosts路径：<code>/etc/hosts</code></li>
+    <li><code>Windows</code> hosts路径：<code>C:\Windows\System32\drivers\etc\hosts</code></li>
     </ul>
-    <h4 id="-3">刷新生效</h4>
+    <h4 id="-4">刷新生效</h4>
     <ul>
-        <li><code>Linux</code>: <code>/etc/init.d/network restart</code></li>
-        <li><code>Windows</code>: <code>ipconfig /flushdns</code></li>
-        <li><code>Macos</code>: <code>sudo killall -HUP mDNSResponder</code></li>
+    <li><code>Linux</code>: <code>/etc/init.d/network restart</code></li>
+    <li><code>Windows</code>: <code>ipconfig /flushdns</code></li>
+    <li><code>Macos</code>: <code>sudo killall -HUP mDNSResponder</code></li>
     </ul>
     <h3 id="unixlinux">Unix/Linux 一键使用</h3>
     <pre><code class="shell language-shell">sed -i "/# fetch-github-hosts begin/Q" /etc/hosts &amp;&amp; curl https://hosts.gitcdn.top/hosts.txt &gt;&gt; /etc/hosts
-</code></pre>
+    </code></pre>
     <blockquote>
-        <p>提示：可以设置crontab定时任务定时获取更新即可，解放双手！</p>
+      <p>提示：可以设置crontab定时任务定时获取更新即可，解放双手！</p>
     </blockquote>
     <h3 id="chrome">Chrome</h3>
-    <p>使用 <a href="https://github.com/gauseen/faster-hosts" target="_blank">FasterHosts</a> 插件，若访问速度过慢可以直接使用
-        <a href="https://gitcdn.top/https://github.com/gauseen/faster-hosts/archive/refs/heads/master.zip">点击此处</a> 来进行下载。</p>
+    <p>使用 <a href="https://github.com/gauseen/faster-hosts">FasterHosts</a> 插件，若访问速度过慢可以直接使用
+    <a href="https://gitcdn.top/https://github.com/gauseen/faster-hosts/archive/refs/heads/master.zip">点击此处</a> 来进行下载。</p>
     <p>下载完成之后解压压缩包，Chrome地址栏输入<code>chrome://extensions/</code>回车进入，勾选<code>开发者模式</code>，选择<code>加载已解压的扩展程序</code>，
-        选择刚才的解压目录即可。</p>
+    选择刚才的解压目录即可。</p>
     <h3 id="windowsmacos">Windows /MacOS 及其他桌面端</h3>
-    <p>使用 <a href="https://swh.app/" target="_blank">SwitchHosts</a> 桌面端应用，安装添加新规则：</p>
+    <p>使用 <a href="https://swh.app/">SwitchHosts</a> 桌面端应用，安装添加新规则：</p>
     <ul>
-        <li><code>Title</code>: 任意</li>
-        <li><code>Type</code>: <code>Remote</code></li>
-        <li><code>Url</code>: <code>https://hosts.gitcdn.top/hosts.txt</code></li>
-        <li><code>Auto refresh</code>: <code>1 hour</code></li>
+    <li><code>Title</code>: 任意</li>
+    <li><code>Type</code>: <code>Remote</code></li>
+    <li><code>Url</code>: <code>https://hosts.gitcdn.top/hosts.txt</code></li>
+    <li><code>Auto refresh</code>: <code>1 hour</code></li>
     </ul>
-    <h2 id="-4">私有部署</h2>
+    <h2 id="-5">私有部署</h2>
     <p>下载本仓库的代码：<a href="https://gitcdn.top/https://github.com/Licoy/fetch-github-hosts/archive/refs/heads/main.zip">fetch-github-hosts.zip</a> ，
-        部署到任意一个含有PHP环境的服务器即可，部署完成之后可以计划任务脚本定时更新hosts：</p>
+    部署到任意一个含有PHP环境的服务器即可，部署完成之后可以计划任务脚本定时更新hosts：</p>
     <pre><code class="shell language-shell">cd /wwwroot/fetch-github-hosts #此处更换为你部署的项目路径
-php fetch_hosts.php
-</code></pre>
+    php fetch_hosts.php
+    </code></pre>
     <blockquote>
-        <p>注意：必须部署到非大陆的服务器节点！</p>
+      <p>注意：必须部署到非大陆的服务器节点！</p>
     </blockquote>
-    <h3 id="-5">开源协议</h3>
+    <h3 id="-6">开源协议</h3>
     <p><a href="https://github.com/Licoy/fetch-github-hosts/blob/main/LICENSE">GPL 3.0</a></p>
 </body>
 </html>
