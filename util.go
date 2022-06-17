@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"syscall"
@@ -26,7 +27,8 @@ func initAppExecDir() {
 	if _debug {
 		_execDir, _ = os.Getwd()
 	} else {
-		_execDir, _ = os.Executable()
+		_exec, _ := os.Executable()
+		_execDir = filepath.Dir(_exec)
 	}
 }
 
@@ -51,11 +53,6 @@ func GetSystemHostsPath() string {
 func PreCheckHasHostsRWPermission() (yes bool, err error) {
 	_, err = syscall.Open(GetSystemHostsPath(), syscall.O_RDWR, 0655)
 	if err != nil {
-		if runtime.GOOS == Windows {
-			if errors.Is(err, syscall.ERROR_ACCESS_DENIED) {
-				err = nil
-			}
-		}
 		if strings.Contains(err.Error(), "Access is denied") {
 			err = nil
 		}

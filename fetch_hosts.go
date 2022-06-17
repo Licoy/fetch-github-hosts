@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"embed"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -17,11 +19,16 @@ const (
 	Windows = "windows"
 	Linux   = "linux"
 	Darwin  = "darwin"
-	HostUrl = "https://hosts.gitcdn.top/hosts.txt"
 )
 
+//go:embed index.template
+var indexTemplate embed.FS
+
+//go:embed domains.json
+var domainsJson embed.FS
+
 // ClientFetchHosts 获取最新的host并写入hosts文件
-func ClientFetchHosts() (err error) {
+func ClientFetchHosts(url string) (err error) {
 	hostsPath := GetSystemHostsPath()
 	hostsBytes, err := ioutil.ReadFile(hostsPath)
 	if err != nil {
@@ -29,7 +36,7 @@ func ClientFetchHosts() (err error) {
 		return
 	}
 
-	resp, err := http.Get(HostUrl)
+	resp, err := http.Get(url)
 	if err != nil || resp.StatusCode != http.StatusOK {
 		err = ComposeError("获取最新的hosts失败", err)
 		return
@@ -41,18 +48,26 @@ func ClientFetchHosts() (err error) {
 		return
 	}
 
-	hosts := string(hostsBytes)
+	fetchHostsStr := strings.Trim(string(fetchHosts), "\n")
 
 	mth, err := regexp.Compile(`# fetch-github-hosts begin(([\s\S])*.?)# fetch-github-hosts end`)
 	if err != nil {
 		err = ComposeError("创建内容正则匹配失败", err)
 		return
 	}
+
+	if len(mth.FindStringSubmatch(fetchHostsStr)) == 0 {
+		err = errors.New("无效的远程hosts链接，未通过格式校验")
+		return
+	}
+
+	hosts := string(hostsBytes)
+
 	findStr := mth.FindStringSubmatch(hosts)
 	if len(findStr) > 0 {
-		hosts = strings.Replace(hosts, findStr[0], string(fetchHosts), 1)
+		hosts = strings.Replace(hosts, findStr[0], fetchHostsStr, 1)
 	} else {
-		hosts += "\n\n" + string(fetchHosts)
+		hosts += "\n\n" + fetchHostsStr + "\n"
 	}
 
 	if err = ioutil.WriteFile(hostsPath, []byte(hosts), os.ModeType); err != nil {
@@ -66,7 +81,7 @@ func ClientFetchHosts() (err error) {
 // ServerFetchHosts 服务端获取github最新的hosts并写入到对应文件及更新首页
 func ServerFetchHosts() (err error) {
 	execDir := AppExecDir()
-	fileData, err := ioutil.ReadFile(execDir + "/domains.json")
+	fileData, err := getExecOrEmbedFile(&domainsJson, "domains.json")
 	if err != nil {
 		err = ComposeError("读取文件domains.json错误", err)
 		return
@@ -95,7 +110,7 @@ func ServerFetchHosts() (err error) {
 	}
 
 	var templateFile []byte
-	templateFile, err = ioutil.ReadFile(execDir + "/index.template")
+	templateFile, err = getExecOrEmbedFile(&indexTemplate, "index.template")
 	if err != nil {
 		err = ComposeError("读取首页模板文件失败", err)
 		return
@@ -129,5 +144,16 @@ func FetchHosts(domains []string) (hostsJson, hostsFile []byte, now string, err 
 	hostsFileData.WriteString("\n# update url: https://hosts.gitcdn.top/hosts.txt\n# fetch-github-hosts end\n\n")
 	hostsFile = hostsFileData.Bytes()
 	hostsJson, err = json.Marshal(hosts)
+	return
+}
+
+func getExecOrEmbedFile(fs *embed.FS, filename string) (template []byte, err error) {
+	exeDirFile := AppExecDir() + "/" + filename
+	_, err = os.Stat(exeDirFile)
+	if err == nil {
+		template, err = ioutil.ReadFile(exeDirFile)
+		return
+	}
+	template, err = fs.ReadFile(filename)
 	return
 }
