@@ -14,7 +14,7 @@ foreach ($github_urls as $url) {
 $utc_date = date('c');
 $hosts_content .= "# last fetch time: $utc_date\n# update url: https://hosts.gitcdn.top/hosts.txt\n# fetch-github-hosts end\n\n";
 
-$template = file_get_contents('index-template.php');
+$template = file_get_contents('index.template');
 file_put_contents('index.html', str_replace('<!--time-->', $utc_date, $template));
 file_put_contents('hosts.txt', $hosts_content);
 file_put_contents('hosts.json', json_encode($github_hosts));

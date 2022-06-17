@@ -95,7 +95,7 @@ func ServerFetchHosts() (err error) {
 	}
 
 	var templateFile []byte
-	templateFile, err = ioutil.ReadFile(execDir + "/index-template.html")
+	templateFile, err = ioutil.ReadFile(execDir + "/index.template")
 	if err != nil {
 		err = ComposeError("读取首页模板文件失败", err)
 		return
