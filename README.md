@@ -36,7 +36,7 @@
 
 ```bash
 # Linux/Macos
-fetch-github-hosts
+sudo fetch-github-hosts
 
 # Windows
 fetch-github-hosts.exe
@@ -46,7 +46,7 @@ fetch-github-hosts.exe
 
 ```bash
 # Linux/Macos（10分钟获取一次）
-fetch-github-hosts -i=10
+sudo fetch-github-hosts -i=10
 
 # Windows（10分钟获取一次）
 fetch-github-hosts.exe -i=10
@@ -56,7 +56,7 @@ fetch-github-hosts.exe -i=10
 
 ```bash
 # Linux/Macos
-fetch-github-hosts -u=http://127.0.0.1:9898/hosts.json
+sudo fetch-github-hosts -u=http://127.0.0.1:9898/hosts.json
 
 # Windows
 fetch-github-hosts.exe -u=http://127.0.0.1:9898/hosts.json
