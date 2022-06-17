@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"runtime"
+	"strings"
 	"syscall"
 )
 
@@ -50,7 +51,12 @@ func GetSystemHostsPath() string {
 func PreCheckHasHostsRWPermission() (yes bool, err error) {
 	_, err = syscall.Open(GetSystemHostsPath(), syscall.O_RDWR, 0655)
 	if err != nil {
-		if errors.Is(err, syscall.ERROR_ACCESS_DENIED) {
+		if runtime.GOOS == Windows {
+			if errors.Is(err, syscall.ERROR_ACCESS_DENIED) {
+				err = nil
+			}
+		}
+		if strings.Contains(err.Error(), "Access is denied") {
 			err = nil
 		}
 		return
