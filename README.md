@@ -1,6 +1,12 @@
-## 介绍
+<div align="center">
+<h2>Fetch GitHub Hosts</h2>
 
-`fetch-github-hosts` 是主要为解决研究及学习人员访问 `Github` 过慢或其他问题而提供的 `Github Hosts` 同步服务。
+`fetch-github-hosts` 是主要为解决研究及学习人员访问 `Github` 过慢或其他问题而提供的 `Github Hosts` 同步工具
+
+![Release](https://img.shields.io/github/v/release/Licoy/fetch-github-hosts.svg?logo=git)
+![Workflows-Release](https://github.com/Licoy/fetch-github-hosts/workflows/Release/badge.svg)
+
+</div>
 
 ## 原理
 
