@@ -1,7 +1,10 @@
 package main
 
 import (
+	"embed"
 	"errors"
+	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -14,11 +17,13 @@ const (
 )
 
 var (
-	_debug   bool
-	_execDir string
+	_debug    bool
+	_execDir  string
+	_logWrite io.Writer
 )
 
 func init() {
+	_logWrite = os.Stdout
 	_debug = os.Getenv("FETCH_GITHUB_HOST_DEBUG") != ""
 	initAppExecDir()
 }
@@ -67,4 +72,15 @@ func ComposeError(msg string, err error) error {
 		return errors.New(msg)
 	}
 	return errors.New(msg + ": " + err.Error())
+}
+
+func GetExecOrEmbedFile(fs *embed.FS, filename string) (template []byte, err error) {
+	exeDirFile := AppExecDir() + "/" + filename
+	_, err = os.Stat(exeDirFile)
+	if err == nil {
+		template, err = ioutil.ReadFile(exeDirFile)
+		return
+	}
+	template, err = fs.ReadFile(filename)
+	return
 }
