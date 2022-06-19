@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"encoding/json"
 	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -11,12 +12,16 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	"io/ioutil"
+	"net/http"
+	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
 var mainWindow fyne.Window
+var fetchConf *FetchConf
 
 //go:embed zcool-cryyt.ttf
 var fyneFontEmbedFs embed.FS
@@ -25,6 +30,7 @@ func bootGui() {
 	if err := initGuiFont(); err != nil {
 		panic(err)
 	}
+	fetchConf = LoadFetchConf()
 	_ = os.Setenv("FYNE_FONT", AppExecDir()+"/"+GuiFontName)
 	a := app.New()
 	mainWindow = a.NewWindow("Fetch Github Hosts")
@@ -51,30 +57,10 @@ func guiClientMode() (content fyne.CanvasObject) {
 	logs, addFn := newLogScrollComponent(fyne.NewSize(800, 260))
 	var cLog = NewFetchLog(NewGuiLogWriter(addFn))
 	var startBtn, stopBtn *widget.Button
-	var interval, url, selectUrl = "60", "https://hosts.gitcdn.top/hosts.txt", ""
+	var interval, customUrl, selectUrl = strconv.Itoa(fetchConf.Client.Interval), fetchConf.Client.CustomUrl, fetchConf.Client.SelectOrigin
 	var isCustomOrigin bool
-	intervalInput, urlInput := widget.NewEntryWithData(binding.BindString(&interval)), widget.NewEntryWithData(binding.BindString(&url))
+	intervalInput, urlInput := widget.NewEntryWithData(binding.BindString(&interval)), widget.NewEntryWithData(binding.BindString(&customUrl))
 	var ticker *FetchTicker
-	startBtn = widget.NewButton("启动", func() {
-		intervalInt := parseStrIsNumberNotShowAlert(&interval, "获取间隔必须为整数")
-		if intervalInt == nil {
-			return
-		}
-		stopBtn.Enable()
-		componentsStatusChange(false, startBtn, intervalInput, urlInput)
-		ticker = NewFetchTicker(*intervalInt)
-		if isCustomOrigin {
-			go startClient(ticker, url, cLog)
-		} else {
-			go startClient(ticker, selectUrl, cLog)
-		}
-
-	})
-	stopBtn = widget.NewButton("停止", func() {
-		stopBtn.Disable()
-		componentsStatusChange(true, startBtn, intervalInput, urlInput)
-		ticker.Stop()
-	})
 
 	originSelectMapOpts := map[string]string{
 		"FetchGithubHosts": "https://hosts.gitcdn.top/hosts.txt",
@@ -92,21 +78,28 @@ func guiClientMode() (content fyne.CanvasObject) {
 	}
 
 	originSelect := widget.NewSelect(originSelectOpts, func(s string) {
+		fetchConf.Client.SelectOrigin = s
 		selectUrl = originSelectMapOpts[s]
 	})
-	originSelect.Selected = originSelectOpts[0]
+	originSelect.Selected = fetchConf.Client.SelectOrigin
 	selectUrl = originSelectMapOpts[originSelect.Selected]
 
 	intervalForm := widget.NewFormItem("获取间隔(分钟)", intervalInput)
 	originSelectForm := widget.NewForm(widget.NewFormItem("hosts源", originSelect))
 
 	originCustomForm := widget.NewForm(widget.NewFormItem("远程hosts链接", urlInput))
-	originCustomForm.Hide()
+
+	if fetchConf.Client.Method == originMethodOpts[0] {
+		originCustomForm.Hide()
+	} else {
+		originSelectForm.Hide()
+	}
 
 	var form *widget.Form
 	originMethod := widget.NewRadioGroup(originMethodOpts, nil)
 	originMethodForm := widget.NewFormItem("远程hosts来源", originMethod)
 	originMethod.OnChanged = func(s string) {
+		fetchConf.Client.Method = s
 		if s == originMethodOpts[0] {
 			originCustomForm.Hide()
 			originSelectForm.Show()
@@ -118,12 +111,36 @@ func guiClientMode() (content fyne.CanvasObject) {
 		}
 	}
 
-	originMethod.Selected = originMethodOpts[0]
+	originMethod.Selected = fetchConf.Client.Method
 
 	form = widget.NewForm(
 		intervalForm,
 		originMethodForm,
 	)
+
+	startBtn = widget.NewButton("启动", func() {
+		intervalInt := parseStrIsNumberNotShowAlert(&interval, "获取间隔必须为整数")
+		if intervalInt == nil {
+			return
+		}
+		stopBtn.Enable()
+		componentsStatusChange(false, startBtn, intervalInput, urlInput, originMethod, originSelect)
+		ticker = NewFetchTicker(*intervalInt)
+		if isCustomOrigin {
+			go startClient(ticker, customUrl, cLog)
+		} else {
+			go startClient(ticker, selectUrl, cLog)
+		}
+		fetchConf.Client.CustomUrl = customUrl
+		fetchConf.Client.Interval = *intervalInt
+		fetchConf.Storage()
+	})
+	stopBtn = widget.NewButton("停止", func() {
+		stopBtn.Disable()
+		componentsStatusChange(true, startBtn, intervalInput, urlInput, originMethod, originSelect)
+		ticker.Stop()
+	})
+	stopBtn.Disable()
 
 	buttons := container.New(layout.NewGridLayout(2), startBtn, stopBtn)
 
@@ -131,10 +148,13 @@ func guiClientMode() (content fyne.CanvasObject) {
 }
 
 func guiServerMode() (content fyne.CanvasObject) {
+	logs, addFn := newLogScrollComponent(fyne.NewSize(800, 260))
+	var sLog = NewFetchLog(NewGuiLogWriter(addFn))
 	var startBtn, stopBtn *widget.Button
-	var interval, port = "60", "9898"
+	var interval, port = strconv.Itoa(fetchConf.Server.Interval), strconv.Itoa(fetchConf.Server.Port)
+	var ticker *FetchTicker
 	intervalInput, portInput := widget.NewEntryWithData(binding.BindString(&interval)), widget.NewEntryWithData(binding.BindString(&port))
-	statusLabel := widget.NewLabel("监听地址：待启动")
+	statusLabel := widget.NewHyperlink("监听地址：待启动", nil)
 	startBtn = widget.NewButton("启动", func() {
 		portInt := parseStrIsNumberNotShowAlert(&port, "端口号必须为整数")
 		if portInt == nil {
@@ -146,19 +166,27 @@ func guiServerMode() (content fyne.CanvasObject) {
 		}
 		stopBtn.Enable()
 		componentsStatusChange(false, startBtn, intervalInput, portInput)
-		statusLabel.SetText(fmt.Sprintf("监听地址：http://127.0.0.1:%d", *portInt))
+		ticker = NewFetchTicker(*intervalInt)
+		go startServer(ticker, *portInt, sLog)
+		fetchConf.Server.Interval = *intervalInt
+		fetchConf.Server.Port = *portInt
+		fetchConf.Storage()
+		listenerUrl := fmt.Sprintf("http://127.0.0.1:%d", *portInt)
+		statusLabel.SetText("监听地址：" + listenerUrl)
+		statusLabel.SetURLFromString(listenerUrl)
 	})
 	stopBtn = widget.NewButton("停止", func() {
 		stopBtn.Disable()
 		componentsStatusChange(true, startBtn, intervalInput, portInput)
 		statusLabel.SetText("监听地址：待启动")
+		ticker.Stop()
 	})
+	stopBtn.Disable()
 	form := widget.NewForm(
 		widget.NewFormItem("获取间隔(分钟)", intervalInput),
 		widget.NewFormItem("启动端口号", portInput),
 	)
 	buttons := container.New(layout.NewGridLayout(2), startBtn, stopBtn)
-	logs, _ := newLogScrollComponent(fyne.NewSize(800, 260))
 	return container.NewVBox(widget.NewLabel(""), form, buttons,
 		container.New(layout.NewCenterLayout(), statusLabel),
 		logs,
@@ -166,7 +194,81 @@ func guiServerMode() (content fyne.CanvasObject) {
 }
 
 func guiAbout() (content fyne.CanvasObject) {
-	return container.NewVBox(widget.NewLabel("about"))
+	aboutNote := widget.NewRichTextFromMarkdown(`
+# 介绍
+Fetch Github Hosts是主要为解决研究及学习人员访问Github过慢或其他问题而提供的Github Hosts同步工具
+---
+# 开源协议
+GNU General Public License v3.0
+
+# 版本号
+
+` + fmt.Sprintf("V%.1f", VERSION))
+	for i := range aboutNote.Segments {
+		if seg, ok := aboutNote.Segments[i].(*widget.TextSegment); ok {
+			seg.Style.Alignment = fyne.TextAlignCenter
+		}
+		if seg, ok := aboutNote.Segments[i].(*widget.HyperlinkSegment); ok {
+			seg.Alignment = fyne.TextAlignCenter
+		}
+	}
+	github := widget.NewButton("Github", openUrl("https://github.com/Licoy/fetch-github-hosts"))
+	feedback := widget.NewButton("反馈建议", openUrl("https://github.com/Licoy/fetch-github-hosts/issues"))
+	var cv *widget.Button
+	cv = widget.NewButton("检查更新", func() {
+		checkVersion(cv)
+	})
+	return container.NewVBox(aboutNote, container.New(layout.NewCenterLayout(), container.NewHBox(github, feedback, cv)))
+}
+
+func checkVersion(btn *widget.Button) {
+	btn.Disable()
+	defer btn.Enable()
+	resp, err := http.Get("https://api.github.com/repos/Licoy/fetch-github-hosts/releases")
+	if err != nil {
+		showAlert("网络请求错误：" + err.Error())
+		return
+	}
+	if resp.StatusCode != http.StatusOK {
+		showAlert("请求失败，状态码为：" + err.Error())
+		return
+	}
+	all, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		showAlert("读取更新响应内容失败：" + err.Error())
+		return
+	}
+	var releases []struct {
+		TagName string `json:"tag_name"`
+		HtmlUrl string `json:"html_url"`
+	}
+	if err = json.Unmarshal(all, &releases); err != nil {
+		showAlert("解析更新响应内容失败：" + err.Error())
+		return
+	}
+	if len(releases) == 0 {
+		showAlert("检查更新失败：" + err.Error())
+		return
+	}
+	verStr := strings.Replace(strings.Replace(releases[0].TagName, "v", "", 1), "V", "", 1)
+	float, err := strconv.ParseFloat(verStr, 64)
+	if err != nil {
+		showAlert("解析版本号失败：" + err.Error())
+		return
+	}
+	if VERSION >= float {
+		showAlert("当前已是最新版本")
+		return
+	}
+	confirm := dialog.NewConfirm("更新提示", "检测到有新的版本，是否立即需要去下载最新版本？", func(b bool) {
+		fmt.Println(b)
+		if b {
+			openUrl(releases[0].HtmlUrl)()
+		}
+	}, mainWindow)
+	confirm.SetDismissText("稍后更新")
+	confirm.SetConfirmText("立即去下载")
+	confirm.Show()
 }
 
 func showAlert(msg string) {
@@ -222,4 +324,11 @@ func initGuiFont() (err error) {
 		}
 	}
 	return
+}
+
+func openUrl(urlStr string) func() {
+	return func() {
+		u, _ := url.Parse(urlStr)
+		_ = fyne.CurrentApp().OpenURL(u)
+	}
 }

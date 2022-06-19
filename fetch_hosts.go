@@ -42,7 +42,7 @@ func startClient(ticker *FetchTicker, url string, flog *fetchLog) {
 		case <-ticker.Ticker.C:
 			fn()
 		case <-ticker.CloseChan:
-			fmt.Println("close")
+			flog.Print("停止获取hosts")
 			return
 		}
 	}
@@ -57,13 +57,7 @@ func startServer(ticker *FetchTicker, port int, flog *fetchLog) {
 	flog.Print(fmt.Sprintf("已监听HTTP服务成功：http://127.0.0.1:%d", port))
 	flog.Print(fmt.Sprintf("hosts文件链接：http://127.0.0.1:%d/hosts.txt", port))
 	flog.Print(fmt.Sprintf("hosts的JSON格式链接：http://127.0.0.1:%d/hosts.json", port))
-	go func() {
-		if err = http.Serve(listen, &serverHandle{flog}); err != nil {
-			fmt.Println("HTTP服务启动失败：", err.Error())
-			os.Exit(1)
-			return
-		}
-	}()
+	go http.Serve(listen, &serverHandle{flog})
 	fn := func() {
 		if err := ServerFetchHosts(); err != nil {
 			flog.Print("执行更新Github-Hosts失败：" + err.Error())
@@ -76,6 +70,13 @@ func startServer(ticker *FetchTicker, port int, flog *fetchLog) {
 		select {
 		case <-ticker.Ticker.C:
 			fn()
+		case <-ticker.CloseChan:
+			flog.Print("正在停止更新hosts服务")
+			if err := listen.Close(); err != nil {
+				flog.Print("关闭端口监听失败")
+			}
+			flog.Print("已停止更新hosts服务")
+			return
 		}
 	}
 }
