@@ -32,6 +32,7 @@ func bootGui() {
 	}
 	fetchConf = LoadFetchConf()
 	_ = os.Setenv("FYNE_FONT", AppExecDir()+"/"+GuiFontName)
+	defer os.Unsetenv("FYNE_FONT")
 	a := app.New()
 	mainWindow = a.NewWindow("Fetch Github Hosts")
 	mainWindow.Resize(fyne.NewSize(800, 580))
@@ -45,8 +46,13 @@ func bootGui() {
 
 	mainWindow.SetContent(tabs)
 
+	if err := GetCheckPermissionResult(); err != nil {
+		time.AfterFunc(time.Second, func() {
+			showAlert(err.Error())
+		})
+	}
+
 	mainWindow.ShowAndRun()
-	_ = os.Unsetenv("FYNE_FONT")
 }
 
 func getTicker(interval int) *time.Ticker {

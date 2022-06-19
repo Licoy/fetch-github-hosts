@@ -8,7 +8,7 @@ import (
 )
 
 type CmdArgs struct {
-	Mode          string `default:"client" short:"m" long:"mode" description:"启动模式(client或server)"`
+	Mode          string `short:"m" long:"mode" description:"启动模式(client或server)"`
 	FetchInterval int    `default:"60" short:"i" long:"interval" description:"获取hosts的间隔时间，单位为分钟"`
 	Port          int    `default:"9898" short:"p" long:"port" description:"服务模式监听端口"`
 	Url           string `default:"https://hosts.gitcdn.top/hosts.txt" short:"u" long:"url" description:"客户端模式远程hosts获取链接"`
@@ -30,7 +30,7 @@ func ParseBootArgs() *CmdArgs {
 	if args.Version {
 		fmt.Printf("版本号: V%.1f\n", VERSION)
 	}
-	if args.Mode != "client" && args.Mode != "server" {
+	if args.Mode != "" && (args.Mode != "client" && args.Mode != "server") {
 		panic(fmt.Sprintf("无效的启动模式: %s", args.Mode))
 	}
 	if args.FetchInterval < 1 {
