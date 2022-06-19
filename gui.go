@@ -62,13 +62,8 @@ func guiClientMode() (content fyne.CanvasObject) {
 	intervalInput, urlInput := widget.NewEntryWithData(binding.BindString(&interval)), widget.NewEntryWithData(binding.BindString(&customUrl))
 	var ticker *FetchTicker
 
-	originSelectMapOpts := map[string]string{
-		"FetchGithubHosts": "https://hosts.gitcdn.top/hosts.txt",
-		"Github520":        "https://raw.hellogithub.com/hosts",
-	}
-
-	originSelectOpts := make([]string, 0, len(originSelectMapOpts))
-	for k := range originSelectMapOpts {
+	originSelectOpts := make([]string, 0, len(HostsOrigins))
+	for k := range HostsOrigins {
 		originSelectOpts = append(originSelectOpts, k)
 	}
 
@@ -79,10 +74,10 @@ func guiClientMode() (content fyne.CanvasObject) {
 
 	originSelect := widget.NewSelect(originSelectOpts, func(s string) {
 		fetchConf.Client.SelectOrigin = s
-		selectUrl = originSelectMapOpts[s]
+		selectUrl = HostsOrigins[s]
 	})
 	originSelect.Selected = fetchConf.Client.SelectOrigin
-	selectUrl = originSelectMapOpts[originSelect.Selected]
+	selectUrl = HostsOrigins[originSelect.Selected]
 
 	intervalForm := widget.NewFormItem("获取间隔(分钟)", intervalInput)
 	originSelectForm := widget.NewForm(widget.NewFormItem("hosts源", originSelect))
