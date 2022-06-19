@@ -26,9 +26,17 @@ var fetchConf *FetchConf
 //go:embed zcool-cryyt.ttf
 var fyneFontEmbedFs embed.FS
 
+var _fileLog *fetchLog
+
 func bootGui() {
+	logFile, err := os.OpenFile(AppExecDir()+"/fetch.log", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
+	if err != nil {
+		_cliLog.Print("日志文件创建失败")
+		return
+	}
+	_fileLog = &fetchLog{w: logFile}
 	if err := initGuiFont(); err != nil {
-		panic(err)
+		_fileLog.Print("字体加载失败")
 	}
 	fetchConf = LoadFetchConf()
 	_ = os.Setenv("FYNE_FONT", AppExecDir()+"/"+GuiFontName)

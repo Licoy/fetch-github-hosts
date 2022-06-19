@@ -25,7 +25,7 @@ func (f *FetchConf) Storage() {
 	viper.Set("server.interval", f.Server.Interval)
 	viper.Set("server.port", f.Server.Port)
 	if err := viper.WriteConfigAs("conf.yaml"); err != nil {
-		showAlert("持久化配置信息失败：" + err.Error())
+		_fileLog.Print("持久化配置信息失败：" + err.Error())
 	}
 }
 
@@ -40,15 +40,15 @@ func LoadFetchConf() *FetchConf {
 	viper.SetDefault("server.port", 9898)
 	var fileNotExits bool
 	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			showAlert("加载配置文件错误")
-		} else {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			fileNotExits = true
+		} else {
+			_fileLog.Print("加载配置文件错误： " + err.Error())
 		}
 	}
 	res := FetchConf{}
 	if err := viper.Unmarshal(&res); err != nil {
-		showAlert("配置文件解析失败")
+		_fileLog.Print("配置文件解析失败")
 	}
 	if fileNotExits {
 		res.Storage()

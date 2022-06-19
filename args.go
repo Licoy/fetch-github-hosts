@@ -24,17 +24,21 @@ func ParseBootArgs() *CmdArgs {
 			if errors.Is(flags.ErrHelp, et.Type) {
 				os.Exit(0)
 			}
+			if !errors.Is(flags.ErrUnknownFlag, et.Type) {
+				panic(fmt.Sprintf("解析参数错误: %v", err))
+			}
 		}
-		panic(fmt.Sprintf("解析参数错误: %v", err))
 	}
 	if args.Version {
 		fmt.Printf("版本号: V%.1f\n", VERSION)
 	}
 	if args.Mode != "" && (args.Mode != "client" && args.Mode != "server") {
-		panic(fmt.Sprintf("无效的启动模式: %s", args.Mode))
+		fmt.Printf("无效的启动模式: %s，已自动设置为client\n", args.Mode)
+		args.Mode = "client"
 	}
 	if args.FetchInterval < 1 {
-		panic(fmt.Sprintf("获取hosts的间隔时间不可以小于1分钟，当前为%d分钟", args.FetchInterval))
+		fmt.Printf("获取hosts的间隔时间不可以小于1分钟，当前为%d分钟，已自动设置为60分钟\n", args.FetchInterval)
+		args.FetchInterval = 60
 	}
 	return args
 }

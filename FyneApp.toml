@@ -1,0 +1,8 @@
+Website = "https://github.com/Licoy/fetch-github-hosts"
+
+[Details]
+  Icon = "logo.png"
+  Name = "Fetch-Github-Hosts"
+  ID = "com.github.licoy.fetch-github-hosts"
+  Version = "2.0"
+  Build = 58
