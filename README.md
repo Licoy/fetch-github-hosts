@@ -4,7 +4,9 @@
 `fetch-github-hosts` 是主要为解决研究及学习人员访问 `Github` 过慢或其他问题而提供的 `Github Hosts` 同步工具
 
 [![Release](https://img.shields.io/github/v/release/Licoy/fetch-github-hosts.svg?logo=git)](https://github.com/Licoy/fetch-github-hosts)
-[![Workflows-Release](https://github.com/Licoy/fetch-github-hosts/workflows/Release/badge.svg)](https://github.com/Licoy/fetch-github-hosts)
+[![LinuxBuild](https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20Linux/badge.svg)](https://github.com/Licoy/fetch-github-hosts)
+[![LinuxBuild](https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20MacOS/badge.svg)](https://github.com/Licoy/fetch-github-hosts)
+[![LinuxBuild](https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20Windows/badge.svg)](https://github.com/Licoy/fetch-github-hosts)
 
 </div>
 
@@ -13,19 +15,39 @@
 此项目是通过部署此项目本身的服务器来获取 `github.com` 的 `hosts`，而不是通过第三方ip地址接口来进行获取，例如 `ipaddress.com` 等。
 
 ## 使用方法
+### 图形化界面
+到 [Releases](https://github.com/Licoy/fetch-github-hosts/releases)
+或 [FastGit镜像](https://hub.fastgit.xyz/Licoy/fetch-github-hosts/releases) 中下载您的系统版本（目前支持`Windows`/`Linux`/`MacOS`
+）
 
-### 自动（推荐）
+下载完成解压`tar.gz`压缩包，运行对应平台的执行文件即可运行（ ⚠️ 注意：Windows下请右键以管理员身份运行，Linux/MacOS下需要用`sudo`进行启动）
+
+#### 客户端模式
+![client](./docs/client.png)
+
+#### 客户端启动
+![client-start](./docs/client-start.png)
+
+#### 客户端hosts源选择
+![client-select](./docs/client-select.png)
+
+#### 客户端hosts源自定义
+![client-custom](./docs/client-custom.png)
+
+#### 服务端模式
+![server](./docs/server.png)
+
+### 命令行终端
 
 到 [Releases](https://github.com/Licoy/fetch-github-hosts/releases)
 或 [FastGit镜像](https://hub.fastgit.xyz/Licoy/fetch-github-hosts/releases) 中下载您的系统版本（目前支持`Windows`/`Linux`/`MacOS`
-），包括`ARM`
-架构的系统。
+）
 
 #### 参数
 
 | 参数名        | 缩写  | 默认值                                  | 必填  | 描述                                 |
 |------------|-----|--------------------------------------|-----|------------------------------------|
-| `mode`     | `m` | client                               | 否   | 启动模式 `server（服务端）` / `client（客户端）` |
+| `mode`     | `m` | 无                                    | 是   | 启动模式 `server（服务端）` / `client（客户端）` |
 | `interval` | `i` | 60                                   | 否   | 获取记录值间隔（分钟）                        |
 | `port`     | `p` | 9898                                 | 否   | 服务模式监听端口以访问HTTP服务                  |
 | `url`      | `u` | `https://hosts.gitcdn.top/hosts.txt` | 否   | 客户端模式远程hosts获取链接                   |
@@ -113,24 +135,6 @@ sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl https://hosts.gitcdn.t
 ```
 
 > 提示：可以设置crontab定时任务定时获取更新即可，解放双手！
-
-### 其他自动方式
-
-#### Chrome浏览器下
-
-使用 [FasterHosts](https://github.com/gauseen/faster-hosts) 插件，点击进入下载。
-
-下载完成之后解压压缩包，Chrome地址栏输入`chrome://extensions/`回车进入，勾选`开发者模式`，选择`加载已解压的扩展程序`，
-选择刚才的解压目录即可。
-
-#### Windows / MacOS 及其他桌面端
-
-使用 [SwitchHosts](https://swh.app/) 桌面端应用，安装添加新规则：
-
-- `Title`: 任意
-- `Type`: `Remote`
-- `Url`: `https://hosts.gitcdn.top/hosts.txt`
-- `Auto refresh`: `1 hour`
 
 ## 私有部署
 
