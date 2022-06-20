@@ -66,10 +66,10 @@
 
 ```bash
 # Linux/Macos
-sudo fetch-github-hosts
+sudo fetch-github-hosts -m=client
 
 # Windows
-fetch-github-hosts.exe
+fetch-github-hosts.exe -m=client
 ```
 
 - 自定义获取时间间隔
