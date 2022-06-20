@@ -44,7 +44,6 @@ func bootGui() {
 	a := app.New()
 	mainWindow = a.NewWindow("Fetch Github Hosts")
 	mainWindow.Resize(fyne.NewSize(800, 580))
-	mainWindow.SetFixedSize(true)
 
 	tabs := container.NewAppTabs(
 		container.NewTabItem("客户端模式", guiClientMode()),
@@ -52,7 +51,7 @@ func bootGui() {
 		container.NewTabItem("关于", guiAbout()),
 	)
 
-	mainWindow.SetContent(tabs)
+	mainWindow.SetContent(container.NewVBox(tabs))
 
 	if err := GetCheckPermissionResult(); err != nil {
 		time.AfterFunc(time.Second, func() {

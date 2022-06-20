@@ -6,3 +6,4 @@ index.html
 output
 conf.yaml
 dist
+*.log
