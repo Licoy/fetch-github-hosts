@@ -22,7 +22,7 @@
 或 [FastGit镜像](https://hub.fastgit.xyz/Licoy/fetch-github-hosts/releases) 中下载您的系统版本（目前支持`Windows`/`Linux`/`MacOS`
 ）
 
-下载完成解压`tar.gz`压缩包，运行对应平台的执行文件即可运行（ ⚠️ 注意：Windows下请右键以管理员身份运行，Linux/MacOS下需要用`sudo`进行启动）
+下载完成解压`tar.gz`压缩包，运行对应平台的执行文件即可运行（ ⚠️ 注意：Linux下需要用`sudo`进行启动，Windows和MacOS会自动进行提权操作。）
 
 #### 客户端模式
 ![client](./docs/client.png)
@@ -57,10 +57,10 @@
 #### 启动客户端：
 
 > 注意：
->
-> Windows下需要右键【以管理员身份运行】；
->
-> Linux/Macos下需要使用root或具有hosts写入权限的账户执行，或直接使用`sudo`运行；
+> 
+> Linux下需要使用`sudo`运行；
+> 
+> Windows和MacOS会自动进行提权操作。
 
 - 直接运行
 
