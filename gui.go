@@ -106,7 +106,11 @@ func getLogoResource() fyne.Resource {
 }
 
 func getTicker(interval int) *time.Ticker {
-	return time.NewTicker(time.Second * time.Duration(interval))
+	d := time.Minute
+	if IsDebug() {
+		d = time.Second
+	}
+	return time.NewTicker(d * time.Duration(interval))
 }
 
 func guiClientMode() (content fyne.CanvasObject) {
