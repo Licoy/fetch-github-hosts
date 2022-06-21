@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	"io/ioutil"
@@ -26,6 +28,9 @@ var fetchConf *FetchConf
 //go:embed zcool-cryyt.ttf
 var fyneFontEmbedFs embed.FS
 
+//go:embed logo.png
+var logoEmbedFs embed.FS
+
 var _fileLog *fetchLog
 
 func bootGui() {
@@ -40,17 +45,36 @@ func bootGui() {
 	}
 	fetchConf = LoadFetchConf()
 	_ = os.Setenv("FYNE_FONT", AppExecDir()+"/"+GuiFontName)
-	defer os.Unsetenv("FYNE_FONT")
+	_ = os.Setenv("FYNE_THEME", "dark")
+	defer func() {
+		os.Unsetenv("FYNE_FONT")
+		os.Unsetenv("FYNE_THEME")
+	}()
+	logoResource := getLogoResource()
 	a := app.New()
-	mainWindow = a.NewWindow("Fetch Github Hosts")
+
+	mainWindow = a.NewWindow(fmt.Sprintf("Fetch Github Hosts - V%.1f", VERSION))
 	mainWindow.Resize(fyne.NewSize(800, 580))
+	mainWindow.SetIcon(logoResource)
+
+	logoImage := canvas.NewImageFromResource(logoResource)
+	logoImage.SetMinSize(fyne.NewSize(240, 240))
 
 	tabs := container.NewAppTabs(
 		container.NewTabItem("客户端模式", guiClientMode()),
 		container.NewTabItem("服务端模式", guiServerMode()),
-		container.NewTabItem("关于", guiAbout()),
+		container.NewTabItem("关于", container.NewVBox(
+			widget.NewLabel(""),
+			container.New(layout.NewCenterLayout(), logoImage),
+			guiAbout(),
+		)),
 	)
 
+	mainWindow.SetCloseIntercept(func() {
+		mainWindow.Hide()
+	})
+
+	mainWindow.CenterOnScreen()
 	mainWindow.SetContent(container.NewVBox(tabs))
 
 	if err := GetCheckPermissionResult(); err != nil {
@@ -59,7 +83,26 @@ func bootGui() {
 		})
 	}
 
+	go checkVersion(nil)
+
+	trayMenu := fyne.NewMenu("TrayMenu", fyne.NewMenuItem("打开主界面", func() {
+		mainWindow.Show()
+	}))
+
+	if desk, ok := a.(desktop.App); ok {
+		desk.SetSystemTrayMenu(trayMenu)
+		desk.SetSystemTrayIcon(logoResource)
+	}
+
 	mainWindow.ShowAndRun()
+}
+
+func getLogoResource() fyne.Resource {
+	content, err := logoEmbedFs.ReadFile("logo.png")
+	if err != nil {
+		return nil
+	}
+	return &fyne.StaticResource{StaticName: "logo", StaticContent: content}
 }
 
 func getTicker(interval int) *time.Ticker {
@@ -230,20 +273,27 @@ GNU General Public License v3.0
 }
 
 func checkVersion(btn *widget.Button) {
-	btn.Disable()
-	defer btn.Enable()
+	if btn != nil {
+		btn.Disable()
+		defer btn.Enable()
+	}
+	alertHandler := func(msg string) {
+		if btn != nil {
+			showAlert(msg)
+		}
+	}
 	resp, err := http.Get("https://api.github.com/repos/Licoy/fetch-github-hosts/releases")
 	if err != nil {
-		showAlert("网络请求错误：" + err.Error())
+		alertHandler("网络请求错误：" + err.Error())
 		return
 	}
 	if resp.StatusCode != http.StatusOK {
-		showAlert("请求失败，状态码为：" + err.Error())
+		alertHandler("请求失败，状态码为：" + err.Error())
 		return
 	}
 	all, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		showAlert("读取更新响应内容失败：" + err.Error())
+		alertHandler("读取更新响应内容失败：" + err.Error())
 		return
 	}
 	var releases []struct {
@@ -251,25 +301,24 @@ func checkVersion(btn *widget.Button) {
 		HtmlUrl string `json:"html_url"`
 	}
 	if err = json.Unmarshal(all, &releases); err != nil {
-		showAlert("解析更新响应内容失败：" + err.Error())
+		alertHandler("解析更新响应内容失败：" + err.Error())
 		return
 	}
 	if len(releases) == 0 {
-		showAlert("检查更新失败：" + err.Error())
+		alertHandler("检查更新失败：" + err.Error())
 		return
 	}
 	verStr := strings.Replace(strings.Replace(releases[0].TagName, "v", "", 1), "V", "", 1)
 	float, err := strconv.ParseFloat(verStr, 64)
 	if err != nil {
-		showAlert("解析版本号失败：" + err.Error())
+		alertHandler("解析版本号失败：" + err.Error())
 		return
 	}
 	if VERSION >= float {
-		showAlert("当前已是最新版本")
+		alertHandler("当前已是最新版本")
 		return
 	}
 	confirm := dialog.NewConfirm("更新提示", "检测到有新的版本，是否立即需要去下载最新版本？", func(b bool) {
-		fmt.Println(b)
 		if b {
 			openUrl(releases[0].HtmlUrl)()
 		}

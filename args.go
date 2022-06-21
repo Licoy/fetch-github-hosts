@@ -12,6 +12,8 @@ type CmdArgs struct {
 	FetchInterval int    `default:"60" short:"i" long:"interval" description:"获取hosts的间隔时间，单位为分钟"`
 	Port          int    `default:"9898" short:"p" long:"port" description:"服务模式监听端口"`
 	Url           string `default:"https://hosts.gitcdn.top/hosts.txt" short:"u" long:"url" description:"客户端模式远程hosts获取链接"`
+	Escalate      bool   `long:"escalate" description:"提权执行"`
+	DontEscalate  bool   `long:"de" description:"禁止提权执行"`
 	Version       bool   `short:"v" long:"version" description:"查看当前版本"`
 }
 
@@ -31,6 +33,7 @@ func ParseBootArgs() *CmdArgs {
 	}
 	if args.Version {
 		fmt.Printf("版本号: V%.1f\n", VERSION)
+		os.Exit(0)
 	}
 	if args.Mode != "" && (args.Mode != "client" && args.Mode != "server") {
 		fmt.Printf("无效的启动模式: %s，已自动设置为client\n", args.Mode)

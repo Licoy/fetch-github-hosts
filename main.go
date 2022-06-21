@@ -2,13 +2,20 @@ package main
 
 import (
 	"fmt"
+	"github.com/getlantern/elevate"
 	"os"
+	"runtime"
 )
 
 var _cliLog = &fetchLog{w: os.Stdout}
 
 func main() {
 	args := ParseBootArgs()
+	if !args.DontEscalate && !args.Escalate && runtime.GOOS != Linux {
+		cmd := elevate.Command(os.Args[0], "--escalate")
+		cmd.Run()
+		os.Exit(0)
+	}
 	isGui := args.Mode == ""
 	if isGui {
 		bootGui()
