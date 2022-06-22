@@ -44,14 +44,9 @@ func bootGui() {
 		_fileLog.Print("字体加载失败")
 	}
 	fetchConf = LoadFetchConf()
-	_ = os.Setenv("FYNE_FONT", AppExecDir()+"/"+GuiFontName)
-	_ = os.Setenv("FYNE_THEME", "dark")
-	defer func() {
-		os.Unsetenv("FYNE_FONT")
-		os.Unsetenv("FYNE_THEME")
-	}()
 	logoResource := getLogoResource()
 	a := app.New()
+	a.Settings().SetTheme(&fghGuiTheme{})
 
 	mainWindow = a.NewWindow(fmt.Sprintf("Fetch Github Hosts - V%.1f", VERSION))
 	mainWindow.Resize(fyne.NewSize(800, 580))
