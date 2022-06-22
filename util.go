@@ -49,9 +49,7 @@ func AppExecDir() string {
 func GetSystemHostsPath() string {
 	switch runtime.GOOS {
 	case Windows:
-		return "C:/Windows/System32/drivers/etc/hosts"
-	case Linux, Darwin:
-		return "/etc/hosts"
+		return os.Getenv("SystemRoot") + "\\System32\\drivers\\etc\\hosts"
 	}
 	return "/etc/hosts"
 }
