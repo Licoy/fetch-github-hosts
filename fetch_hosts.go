@@ -104,19 +104,10 @@ func (s *serverHandle) ServeHTTP(resp http.ResponseWriter, request *http.Request
 
 // ClientFetchHosts 获取最新的host并写入hosts文件
 func ClientFetchHosts(url string) (err error) {
-	hostsPath := GetSystemHostsPath()
-	hostsBytes, err := ioutil.ReadFile(hostsPath)
-	if err != nil {
-		err = ComposeError("读取文件hosts错误", err)
-		return
-	}
-
-	domains, err := getGithubDomains()
+	hosts, err := getCleanGithubHosts()
 	if err != nil {
 		return
 	}
-
-	localHostsLines := strings.Split(string(hostsBytes), "\n")
 
 	resp, err := http.Get(url)
 	if err != nil || resp.StatusCode != http.StatusOK {
@@ -132,29 +123,6 @@ func ClientFetchHosts(url string) (err error) {
 
 	fetchHostsLines := strings.Split(string(fetchHosts), "\n")
 
-	// clear local hosts github domain
-	hosts := &bytes.Buffer{}
-
-	for _, localLine := range localHostsLines {
-		line := strings.TrimSpace(localLine)
-		if line == "" || strings.HasPrefix(line, "#") {
-			hosts.WriteString(localLine)
-			hosts.WriteString("\n")
-			continue
-		}
-		var clearLine bool
-		for _, domain := range domains {
-			if strings.Contains(line, domain) {
-				clearLine = true
-				break
-			}
-		}
-		if !clearLine {
-			hosts.WriteString(localLine)
-			hosts.WriteString("\n")
-		}
-	}
-
 	for _, fetchLine := range fetchHostsLines {
 		line := strings.TrimSpace(fetchLine)
 		if line == "" || strings.HasPrefix(line, "#") {
@@ -164,7 +132,7 @@ func ClientFetchHosts(url string) (err error) {
 		hosts.WriteString("\n")
 	}
 
-	if err = ioutil.WriteFile(hostsPath, hosts.Bytes(), os.ModeType); err != nil {
+	if err = ioutil.WriteFile(GetSystemHostsPath(), hosts.Bytes(), os.ModeType); err != nil {
 		err = ComposeError("写入hosts文件失败，请用超级管理员身份启动本程序！", err)
 		return
 	}
@@ -234,6 +202,46 @@ func FetchHosts(domains []string) (hostsJson, hostsFile []byte, now string, err 
 	return
 }
 
+func getCleanGithubHosts() (hosts *bytes.Buffer, err error) {
+	hostsPath := GetSystemHostsPath()
+	hostsBytes, err := ioutil.ReadFile(hostsPath)
+	if err != nil {
+		err = ComposeError("读取文件hosts错误", err)
+		return
+	}
+
+	domains, err := getGithubDomains()
+	if err != nil {
+		return
+	}
+
+	// clear local hosts github domain
+	localHostsLines := strings.Split(string(hostsBytes), "\n")
+	hosts = &bytes.Buffer{}
+
+	for _, localLine := range localHostsLines {
+		line := strings.TrimSpace(localLine)
+		if line == "" || strings.HasPrefix(line, "#") {
+			hosts.WriteString(localLine)
+			hosts.WriteString("\n")
+			continue
+		}
+		var clearLine bool
+		for _, domain := range domains {
+			if strings.Contains(line, domain) {
+				clearLine = true
+				break
+			}
+		}
+		if !clearLine {
+			hosts.WriteString(localLine)
+			hosts.WriteString("\n")
+		}
+	}
+
+	return
+}
+
 func getGithubDomains() (domains []string, err error) {
 	fileData, err := GetExecOrEmbedFile(&domainsJson, "domains.json")
 	if err != nil {
@@ -244,6 +252,17 @@ func getGithubDomains() (domains []string, err error) {
 	if err = json.Unmarshal(fileData, &domains); err != nil {
 		err = ComposeError("domain.json解析失败", err)
 		return
+	}
+	return
+}
+
+func flushCleanGithubHosts() (err error) {
+	hosts, err := getCleanGithubHosts()
+	if err != nil {
+		return
+	}
+	if err = ioutil.WriteFile(GetSystemHostsPath(), hosts.Bytes(), os.ModeType); err != nil {
+		err = ComposeError("写入hosts文件失败，请用超级管理员身份启动本程序！", err)
 	}
 	return
 }

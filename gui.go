@@ -192,7 +192,13 @@ func guiClientMode() (content fyne.CanvasObject) {
 	})
 	stopBtn.Disable()
 
-	buttons := container.New(layout.NewGridLayout(2), startBtn, stopBtn)
+	buttons := container.New(layout.NewGridLayout(3), startBtn, stopBtn, widget.NewButton("清除hosts", func() {
+		if err := flushCleanGithubHosts(); err != nil {
+			showAlert("清除hosts中的github记录失败：" + err.Error())
+		} else {
+			showAlert("hosts文件中的github记录已经清除成功！")
+		}
+	}))
 
 	return container.NewVBox(widget.NewLabel(""), form, originSelectForm, originCustomForm, buttons, logs)
 }
