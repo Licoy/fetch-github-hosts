@@ -148,6 +148,9 @@ sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl https://hosts.gitcdn.t
 
 > 注意：因网络影响，尽量部署到海外服务器节点！
 
-### 开源协议
+## 趋势
+[![Stargazers over time](https://starchart.cc/Licoy/fetch-github-hosts.svg)](https://starchart.cc/Licoy/fetch-github-hosts)
+
+## 开源协议
 
 [GPL 3.0](https://github.com/Licoy/fetch-github-hosts/blob/main/LICENSE)
