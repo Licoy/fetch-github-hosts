@@ -13,9 +13,8 @@
     <p><img src="https://github.com/Licoy/fetch-github-hosts/raw/main/logo.png" alt="LOGO" /></p>
     <p><code>fetch-github-hosts</code> 是主要为解决研究及学习人员访问 <code>Github</code> 过慢或其他问题而提供的 <code>Github Hosts</code> 同步工具</p>
     <p><a href="https://github.com/Licoy/fetch-github-hosts"><img src="https://img.shields.io/github/v/release/Licoy/fetch-github-hosts.svg?logo=git" alt="Release" /></a>
-        <a href="https://github.com/Licoy/fetch-github-hosts"><img src="https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20Linux/badge.svg" alt="LinuxBuild" /></a>
-        <a href="https://github.com/Licoy/fetch-github-hosts"><img src="https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20MacOS/badge.svg" alt="LinuxBuild" /></a>
-        <a href="https://github.com/Licoy/fetch-github-hosts"><img src="https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20Windows/badge.svg" alt="LinuxBuild" /></a></p>
+        <a href="https://github.com/Licoy/fetch-github-hosts"><img src="https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20Linux%20&%20Windows/badge.svg" alt="Build Linux & Windows" /></a>
+        <a href="https://github.com/Licoy/fetch-github-hosts"><img src="https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20MacOS/badge.svg" alt="Build MacOS" /></a>
 </div>
 <h2>原理</h2>
 <p>此项目是通过部署此项目本身的服务器来获取 <code>github.com</code> 的 <code>hosts</code>，而不是通过第三方ip地址接口来进行获取，例如 <code>ipaddress.com</code> 等。</p>

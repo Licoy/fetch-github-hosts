@@ -40,9 +40,6 @@ func bootGui() {
 		return
 	}
 	_fileLog = &fetchLog{w: logFile}
-	if err := initGuiFont(); err != nil {
-		_fileLog.Print("字体加载失败")
-	}
 	fetchConf = LoadFetchConf()
 	logoResource := getLogoResource()
 	a := app.New()
@@ -368,24 +365,6 @@ func componentsStatusChange(enable bool, components ...fyne.Disableable) {
 			v.Disable()
 		}
 	}
-}
-
-func initGuiFont() (err error) {
-	fontPath := AppExecDir() + "/" + GuiFontName
-	_, err = os.Stat(fontPath)
-	if err != nil {
-		var file []byte
-		file, err = fyneFontEmbedFs.ReadFile(GuiFontName)
-		if err != nil {
-			err = ComposeError("加载字体失败", err)
-			return
-		}
-		if err = ioutil.WriteFile(fontPath, file, os.ModePerm); err != nil {
-			err = ComposeError("加载所需字体文件失败", err)
-			return
-		}
-	}
-	return
 }
 
 func openUrl(urlStr string) func() {

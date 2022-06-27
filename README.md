@@ -6,9 +6,8 @@
 `fetch-github-hosts` 是主要为解决研究及学习人员访问 `Github` 过慢或其他问题而提供的 `Github Hosts` 同步工具
 
 [![Release](https://img.shields.io/github/v/release/Licoy/fetch-github-hosts.svg?logo=git)](https://github.com/Licoy/fetch-github-hosts)
-[![LinuxBuild](https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20Linux/badge.svg)](https://github.com/Licoy/fetch-github-hosts)
-[![LinuxBuild](https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20MacOS/badge.svg)](https://github.com/Licoy/fetch-github-hosts)
-[![LinuxBuild](https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20Windows/badge.svg)](https://github.com/Licoy/fetch-github-hosts)
+[![Build Linux & Windows](https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20Linux%20&%20Windows/badge.svg)](https://github.com/Licoy/fetch-github-hosts)
+[![Build MacOS](https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20MacOS/badge.svg)](https://github.com/Licoy/fetch-github-hosts)
 
 </div>
 
