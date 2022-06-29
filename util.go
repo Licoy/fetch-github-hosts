@@ -55,13 +55,14 @@ func GetSystemHostsPath() string {
 }
 
 func PreCheckHasHostsRWPermission() (yes bool, err error) {
-	_, err = syscall.Open(GetSystemHostsPath(), syscall.O_RDWR, 0655)
+	h, err := syscall.Open(GetSystemHostsPath(), syscall.O_RDWR, 0655)
 	if err != nil {
 		if strings.Contains(err.Error(), "Access is denied") {
 			err = nil
 		}
 		return
 	}
+	syscall.Close(h)
 	yes = true
 	return
 }
@@ -99,4 +100,11 @@ func GetCheckPermissionResult() (err error) {
 		}
 	}
 	return
+}
+
+func GetNewlineChar() string {
+	if runtime.GOOS == Windows {
+		return "\r\n"
+	}
+	return "\n"
 }

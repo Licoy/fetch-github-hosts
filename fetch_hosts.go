@@ -121,17 +121,20 @@ func ClientFetchHosts(url string) (err error) {
 		return
 	}
 
+	newlineChar := GetNewlineChar()
+
 	fetchHostsLines := strings.Split(string(fetchHosts), "\n")
 
-	for _, fetchLine := range fetchHostsLines {
+	for i, fetchLine := range fetchHostsLines {
 		line := strings.TrimSpace(fetchLine)
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
 		hosts.WriteString(fetchLine)
-		hosts.WriteString("\n")
+		if i != len(fetchHostsLines)-1 {
+			hosts.WriteString(newlineChar)
+		}
 	}
-
 	if err = ioutil.WriteFile(GetSystemHostsPath(), hosts.Bytes(), os.ModeType); err != nil {
 		err = ComposeError("写入hosts文件失败，请用超级管理员身份启动本程序！", err)
 		return
@@ -215,15 +218,19 @@ func getCleanGithubHosts() (hosts *bytes.Buffer, err error) {
 		return
 	}
 
+	newlineChar := GetNewlineChar()
+
 	// clear local hosts github domain
-	localHostsLines := strings.Split(string(hostsBytes), "\n")
+	localHostsLines := strings.Split(string(hostsBytes), newlineChar)
 	hosts = &bytes.Buffer{}
 
-	for _, localLine := range localHostsLines {
+	for i, localLine := range localHostsLines {
 		line := strings.TrimSpace(localLine)
 		if line == "" || strings.HasPrefix(line, "#") {
 			hosts.WriteString(localLine)
-			hosts.WriteString("\n")
+			if i != len(localHostsLines)-1 || !strings.HasSuffix(hosts.String(), newlineChar) {
+				hosts.WriteString(newlineChar)
+			}
 			continue
 		}
 		var clearLine bool
@@ -235,7 +242,7 @@ func getCleanGithubHosts() (hosts *bytes.Buffer, err error) {
 		}
 		if !clearLine {
 			hosts.WriteString(localLine)
-			hosts.WriteString("\n")
+			hosts.WriteString(newlineChar)
 		}
 	}
 
