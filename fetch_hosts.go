@@ -2,9 +2,9 @@ package main
 
 import (
 	"bytes"
-	"embed"
 	"encoding/json"
 	"fmt"
+	"github.com/h2non/filetype"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -18,12 +18,6 @@ const (
 	Linux   = "linux"
 	Darwin  = "darwin"
 )
-
-//go:embed index.template
-var indexTemplate embed.FS
-
-//go:embed domains.json
-var domainsJson embed.FS
 
 func startClient(ticker *FetchTicker, url string, flog *fetchLog) {
 	flog.Print("远程hosts获取链接：" + url)
@@ -99,6 +93,13 @@ func (s *serverHandle) ServeHTTP(resp http.ResponseWriter, request *http.Request
 		resp.Write(file)
 		return
 	}
+	if strings.HasPrefix(p, "/public/") {
+		file, _ := assetsFs.ReadFile("assets" + p)
+		kind, _ := filetype.Match(file)
+		resp.Header().Set("Content-Type", kind.MIME.Value)
+		resp.Write(file)
+		return
+	}
 	http.Redirect(resp, request, "/", http.StatusMovedPermanently)
 }
 
@@ -168,7 +169,7 @@ func ServerFetchHosts() (err error) {
 	}
 
 	var templateFile []byte
-	templateFile, err = GetExecOrEmbedFile(&indexTemplate, "index.template")
+	templateFile, err = GetExecOrEmbedFile(&assetsFs, "assets/index.html")
 	if err != nil {
 		err = ComposeError("读取首页模板文件失败", err)
 		return
@@ -250,7 +251,7 @@ func getCleanGithubHosts() (hosts *bytes.Buffer, err error) {
 }
 
 func getGithubDomains() (domains []string, err error) {
-	fileData, err := GetExecOrEmbedFile(&domainsJson, "domains.json")
+	fileData, err := GetExecOrEmbedFile(&assetsFs, "assets/domains.json")
 	if err != nil {
 		err = ComposeError("读取文件domains.json错误", err)
 		return

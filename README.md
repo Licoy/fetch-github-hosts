@@ -1,7 +1,7 @@
 <div align="center">
 <h2>Fetch GitHub Hosts</h2>
 
-![LOGO](logo.png)
+![LOGO](assets/public/logo.png)
 
 `fetch-github-hosts` 是主要为解决研究及学习人员访问 `Github` 过慢或其他问题而提供的 `Github Hosts` 同步工具
 
@@ -24,19 +24,19 @@
 下载完成解压`tar.gz`压缩包，运行对应平台的执行文件即可运行（ ⚠️ 注意：Linux下需要用`sudo`进行启动，Windows和MacOS会自动进行提权操作。）
 
 #### 客户端模式
-![client](./docs/client.png)
+![client](assets/public/docs/client.png)
 
 #### 客户端启动
-![client-start](./docs/client-start.png)
+![client-start](assets/public/docs/client-start.png)
 
 #### 客户端hosts源选择
-![client-select](./docs/client-select.png)
+![client-select](assets/public/docs/client-select.png)
 
 #### 客户端hosts源自定义
-![client-custom](./docs/client-custom.png)
+![client-custom](assets/public/docs/client-custom.png)
 
 #### 服务端模式
-![server](./docs/server.png)
+![server](assets/public/docs/server.png)
 
 ### 命令行终端
 

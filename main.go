@@ -1,11 +1,15 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"github.com/getlantern/elevate"
 	"os"
 	"runtime"
 )
+
+//go:embed assets
+var assetsFs embed.FS
 
 var _cliLog = &fetchLog{w: os.Stdout}
 

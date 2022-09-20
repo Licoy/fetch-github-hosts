@@ -10,7 +10,7 @@ type fghGuiTheme struct {
 }
 
 func (f *fghGuiTheme) Font(s fyne.TextStyle) fyne.Resource {
-	font, err := fyneFontEmbedFs.ReadFile(GuiFontName)
+	font, err := assetsFs.ReadFile("assets/zcool-cryyt.ttf")
 	if err != nil {
 		return theme.DefaultTheme().Font(s)
 	}

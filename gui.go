@@ -1,7 +1,6 @@
 package main
 
 import (
-	"embed"
 	"encoding/json"
 	"fmt"
 	"fyne.io/fyne/v2"
@@ -24,12 +23,6 @@ import (
 
 var mainWindow fyne.Window
 var fetchConf *FetchConf
-
-//go:embed zcool-cryyt.ttf
-var fyneFontEmbedFs embed.FS
-
-//go:embed logo.png
-var logoEmbedFs embed.FS
 
 var _fileLog *fetchLog
 
@@ -90,7 +83,7 @@ func bootGui() {
 }
 
 func getLogoResource() fyne.Resource {
-	content, err := logoEmbedFs.ReadFile("logo.png")
+	content, err := assetsFs.ReadFile("assets/public/logo.png")
 	if err != nil {
 		return nil
 	}
