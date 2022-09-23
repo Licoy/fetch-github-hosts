@@ -2,7 +2,7 @@
 hosts.txt
 hosts.json
 index.php
-index.html
+/index.html
 output
 conf.yaml
 dist

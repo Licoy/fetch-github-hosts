@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch Github Hosts</title>
+    <link rel="stylesheet" href="public/style.min.css" type="text/css" charset="utf-8"/>
+</head>
+<body>
+<div align="center">
+    <h2>Fetch GitHub Hosts</h2>
+    <p><img src="public/logo.png" alt="LOGO" /></p>
+    <p><code>fetch-github-hosts</code> 是主要为解决研究及学习人员访问 <code>Github</code> 过慢或其他问题而提供的 <code>Github Hosts</code> 同步工具</p>
+    <p><a href="https://github.com/Licoy/fetch-github-hosts"><img src="https://img.shields.io/github/v/release/Licoy/fetch-github-hosts.svg?logo=git" alt="Release" /></a>
+        <a href="https://github.com/Licoy/fetch-github-hosts"><img src="https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20Linux%20&%20Windows/badge.svg" alt="Build Linux & Windows" /></a>
+        <a href="https://github.com/Licoy/fetch-github-hosts"><img src="https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20MacOS/badge.svg" alt="Build MacOS" /></a>
+</div>
+<h2>原理</h2>
+<p>此项目是通过部署此项目本身的服务器来获取 <code>github.com</code> 的 <code>hosts</code>，而不是通过第三方ip地址接口来进行获取，例如 <code>ipaddress.com</code> 等。</p>
+<p>最近获取时间：
+    <span style="color:green">
+            <!--time-->
+        </span>
+    <span>&nbsp;</span>
+    [<a href="/hosts.txt" target="_blank">hosts.txt</a>]
+    [<a href="/hosts.json" target="_blank">hosts.json</a>]
+</p>
+<h2>使用方法</h2>
+<h3>图形化界面</h3>
+<p>到 <a href="https://github.com/Licoy/fetch-github-hosts/releases">Releases</a>
+    或 <a href="https://hub.fastgit.xyz/Licoy/fetch-github-hosts/releases">FastGit镜像</a> 中下载您的系统版本（目前支持<code>Windows</code>/<code>Linux</code>/<code>MacOS</code>
+    ）</p>
+<p>下载完成解压<code>tar.gz</code>压缩包，运行对应平台的执行文件即可运行（ ⚠️ 注意：Linux下需要用<code>sudo</code>进行启动，Windows和MacOS会自动进行提权操作。）</p>
+<h4>客户端模式</h4>
+<p><img src="public/docs/client.png" alt="client" /></p>
+<h4>客户端启动</h4>
+<p><img src="public/docs/client-start.png" alt="client-start" /></p>
+<h4>客户端hosts源选择</h4>
+<p><img src="public/docs/client-select.png" alt="client-select" /></p>
+<h4>客户端hosts源自定义</h4>
+<p><img src="public/docs/client-custom.png" alt="client-custom" /></p>
+<h4>服务端模式</h4>
+<p><img src="public/docs/server.png" alt="server" /></p>
+<h3>命令行终端</h3>
+<p>到 <a href="https://github.com/Licoy/fetch-github-hosts/releases">Releases</a>
+    或 <a href="https://hub.fastgit.xyz/Licoy/fetch-github-hosts/releases">FastGit镜像</a> 中下载您的系统版本（目前支持<code>Windows</code>/<code>Linux</code>/<code>MacOS</code>
+    ）</p>
+<h4>参数</h4>
+<table>
+    <thead>
+    <tr>
+        <th>参数名</th>
+        <th>缩写</th>
+        <th>默认值</th>
+        <th>必填</th>
+        <th>描述</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><code>mode</code></td>
+        <td><code>m</code></td>
+        <td>无</td>
+        <td>是</td>
+        <td>启动模式 <code>server（服务端）</code> / <code>client（客户端）</code></td>
+    </tr>
+    <tr>
+        <td><code>interval</code></td>
+        <td><code>i</code></td>
+        <td>60</td>
+        <td>否</td>
+        <td>获取记录值间隔（分钟）</td>
+    </tr>
+    <tr>
+        <td><code>port</code></td>
+        <td><code>p</code></td>
+        <td>9898</td>
+        <td>否</td>
+        <td>服务模式监听端口以访问HTTP服务</td>
+    </tr>
+    <tr>
+        <td><code>url</code></td>
+        <td><code>u</code></td>
+        <td><code>https://hosts.gitcdn.top/hosts.txt</code></td>
+        <td>否</td>
+        <td>客户端模式远程hosts获取链接</td>
+    </tr>
+    </tbody>
+</table>
+<h4>启动客户端：</h4>
+<blockquote>
+    <p>注意：</p>
+    <p>Linux下需要使用<code>sudo</code>运行；</p>
+    <p>Windows和MacOS会自动进行提权操作。</p>
+</blockquote>
+<ul>
+    <li>直接运行</li>
+</ul>
+<pre><code class="language-bash"># Linux/Macos
+sudo fetch-github-hosts -m=client
+
+# Windows
+fetch-github-hosts.exe -m=client</code></pre>
+<ul>
+    <li>自定义获取时间间隔</li>
+</ul>
+<pre><code class="language-bash"># Linux/Macos（10分钟获取一次）
+sudo fetch-github-hosts -i=10
+
+# Windows（10分钟获取一次）
+fetch-github-hosts.exe -i=10</code></pre>
+<ul>
+    <li>自定义获取链接</li>
+</ul>
+<pre><code class="language-bash"># Linux/Macos
+sudo fetch-github-hosts -u=http://127.0.0.1:9898/hosts.json
+
+# Windows
+fetch-github-hosts.exe -u=http://127.0.0.1:9898/hosts.json</code></pre>
+<h4>启动服务端：</h4>
+<ul>
+    <li>直接运行</li>
+</ul>
+<pre><code class="language-bash"># Linux/Macos
+fetch-github-hosts -m=server
+
+# Windows
+fetch-github-hosts.exe -m=server</code></pre>
+<ul>
+    <li>自定义监听端口</li>
+</ul>
+<pre><code class="language-bash"># Linux/Macos
+fetch-github-hosts -m=server -p=6666
+
+# Windows
+fetch-github-hosts.exe -m=server -p=6666</code></pre>
+<h3>手动</h3>
+<h4>添加hosts</h4>
+<p>访问 <a href="https://hosts.gitcdn.top/hosts.txt">https://hosts.gitcdn.top/hosts.txt</a> ，
+    将其全部内容粘贴到你的hosts文件中，即可。</p>
+<ul>
+    <li><code>Linux / MacOS</code> hosts路径：<code>/etc/hosts</code></li>
+    <li><code>Windows</code> hosts路径：<code>C:\Windows\System32\drivers\etc\hosts</code></li>
+</ul>
+<h4>刷新生效</h4>
+<ul>
+    <li><code>Linux</code>: <code>/etc/init.d/network restart</code></li>
+    <li><code>Windows</code>: <code>ipconfig /flushdns</code></li>
+    <li><code>Macos</code>: <code>sudo killall -HUP mDNSResponder</code></li>
+</ul>
+<h4>Unix/Linux 一键使用</h4>
+<pre><code class="language-shell">sed -i "/# fetch-github-hosts begin/Q" /etc/hosts &amp;&amp; curl https://hosts.gitcdn.top/hosts.txt &gt;&gt; /etc/hosts</code></pre>
+<blockquote>
+    <p>提示：可以设置crontab定时任务定时获取更新即可，解放双手！</p>
+</blockquote>
+<h2>私有部署</h2>
+<p>下载最新的发行版（到 <a href="https://github.com/Licoy/fetch-github-hosts/releases">Releases</a>
+    或 <a href="https://hub.fastgit.xyz/Licoy/fetch-github-hosts/releases">FastGit镜像</a> 进行下载）
+    ，并选择您的系统对应版本，直接以服务模式运行即可：<code>fetch-github-hosts -m=server -p=9898</code>，会自动监听<code>0.0.0.0:9898</code>，您可以直接浏览器访问 <code>http://127.0.0.1:9898</code>
+    以访问您自定义服务。
+    （具体方法可参见【启动服务端】小节详细说明）</p>
+<blockquote>
+    <p>注意：因网络影响，尽量部署到海外服务器节点！</p>
+</blockquote>
+<h3>开源协议</h3>
+<p><a href="https://github.com/Licoy/fetch-github-hosts/blob/main/LICENSE">GPL 3.0</a></p>
+</body>
+</html>
