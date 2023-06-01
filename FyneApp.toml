@@ -4,5 +4,5 @@ Website = "https://github.com/Licoy/fetch-github-hosts"
   Icon = "assets/public/logo.png"
   Name = "Fetch-Github-Hosts"
   ID = "com.github.licoy.fetch-github-hosts"
-  Version = "2.5"
+  Version = "2.6"
   Build = 58
