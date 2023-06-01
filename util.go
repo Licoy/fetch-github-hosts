@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -78,7 +77,7 @@ func GetExecOrEmbedFile(fs *embed.FS, filename string) (template []byte, err err
 	exeDirFile := AppExecDir() + "/" + filename
 	_, err = os.Stat(exeDirFile)
 	if err == nil {
-		template, err = ioutil.ReadFile(exeDirFile)
+		template, err = os.ReadFile(exeDirFile)
 		return
 	}
 	template, err = fs.ReadFile(filename)

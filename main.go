@@ -11,7 +11,7 @@ import (
 //go:embed assets
 var assetsFs embed.FS
 
-var _cliLog = &fetchLog{w: os.Stdout}
+var _cliLog = &FetchLog{w: os.Stdout}
 
 func main() {
 	args := ParseBootArgs()

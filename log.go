@@ -6,15 +6,15 @@ import (
 	"time"
 )
 
-type fetchLog struct {
+type FetchLog struct {
 	w io.Writer
 }
 
-func NewFetchLog(w io.Writer) *fetchLog {
-	return &fetchLog{w}
+func NewFetchLog(w io.Writer) *FetchLog {
+	return &FetchLog{w}
 }
 
-func (f *fetchLog) Print(msg string) {
+func (f *FetchLog) Print(msg string) {
 	now := time.Now().Format("2006-01-02 15:04:05")
 	fmt.Fprintf(f.w, "[%s] %s\n", now, msg)
 }

@@ -12,7 +12,7 @@ import (
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -24,7 +24,7 @@ import (
 var mainWindow fyne.Window
 var fetchConf *FetchConf
 
-var _fileLog *fetchLog
+var _fileLog *FetchLog
 
 func bootGui() {
 	logFile, err := os.OpenFile(AppExecDir()+"/fetch.log", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
@@ -32,7 +32,7 @@ func bootGui() {
 		_cliLog.Print("日志文件创建失败")
 		return
 	}
-	_fileLog = &fetchLog{w: logFile}
+	_fileLog = &FetchLog{w: logFile}
 	fetchConf = LoadFetchConf()
 	logoResource := getLogoResource()
 	a := app.New()
@@ -126,7 +126,6 @@ func guiClientMode() (content fyne.CanvasObject) {
 
 	intervalForm := widget.NewFormItem("获取间隔(分钟)", intervalInput)
 	originSelectForm := widget.NewForm(widget.NewFormItem("hosts源", originSelect))
-
 	originCustomForm := widget.NewForm(widget.NewFormItem("远程hosts链接", urlInput))
 
 	if fetchConf.Client.Method == originMethodOpts[0] {
@@ -158,7 +157,7 @@ func guiClientMode() (content fyne.CanvasObject) {
 		originMethodForm,
 	)
 
-	startBtn = widget.NewButton("启动", func() {
+	startFetchExec := func() {
 		intervalInt := parseStrIsNumberNotShowAlert(&interval, "获取间隔必须为整数")
 		if intervalInt == nil {
 			return
@@ -174,22 +173,37 @@ func guiClientMode() (content fyne.CanvasObject) {
 		fetchConf.Client.CustomUrl = customUrl
 		fetchConf.Client.Interval = *intervalInt
 		fetchConf.Storage()
-	})
+	}
+
+	startBtn = widget.NewButton("启动", startFetchExec)
 	stopBtn = widget.NewButton("停止", func() {
 		stopBtn.Disable()
 		componentsStatusChange(true, startBtn, intervalInput, urlInput, originMethod, originSelect)
 		ticker.Stop()
 	})
-	stopBtn.Disable()
 
-	buttons := container.New(layout.NewGridLayout(3), startBtn, stopBtn, widget.NewButton("清除hosts", func() {
+	if fetchConf.Client.AutoFetch {
+		startFetchExec()
+		startBtn.Disable()
+	} else {
+		stopBtn.Disable()
+	}
+	autoFetchCheck := widget.NewCheck("启动软件自动获取", func(b bool) {
+		if b != fetchConf.Client.AutoFetch {
+			fetchConf.Client.AutoFetch = b
+			fetchConf.Storage()
+			showAlert("启动软件自动获取状态已改变，将会在下次启动程序时生效！")
+		}
+	})
+	autoFetchCheck.SetChecked(fetchConf.Client.AutoFetch)
+
+	buttons := container.New(layout.NewGridLayout(4), startBtn, stopBtn, widget.NewButton("清除hosts", func() {
 		if err := flushCleanGithubHosts(); err != nil {
 			showAlert("清除hosts中的github记录失败：" + err.Error())
 		} else {
 			showAlert("hosts文件中的github记录已经清除成功！")
 		}
-	}))
-
+	}), container.New(layout.NewCenterLayout(), autoFetchCheck))
 	return container.NewVBox(widget.NewLabel(""), form, originSelectForm, originCustomForm, buttons, logs)
 }
 
@@ -286,7 +300,7 @@ func checkVersion(btn *widget.Button) {
 		alertHandler("请求失败，状态码为：" + err.Error())
 		return
 	}
-	all, err := ioutil.ReadAll(resp.Body)
+	all, err := io.ReadAll(resp.Body)
 	if err != nil {
 		alertHandler("读取更新响应内容失败：" + err.Error())
 		return
