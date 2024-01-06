@@ -17,8 +17,7 @@
 
 ## 使用方法
 ### 图形化界面
-到 [Releases](https://github.com/Licoy/fetch-github-hosts/releases)
-或 [FastGit镜像](https://hub.fastgit.xyz/Licoy/fetch-github-hosts/releases) 中下载您的系统版本（目前支持`Windows`/`Linux`/`MacOS`
+到 [Releases](https://github.com/Licoy/fetch-github-hosts/releases) 中下载您的系统版本（目前支持`Windows`/`Linux`/`MacOS`
 ）
 
 下载完成解压`tar.gz`压缩包，运行对应平台的执行文件即可运行（ ⚠️ 注意：Linux下需要用`sudo`进行启动，Windows和MacOS会自动进行提权操作。）
@@ -40,8 +39,7 @@
 
 ### 命令行终端
 
-到 [Releases](https://github.com/Licoy/fetch-github-hosts/releases)
-或 [FastGit镜像](https://hub.fastgit.xyz/Licoy/fetch-github-hosts/releases) 中下载您的系统版本（目前支持`Windows`/`Linux`/`MacOS`
+到 [Releases](https://github.com/Licoy/fetch-github-hosts/releases) 中下载您的系统版本（目前支持`Windows`/`Linux`/`MacOS`
 ）
 
 #### 参数
@@ -52,6 +50,7 @@
 | `interval` | `i` | 60                                   | 否   | 获取记录值间隔（分钟）                        |
 | `port`     | `p` | 9898                                 | 否   | 服务模式监听端口以访问HTTP服务                  |
 | `url`      | `u` | `https://hosts.gitcdn.top/hosts.txt` | 否   | 客户端模式远程hosts获取链接                   |
+| `lang`     | `l` | `zh-CN`                              | 否   | 界面语言                               |
 
 #### 启动客户端：
 
@@ -139,8 +138,7 @@ sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl https://hosts.gitcdn.t
 
 ## 私有部署
 
-下载最新的发行版（到 [Releases](https://github.com/Licoy/fetch-github-hosts/releases)
-或 [FastGit镜像](https://hub.fastgit.xyz/Licoy/fetch-github-hosts/releases) 进行下载）
+下载最新的发行版（到 [Releases](https://github.com/Licoy/fetch-github-hosts/releases) 进行下载）
 ，并选择您的系统对应版本，直接以服务模式运行即可：`fetch-github-hosts -m=server -p=9898`，会自动监听`0.0.0.0:9898`，您可以直接浏览器访问 `http://127.0.0.1:9898`
 以访问您自定义服务。
 （具体方法可参见【启动服务端】小节详细说明）
