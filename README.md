@@ -1,3 +1,5 @@
+简体中文 | [English](./README_EN.md)
+
 <div align="center">
 <h2>Fetch GitHub Hosts</h2>
 
