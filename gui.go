@@ -12,6 +12,7 @@ import (
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
+	"image/color"
 	"io"
 	"net/http"
 	"net/url"
@@ -49,7 +50,7 @@ func bootGui() {
 		container.NewTabItem("客户端模式", guiClientMode()),
 		container.NewTabItem("服务端模式", guiServerMode()),
 		container.NewTabItem("关于", container.NewVBox(
-			widget.NewLabel(""),
+			newMargin(fyne.NewSize(10, 10)),
 			container.New(layout.NewCenterLayout(), logoImage),
 			guiAbout(),
 		)),
@@ -99,7 +100,7 @@ func getTicker(interval int) *time.Ticker {
 }
 
 func guiClientMode() (content fyne.CanvasObject) {
-	logs, addFn := newLogScrollComponent(fyne.NewSize(800, 260))
+	logs, addFn := newLogScrollComponent(fyne.NewSize(800, 280))
 	var cLog = NewFetchLog(NewGuiLogWriter(addFn))
 	var startBtn, stopBtn *widget.Button
 	var interval, customUrl, selectUrl = strconv.Itoa(fetchConf.Client.Interval), fetchConf.Client.CustomUrl, fetchConf.Client.SelectOrigin
@@ -204,11 +205,13 @@ func guiClientMode() (content fyne.CanvasObject) {
 			showAlert("hosts文件中的github记录已经清除成功！")
 		}
 	}), container.New(layout.NewCenterLayout(), autoFetchCheck))
-	return container.NewVBox(widget.NewLabel(""), form, originSelectForm, originCustomForm, buttons, logs)
+	margin := newMargin(fyne.NewSize(10, 10))
+	return container.NewVBox(margin, form, originSelectForm, originCustomForm, margin, buttons,
+		margin, logs)
 }
 
 func guiServerMode() (content fyne.CanvasObject) {
-	logs, addFn := newLogScrollComponent(fyne.NewSize(800, 260))
+	logs, addFn := newLogScrollComponent(fyne.NewSize(800, 320))
 	var sLog = NewFetchLog(NewGuiLogWriter(addFn))
 	var startBtn, stopBtn *widget.Button
 	var interval, port = strconv.Itoa(fetchConf.Server.Interval), strconv.Itoa(fetchConf.Server.Port)
@@ -247,7 +250,7 @@ func guiServerMode() (content fyne.CanvasObject) {
 		widget.NewFormItem("启动端口号", portInput),
 	)
 	buttons := container.New(layout.NewGridLayout(2), startBtn, stopBtn)
-	return container.NewVBox(widget.NewLabel(""), form, buttons,
+	return container.NewVBox(newMargin(fyne.NewSize(10, 10)), form, buttons,
 		container.New(layout.NewCenterLayout(), statusLabel),
 		logs,
 	)
@@ -379,4 +382,10 @@ func openUrl(urlStr string) func() {
 		u, _ := url.Parse(urlStr)
 		_ = fyne.CurrentApp().OpenURL(u)
 	}
+}
+
+func newMargin(size fyne.Size) *canvas.Rectangle {
+	margin := canvas.NewRectangle(color.Transparent)
+	margin.SetMinSize(size)
+	return margin
 }
