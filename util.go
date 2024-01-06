@@ -4,6 +4,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"io"
 	"os"
 	"path/filepath"
@@ -13,7 +14,7 @@ import (
 )
 
 const (
-	VERSION = 2.6
+	VERSION = 2.7
 )
 
 var (
@@ -87,15 +88,27 @@ func GetExecOrEmbedFile(fs *embed.FS, filename string) (template []byte, err err
 func GetCheckPermissionResult() (err error) {
 	permission, err := PreCheckHasHostsRWPermission()
 	if err != nil {
-		err = ComposeError("检查hosts读写权限失败，请以sudo或管理员身份来运行本程序！", err)
+		err = ComposeError(t(&i18n.Message{
+			ID:    "PermissionCheckFail",
+			Other: "检查hosts读写权限失败，请以sudo或管理员身份来运行本程序！",
+		}), err)
 		return
 	}
 	if !permission {
 		if runtime.GOOS == Windows {
-			err = errors.New("请鼠标右键选择【以管理员的身份运行】来执行本程序！")
-			fmt.Println("请鼠标右键选择【以管理员的身份运行】来执行本程序！")
+			err = errors.New(t(&i18n.Message{
+				ID:    "RunAsAdminWin",
+				Other: "请鼠标右键选择【以管理员的身份运行】来执行本程序！",
+			}))
+			fmt.Println(t(&i18n.Message{
+				ID:    "RunAsAdminWin",
+				Other: "请鼠标右键选择【以管理员的身份运行】来执行本程序！",
+			}))
 		} else {
-			err = ComposeError("请以root账户或sudo来执行本程序！", err)
+			err = ComposeError(t(&i18n.Message{
+				ID:    "RunAsAdminUnix",
+				Other: "请以root账户或sudo来执行本程序！",
+			}), err)
 		}
 	}
 	return

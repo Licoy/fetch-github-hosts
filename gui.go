@@ -365,6 +365,29 @@ GNU General Public License v3.0
 			seg.Alignment = fyne.TextAlignCenter
 		}
 	}
+	languages := map[string]string{
+		"简体中文":    "zh-CN",
+		"English": "en-US",
+	}
+	langSelectOpts := make([]string, 0, len(languages))
+	currentLang := "简体中文"
+	for k := range languages {
+		langSelectOpts = append(langSelectOpts, k)
+		if languages[k] == _conf.Lang {
+			currentLang = k
+		}
+	}
+	originSelect := widget.NewSelect(langSelectOpts, func(s string) {
+		_conf.Lang = languages[s]
+		_conf.Storage()
+		showAlert(tfs(&i18n.Message{
+			ID:    "LangChangeTips",
+			Other: "语言已经切换为 {{.Lang}}，将会在下次启动程序时生效！",
+		}, map[string]interface{}{
+			"Lang": s,
+		}))
+	})
+	originSelect.Selected = currentLang
 	github := widget.NewButton("Github", openUrl("https://github.com/Licoy/fetch-github-hosts"))
 	feedback := widget.NewButton(t(&i18n.Message{
 		ID:    "Feedback",
@@ -377,7 +400,7 @@ GNU General Public License v3.0
 	}), func() {
 		checkVersion(cv)
 	})
-	return container.NewVBox(aboutNote, container.New(layout.NewCenterLayout(), container.NewHBox(github, feedback, cv)))
+	return container.NewVBox(aboutNote, container.New(layout.NewCenterLayout(), container.NewHBox(originSelect, github, feedback, cv)))
 }
 
 func checkVersion(btn *widget.Button) {
