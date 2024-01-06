@@ -4,6 +4,9 @@ import (
 	"embed"
 	"fmt"
 	"github.com/getlantern/elevate"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/pelletier/go-toml/v2"
+	"golang.org/x/text/language"
 	"os"
 	"runtime"
 )
@@ -11,7 +14,12 @@ import (
 //go:embed assets
 var assetsFs embed.FS
 
+//go:embed active.*.toml
+var localeFS embed.FS
+
 var _cliLog = &FetchLog{w: os.Stdout}
+var _local *i18n.Localizer
+var _conf *FetchConf
 
 func main() {
 	args := ParseBootArgs()
@@ -21,6 +29,11 @@ func main() {
 		os.Exit(0)
 	}
 	isGui := args.Mode == ""
+	bundle := i18n.NewBundle(language.Chinese)
+	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+	bundle.LoadMessageFileFS(localeFS, "active.en-US.toml")
+	_conf = LoadFetchConf()
+	_local = i18n.NewLocalizer(bundle, args.Lang, _conf.Lang)
 	if isGui {
 		bootGui()
 	} else {

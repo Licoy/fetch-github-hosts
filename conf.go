@@ -5,6 +5,7 @@ import (
 )
 
 type FetchConf struct {
+	Lang   string
 	Client struct {
 		Interval     int
 		Method       string
@@ -19,6 +20,7 @@ type FetchConf struct {
 }
 
 func (f *FetchConf) Storage() {
+	viper.Set("lang", f.Lang)
 	viper.Set("client.interval", f.Client.Interval)
 	viper.Set("client.method", f.Client.Method)
 	viper.Set("client.selectorigin", f.Client.SelectOrigin)
@@ -35,6 +37,7 @@ func LoadFetchConf() *FetchConf {
 	viper.AddConfigPath(AppExecDir())
 	viper.SetConfigName("conf")
 	viper.SetConfigType("yaml")
+	viper.SetDefault("lang", "zh-CN")
 	viper.SetDefault("client.interval", 60)
 	viper.SetDefault("client.method", "官方指定hosts源")
 	viper.SetDefault("client.selectorigin", "FetchGithubHosts")

@@ -15,6 +15,7 @@ type CmdArgs struct {
 	Escalate      bool   `long:"escalate" description:"提权执行"`
 	DontEscalate  bool   `long:"de" description:"禁止提权执行"`
 	Version       bool   `short:"v" long:"version" description:"查看当前版本"`
+	Lang          string `long:"lang" short:"l" description:"使用语言"`
 }
 
 func ParseBootArgs() *CmdArgs {
