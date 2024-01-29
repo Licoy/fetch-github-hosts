@@ -272,17 +272,23 @@ func FetchHosts(domains []string) (hostsJson, hostsFile []byte, now string, err 
 	hosts := make([][]string, 0, len(domains))
 	hostsFileData := bytes.NewBufferString("# fetch-github-hosts begin\n")
 	for _, domain := range domains {
-		host, err := net.LookupHost(domain)
-		if err != nil {
+		ipList, sErr := net.LookupIP(domain)
+		if sErr != nil {
 			fmt.Printf("%s: %s\b", t(&i18n.Message{
 				ID:    "GetHostRecordErr",
 				Other: "获取主机记录失败",
-			}), err.Error())
+			}), sErr.Error())
 			continue
 		}
-		item := []string{host[0], domain}
-		hosts = append(hosts, item)
-		hostsFileData.WriteString(fmt.Sprintf("%-28s%s\n", item[0], item[1]))
+		for _, ip := range ipList {
+			ipv4 := ip.To4()
+			if ipv4 != nil {
+				item := []string{ipv4.String(), domain}
+				hosts = append(hosts, item)
+				hostsFileData.WriteString(fmt.Sprintf("%-28s%s\n", item[0], item[1]))
+				break
+			}
+		}
 	}
 	hostsFileData.WriteString("# last fetch time: ")
 	hostsFileData.WriteString(now)
