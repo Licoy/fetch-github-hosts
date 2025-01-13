@@ -1,9 +1,13 @@
+//go:build !no_gui
+// +build !no_gui
+
 package main
 
 import (
+	"image/color"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/theme"
-	"image/color"
 )
 
 type fghGuiTheme struct {

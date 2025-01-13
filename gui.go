@@ -1,8 +1,20 @@
+//go:build !no_gui
+// +build !no_gui
+
 package main
 
 import (
 	"encoding/json"
 	"fmt"
+	"image/color"
+	"io"
+	"net/http"
+	"net/url"
+	"os"
+	"strconv"
+	"strings"
+	"time"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
@@ -13,14 +25,6 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"image/color"
-	"io"
-	"net/http"
-	"net/url"
-	"os"
-	"strconv"
-	"strings"
-	"time"
 )
 
 var mainWindow fyne.Window

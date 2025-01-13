@@ -13,6 +13,12 @@
 
 </div>
 
+## no-gui 构建方法
+
+```bash
+go build -tags="no_gui"
+```
+
 ## 原理
 
 此项目是通过部署此项目本身的服务器来获取 `github.com` 的 `hosts`，而不是通过第三方ip地址接口来进行获取，例如 `ipaddress.com` 等。

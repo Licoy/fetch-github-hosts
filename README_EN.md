@@ -13,6 +13,12 @@
 
 </div>
 
+## no-gui build
+
+```bash
+go build -tags="no_gui"
+```
+
 ## Principle
 
 This project obtains the `hosts` of `github.com` by deploying the server of the project itself, rather than through a third-party IP address interface, such as `ipaddress.com`, etc.
