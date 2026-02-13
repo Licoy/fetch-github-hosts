@@ -101,10 +101,13 @@ pub async fn start_server_task(
         Err(e) => emit_log(format!("执行更新Github-Hosts失败：{}", e)),
     }
 
+    // Shared shutdown signal via tokio::sync::watch
+    let (shutdown_tx, shutdown_rx) = tokio::sync::watch::channel(false);
+
     // Start HTTP server in background
     let app_clone = app.clone();
     let http_handle = tokio::spawn(async move {
-        start_http_server(port, app_clone).await;
+        start_http_server(port, app_clone, shutdown_rx).await;
     });
 
     let interval = std::time::Duration::from_secs(interval_minutes as u64 * 60);
@@ -123,7 +126,13 @@ pub async fn start_server_task(
         } => {}
         _ = stop_rx => {
             emit_log("已停止更新hosts服务".to_string());
-            http_handle.abort();
+            // Signal shutdown to HTTP server gracefully
+            let _ = shutdown_tx.send(true);
+            // Wait for HTTP server to finish (with timeout)
+            let _ = tokio::time::timeout(
+                std::time::Duration::from_secs(3),
+                http_handle,
+            ).await;
         }
     }
 }
@@ -150,13 +159,13 @@ async fn server_fetch_hosts(_app: &AppHandle) -> Result<(), String> {
     Ok(())
 }
 
-/// Simple HTTP server for serving hosts files
-async fn start_http_server(port: u16, app: AppHandle) {
-    use std::io::{Read, Write};
-    use std::net::TcpListener;
+/// Simple HTTP server for serving hosts files (async with graceful shutdown)
+async fn start_http_server(port: u16, app: AppHandle, mut shutdown_rx: tokio::sync::watch::Receiver<bool>) {
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
+    use tokio::net::TcpListener;
 
     let addr = format!("0.0.0.0:{}", port);
-    let listener = match TcpListener::bind(&addr) {
+    let listener = match TcpListener::bind(&addr).await {
         Ok(l) => l,
         Err(e) => {
             let _ = app.emit(
@@ -169,30 +178,34 @@ async fn start_http_server(port: u16, app: AppHandle) {
         }
     };
 
-    // Set non-blocking so we can be aborted
-    listener
-        .set_nonblocking(true)
-        .expect("cannot set non-blocking");
+    let _ = app.emit(
+        "server-log",
+        LogPayload {
+            message: format!("HTTP 服务已启动：http://0.0.0.0:{}", port),
+        },
+    );
 
     loop {
-        match listener.accept() {
-            Ok((mut stream, _)) => {
-                let mut buf = [0u8; 4096];
-                let _ = stream.read(&mut buf);
-                let request = String::from_utf8_lossy(&buf);
+        tokio::select! {
+            result = listener.accept() => {
+                match result {
+                    Ok((mut stream, _)) => {
+                        let mut buf = [0u8; 4096];
+                        let _ = stream.read(&mut buf).await;
+                        let request = String::from_utf8_lossy(&buf);
 
-                let path = request
-                    .lines()
-                    .next()
-                    .and_then(|line| line.split_whitespace().nth(1))
-                    .unwrap_or("/");
+                        let path = request
+                            .lines()
+                            .next()
+                            .and_then(|line| line.split_whitespace().nth(1))
+                            .unwrap_or("/");
 
-                let exe_dir = std::env::current_exe()
-                    .ok()
-                    .and_then(|p| p.parent().map(|p| p.to_path_buf()))
-                    .unwrap_or_else(|| std::path::PathBuf::from("."));
+                        let exe_dir = std::env::current_exe()
+                            .ok()
+                            .and_then(|p| p.parent().map(|p| p.to_path_buf()))
+                            .unwrap_or_else(|| std::path::PathBuf::from("."));
 
-                let (status, content_type, body) = match path {
+                        let (status, content_type, body) = match path {
                     "/hosts.txt" => {
                         let content = std::fs::read_to_string(exe_dir.join("hosts.txt"))
                             .unwrap_or_else(|_| "# no hosts yet".to_string());
@@ -331,13 +344,16 @@ function switchLang(l){{const t=i18n[l]||i18n.zh;document.querySelectorAll('[dat
                     body.len(),
                     body
                 );
-                let _ = stream.write_all(response.as_bytes());
+                let _ = stream.write_all(response.as_bytes()).await;
+                    }
+                    Err(_) => break,
+                }
             }
-            Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                std::thread::sleep(std::time::Duration::from_millis(100));
-                continue;
+            _ = shutdown_rx.changed() => {
+                // Graceful shutdown: listener is dropped here, releasing the port
+                break;
             }
-            Err(_) => break,
         }
     }
+    // listener is dropped here, port is released immediately
 }

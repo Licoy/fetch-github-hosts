@@ -1,155 +1,163 @@
-[简体中文](./README.md) | English
+[简体中文](./README.md) | English | [日本語](./README_JA.md)
 
 <div align="center">
 <h2>Fetch GitHub Hosts</h2>
 
-![LOGO](assets/public/logo.png)
+<img src="public/logo.png" width="128" height="128" alt="Logo">
 
-`fetch-github-hosts` is a `Github Hosts` synchronization tool mainly provided to solve the problem of slow access to `Github` or other problems for research and learning personnel.
+A GitHub Hosts synchronization tool designed to help researchers and learners access GitHub faster
 
-[![Release](https://img.shields.io/github/v/release/Licoy/fetch-github-hosts.svg?logo=git)](https://github.com/Licoy/fetch-github-hosts)
-[![Build Linux & Windows](https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20Linux%20&%20Windows/badge.svg)](https://github.com/Licoy/fetch-github-hosts)
-[![Build MacOS](https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20MacOS/badge.svg)](https://github.com/Licoy/fetch-github-hosts)
+[![Release](https://img.shields.io/github/v/release/Licoy/fetch-github-hosts.svg?logo=git)](https://github.com/Licoy/fetch-github-hosts/releases)
+[![GitHub Stars](https://img.shields.io/github/stars/Licoy/fetch-github-hosts?style=flat&logo=github)](https://github.com/Licoy/fetch-github-hosts)
+[![License](https://img.shields.io/github/license/Licoy/fetch-github-hosts)](./LICENSE)
 
 </div>
 
-## Principle
+## ✨ Features
 
-This project obtains the `hosts` of `github.com` by deploying the server of the project itself, rather than through a third-party IP address interface, such as `ipaddress.com`, etc.
+- 🖥️ **Cross-platform Desktop App** — Supports macOS (Intel & Apple Silicon), Windows, Linux
+- 🔄 **Client Mode** — Automatically sync hosts from remote sources to your system
+- 🌐 **Server Mode** — Self-hosted DNS resolution service with HTTP API
+- 🌓 **Dark / Light / System** theme modes
+- 🌍 **Multi-language** — 简体中文, English, 日本語
+- 🔒 **Smart Elevation** — One-time password prompt, no repeated authorization needed
+- 📡 **System Tray** — Run in background with one-click start/stop
 
-## Instructions
-### Graphical interface
-Go to [Releases](https://github.com/Licoy/fetch-github-hosts/releases) to download your system version (currently supports `Windows`/`Linux`/`MacOS`
-)
+## 📦 Installation
 
-After the download is completed, unzip the `tar.gz` compressed package and run the executable file of the corresponding platform to run (⚠️ Note: Linux needs to be started with `sudo`, Windows and MacOS will automatically perform privilege escalation operations.)
+Download from [Releases](https://github.com/Licoy/fetch-github-hosts/releases):
 
-#### Client mode
-![client](assets/public/docs/client.png)
+| Platform | File Type | Architecture |
+|----------|-----------|--------------|
+| macOS | `.dmg` | Universal (Intel + Apple Silicon) |
+| Windows | `.msi` / `.exe` | x86_64 |
+| Linux | `.deb` / `.AppImage` | x86_64 |
 
-#### Client startup
-![client-start](assets/public/docs/client-start.png)
+## 🚀 Usage
 
-#### Client hosts source selection
-![client-select](assets/public/docs/client-select.png)
+### Desktop Client
 
-#### Client hosts are derived from customization
-![client-custom](assets/public/docs/client-custom.png)
+Download, install, and run. The app provides a graphical user interface.
 
-#### Server mode
-![server](assets/public/docs/server.png)
+#### Client Mode
 
-### Command line terminal
+Fetches the latest GitHub DNS records from remote hosts sources and writes them to the system hosts file.
 
-Go to [Releases](https://github.com/Licoy/fetch-github-hosts/releases) to download your system version (currently supports `Windows`/`Linux`/`MacOS`
-)
+- Multiple hosts sources (FetchGithubHosts, Github520)
+- Custom remote URL support
+- Configurable auto-fetch interval (minutes)
 
-#### Parameters
+#### Server Mode
 
-| Parameter name | Abbreviation | Default value                        | Required | Description                                            |
-|----------------|--------------|--------------------------------------|----------|--------------------------------------------------------|
-| `mode`         | `m`          | None                                 | Yes      | Startup mode `server` / `client`                       |
-| `interval`     | `i`          | 60                                   | No       | Get the record value interval (minutes)                |
-| `port`         | `p`          | 9898                                 | No       | Service mode listening port to access the HTTP service |
-| `url`          | `u`          | `https://hosts.gitcdn.top/hosts.txt` | No       | Client mode remote hosts get link                      |
-| `lang`         | `l`          | `zh-CN`                              | No       | Interface language                                     |
+Starts a local HTTP server that auto-resolves GitHub domains and serves hosts files.
 
-#### Start the client:
+- Default port: `9898`
+- Provides `hosts.txt` (plain text) and `hosts.json` (JSON) formats
+- Built-in web page with dark/light theme and multi-language support
 
-> Note:
->
-> You need to use `sudo` to run under Linux;
->
-> Windows and MacOS will automatically perform privilege escalation operations.
+### Manual Method
 
-- run directly
+#### Add Hosts
+
+Visit [https://hosts.gitcdn.top/hosts.txt](https://hosts.gitcdn.top/hosts.txt) and paste the content into your system hosts file.
+
+- **Linux / macOS**: `/etc/hosts`
+- **Windows**: `C:\Windows\System32\drivers\etc\hosts`
+
+#### Flush DNS Cache
 
 ```bash
-#Linux/Macos
-sudo fetch-github-hosts -m=client
+# macOS
+sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder
 
 # Windows
-fetch-github-hosts.exe -m=client
+ipconfig /flushdns
+
+# Linux
+sudo systemd-resolve --flush-caches
 ```
 
-- Customize the acquisition time interval
+#### One-liner for Linux/macOS
 
 ```bash
-# Linux/Macos (obtained once every 10 minutes)
-sudo fetch-github-hosts -i=10
-
-# Windows (obtained once every 10 minutes)
-fetch-github-hosts.exe -i=10
-```
-
-- Customized get link
-
-```bash
-#Linux/Macos
-sudo fetch-github-hosts -u=http://127.0.0.1:9898/hosts.json
-
-# Windows
-fetch-github-hosts.exe -u=http://127.0.0.1:9898/hosts.json
-```
-
-#### Start the server:
-
-- run directly
-
-```bash
-#Linux/Macos
-fetch-github-hosts -m=server
-
-# Windows
-fetch-github-hosts.exe -m=server
-```
-
-- Custom listening port
-
-```bash
-#Linux/Macos
-fetch-github-hosts -m=server -p=6666
-
-# Windows
-fetch-github-hosts.exe -m=server -p=6666
-```
-
-### Manual
-
-#### Add hosts
-
-Visit [https://hosts.gitcdn.top/hosts.txt](https://hosts.gitcdn.top/hosts.txt) ,
-Paste its entire contents into your hosts file.
-
-- `Linux/MacOS` hosts path: `/etc/hosts`
-- `Windows` hosts path: `C:\Windows\System32\drivers\etc\hosts`
-
-#### Refresh takes effect
-
-- `Linux`: `/etc/init.d/network restart`
-- `Windows`: `ipconfig /flushdns`
-- `Macos`: `sudo killall -HUP mDNSResponder`
-
-#### Unix/Linux one-click use
-
-```shell
 sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl https://hosts.gitcdn.top/hosts.txt >> /etc/hosts
 ```
 
-> Tip: You can set up a crontab scheduled task to get updates regularly, freeing your hands!
+> 💡 Set up a crontab task for automatic updates
 
-## Private deployment
+## 🏗️ Tech Stack
 
-Download the latest release (go to [Releases](https://github.com/Licoy/fetch-github-hosts/releases) to download)
-, and select the corresponding version of your system, and run it directly in service mode: `fetch-github-hosts -m=server -p=9898`, which will automatically monitor `0.0.0.0:9898`, and you can access it directly with a browser `http://127.0.0.1:9898`
-to access your customized services.
-(For specific methods, please refer to the section [Start Server] for detailed instructions)
+| Component | Technology |
+|-----------|-----------|
+| Desktop Framework | [Tauri 2.0](https://v2.tauri.app/) (Rust) |
+| Frontend | [Nuxt 3](https://nuxt.com/) + [Vue 3](https://vuejs.org/) |
+| UI Components | [Nuxt UI](https://ui.nuxt.com/) |
+| Styling | [Tailwind CSS 4](https://tailwindcss.com/) |
+| State Management | [Pinia](https://pinia.vuejs.org/) |
+| i18n | [@nuxtjs/i18n](https://i18n.nuxtjs.org/) |
 
-> Note: Due to network influence, try to deploy to overseas server nodes!
+## 🛠️ Development
 
-## Trend
+### Requirements
+
+- Node.js ≥ 20
+- Rust ≥ 1.70
+- macOS / Windows / Linux
+
+### Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Build static frontend
+NUXT_CLI_WRAPPER=false npx nuxt generate
+
+# Start Tauri dev mode
+npx tauri dev
+```
+
+### Build for Production
+
+```bash
+# Build frontend
+NUXT_CLI_WRAPPER=false npx nuxt generate
+
+# Build Tauri app
+npx tauri build
+```
+
+## 📁 Project Structure
+
+```
+fetch-github-hosts/
+├── components/          # Vue components
+│   ├── ClientMode.vue   # Client mode panel
+│   ├── ServerMode.vue   # Server mode panel
+│   ├── AboutPanel.vue   # About panel
+│   └── LogViewer.vue    # Log viewer
+├── composables/         # Vue composables
+│   └── useTauri.ts      # Tauri API wrappers
+├── i18n/locales/        # i18n translation files
+├── pages/index.vue      # Main page
+├── public/              # Static assets
+├── src-tauri/           # Tauri (Rust) backend
+│   ├── src/
+│   │   ├── lib.rs       # Entry + System tray
+│   │   ├── commands.rs  # Tauri commands
+│   │   ├── services.rs  # Client/Server logic
+│   │   ├── dns.rs       # DNS resolution
+│   │   ├── hosts.rs     # Hosts file operations
+│   │   ├── config.rs    # Config read/write
+│   │   └── models.rs    # Data models
+│   └── icons/           # App icons
+└── .github/workflows/   # CI/CD
+```
+
+## 🌟 Star History
+
 [![Stargazers over time](https://starchart.cc/Licoy/fetch-github-hosts.svg)](https://starchart.cc/Licoy/fetch-github-hosts)
 
-## Open Source Agreement
+## 📄 License
 
-[GPL 3.0](https://github.com/Licoy/fetch-github-hosts/blob/main/LICENSE)
+[GPL-3.0](./LICENSE)

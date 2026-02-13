@@ -3,13 +3,15 @@ use std::path::PathBuf;
 
 use crate::models::AppConfig;
 
-/// Get the config file path (next to the executable or in app data dir)
+/// Get the config directory: ~/.fetch-github-hosts/
+fn config_dir() -> PathBuf {
+    let home = dirs::home_dir().unwrap_or_else(|| PathBuf::from("."));
+    home.join(".fetch-github-hosts")
+}
+
+/// Get the config file path: ~/.fetch-github-hosts/config.yml
 pub fn config_path() -> PathBuf {
-    let exe_dir = std::env::current_exe()
-        .ok()
-        .and_then(|p| p.parent().map(|p| p.to_path_buf()))
-        .unwrap_or_else(|| PathBuf::from("."));
-    exe_dir.join("conf.yaml")
+    config_dir().join("config.yml")
 }
 
 /// Load config from YAML file, returning defaults if file doesn't exist
@@ -27,6 +29,10 @@ pub fn load_config() -> AppConfig {
 
 /// Save config to YAML file
 pub fn save_config(config: &AppConfig) -> Result<(), String> {
+    let dir = config_dir();
+    if !dir.exists() {
+        fs::create_dir_all(&dir).map_err(|e| format!("Failed to create config dir: {}", e))?;
+    }
     let path = config_path();
     let yaml = serde_yaml::to_string(config).map_err(|e| e.to_string())?;
     fs::write(&path, yaml).map_err(|e| format!("Failed to write config: {}", e))
