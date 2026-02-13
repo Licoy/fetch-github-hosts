@@ -85,74 +85,22 @@ sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl https://hosts.gitcdn.t
 
 > 💡 crontab で定期実行すれば自動更新できます
 
-## 🏗️ 技術スタック
+## 📸 スクリーンショット
 
-| コンポーネント | 技術 |
-|-------------|------|
-| デスクトップフレームワーク | [Tauri 2.0](https://v2.tauri.app/) (Rust) |
-| フロントエンド | [Nuxt 3](https://nuxt.com/) + [Vue 3](https://vuejs.org/) |
-| UI コンポーネント | [Nuxt UI](https://ui.nuxt.com/) |
-| スタイリング | [Tailwind CSS 4](https://tailwindcss.com/) |
-| 状態管理 | [Pinia](https://pinia.vuejs.org/) |
-| 国際化 | [@nuxtjs/i18n](https://i18n.nuxtjs.org/) |
+#### クライアントモード
+![client](assets/public/docs/client.png)
 
-## 🛠️ 開発
+#### クライアント起動中
+![client-start](assets/public/docs/client-start.png)
 
-### 必要環境
+#### Hosts ソース選択
+![client-select](assets/public/docs/client-select.png)
 
-- Node.js ≥ 20
-- Rust ≥ 1.70
-- macOS / Windows / Linux
+#### カスタム Hosts ソース
+![client-custom](assets/public/docs/client-custom.png)
 
-### ローカル開発
-
-```bash
-# 依存関係のインストール
-npm install
-
-# フロントエンドの静的ビルド
-NUXT_CLI_WRAPPER=false npx nuxt generate
-
-# Tauri 開発モードの起動
-npx tauri dev
-```
-
-### プロダクションビルド
-
-```bash
-# フロントエンドのビルド
-NUXT_CLI_WRAPPER=false npx nuxt generate
-
-# Tauri アプリのビルド
-npx tauri build
-```
-
-## 📁 プロジェクト構造
-
-```
-fetch-github-hosts/
-├── components/          # Vue コンポーネント
-│   ├── ClientMode.vue   # クライアントモードパネル
-│   ├── ServerMode.vue   # サーバーモードパネル
-│   ├── AboutPanel.vue   # 概要パネル
-│   └── LogViewer.vue    # ログビューア
-├── composables/         # Vue コンポーザブル
-│   └── useTauri.ts      # Tauri API ラッパー
-├── i18n/locales/        # 翻訳ファイル
-├── pages/index.vue      # メインページ
-├── public/              # 静的アセット
-├── src-tauri/           # Tauri (Rust) バックエンド
-│   ├── src/
-│   │   ├── lib.rs       # エントリ + システムトレイ
-│   │   ├── commands.rs  # Tauri コマンド
-│   │   ├── services.rs  # クライアント/サーバーロジック
-│   │   ├── dns.rs       # DNS 解決
-│   │   ├── hosts.rs     # Hosts ファイル操作
-│   │   ├── config.rs    # 設定の読み書き
-│   │   └── models.rs    # データモデル
-│   └── icons/           # アプリアイコン
-└── .github/workflows/   # CI/CD
-```
+#### サーバーモード
+![server](assets/public/docs/server.png)
 
 ## 🌟 スター推移
 

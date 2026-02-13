@@ -101,6 +101,7 @@
 const { safeInvoke, safeListen } = useTauri()
 const { t } = useI18n()
 const toast = useToast()
+const { config: appConfig, loadConfig, updateClient } = useConfig()
 
 const isRunning = ref(false)
 const logs = ref<string[]>([])
@@ -153,7 +154,7 @@ async function startFetch() {
     await safeInvoke('start_client', { url, interval })
     isRunning.value = true
     addLog(t('client.remoteUrlLog', { url }))
-    await saveConfig()
+    await syncToSharedConfig()
   } catch (e: any) {
     addLog(t('client.fetchFail', { error: e.toString() }))
   }
@@ -196,39 +197,33 @@ async function flushDns() {
 
 function onAutoFetchChange(val: boolean) {
   config.autoFetch = val
-  saveConfig()
+  updateClient({
+    interval: Number(config.interval),
+    method: config.originMethod,
+    select_origin: config.selectOrigin,
+    custom_url: config.customUrl,
+    auto_fetch: config.autoFetch,
+  })
   toast.add({ title: t('client.autoFetchChanged'), color: 'info' })
 }
 
-async function saveConfig() {
-  try {
-    await safeInvoke('save_config', {
-      config: {
-        lang: 'zh-CN',
-        client: {
-          interval: Number(config.interval),
-          method: config.originMethod,
-          select_origin: config.selectOrigin,
-          custom_url: config.customUrl,
-          auto_fetch: config.autoFetch,
-        },
-        server: { interval: 60, port: 9898 },
-      },
-    })
-  } catch (_) { }
+async function syncToSharedConfig() {
+  await updateClient({
+    interval: Number(config.interval),
+    method: config.originMethod,
+    select_origin: config.selectOrigin,
+    custom_url: config.customUrl,
+    auto_fetch: config.autoFetch,
+  })
 }
 
-async function loadConfig() {
-  try {
-    const cfg: any = await safeInvoke('load_config')
-    if (cfg) {
-      config.interval = cfg.client?.interval ?? 60
-      config.originMethod = cfg.client?.method ?? 'official'
-      config.selectOrigin = cfg.client?.select_origin ?? 'FetchGithubHosts'
-      config.customUrl = cfg.client?.custom_url ?? ''
-      config.autoFetch = cfg.client?.auto_fetch ?? false
-    }
-  } catch (_) { }
+function syncFromSharedConfig() {
+  const c = appConfig.value.client
+  config.interval = c.interval ?? 60
+  config.originMethod = c.method ?? 'official'
+  config.selectOrigin = c.select_origin ?? 'FetchGithubHosts'
+  config.customUrl = c.custom_url ?? ''
+  config.autoFetch = c.auto_fetch ?? false
 }
 
 onMounted(async () => {
@@ -237,6 +232,7 @@ onMounted(async () => {
     addLog(event.payload.message)
   })
   await loadConfig()
+  syncFromSharedConfig()
   // Auto fetch on startup if enabled
   if (config.autoFetch) {
     startFetch()

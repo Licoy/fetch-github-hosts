@@ -72,6 +72,7 @@
 const { safeInvoke, safeListen } = useTauri()
 const { t } = useI18n()
 const toast = useToast()
+const { config: appConfig, loadConfig, updateServer } = useConfig()
 
 const isRunning = ref(false)
 const listeningUrl = ref('')
@@ -107,7 +108,10 @@ async function startServer() {
     addLog(t('server.startSuccess', { port }))
     addLog(t('server.hostsLink', { port }))
     addLog(t('server.hostsJsonLink', { port }))
-    await saveConfig()
+    await updateServer({
+      interval: Number(config.interval),
+      port: Number(config.port),
+    })
   } catch (e: any) {
     addLog(t('server.startFail', { error: e.toString() }))
   }
@@ -125,34 +129,16 @@ async function stopServer() {
 }
 
 async function saveConfig() {
-  try {
-    await safeInvoke('save_config', {
-      config: {
-        lang: 'zh-CN',
-        client: {
-          interval: 60,
-          method: 'official',
-          select_origin: 'FetchGithubHosts',
-          custom_url: '',
-          auto_fetch: false,
-        },
-        server: {
-          interval: Number(config.interval),
-          port: Number(config.port),
-        },
-      },
-    })
-  } catch (_) { }
+  await updateServer({
+    interval: Number(config.interval),
+    port: Number(config.port),
+  })
 }
 
-async function loadConfig() {
-  try {
-    const cfg: any = await safeInvoke('load_config')
-    if (cfg) {
-      config.interval = cfg.server?.interval ?? 60
-      config.port = cfg.server?.port ?? 9898
-    }
-  } catch (_) { }
+function syncFromSharedConfig() {
+  const s = appConfig.value.server
+  config.interval = s.interval ?? 60
+  config.port = s.port ?? 9898
 }
 
 onMounted(async () => {
@@ -160,5 +146,6 @@ onMounted(async () => {
     addLog(event.payload.message)
   })
   await loadConfig()
+  syncFromSharedConfig()
 })
 </script>

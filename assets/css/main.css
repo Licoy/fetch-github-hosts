@@ -95,4 +95,17 @@ body, #__nuxt {
   color: #fff;
 }
 
+/* Disable text selection globally, except log viewer */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection only in log viewer */
+.log-selectable,
+.log-selectable * {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 

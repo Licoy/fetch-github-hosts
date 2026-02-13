@@ -85,74 +85,22 @@ sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl https://hosts.gitcdn.t
 
 > 💡 可配合 crontab 定时任务实现自动更新
 
-## 🏗️ 技术栈
+## 📸 截图
 
-| 组件 | 技术 |
-|------|------|
-| 桌面框架 | [Tauri 2.0](https://v2.tauri.app/) (Rust) |
-| 前端框架 | [Nuxt 3](https://nuxt.com/) + [Vue 3](https://vuejs.org/) |
-| UI 组件 | [Nuxt UI](https://ui.nuxt.com/) |
-| 样式 | [Tailwind CSS 4](https://tailwindcss.com/) |
-| 状态管理 | [Pinia](https://pinia.vuejs.org/) |
-| 国际化 | [@nuxtjs/i18n](https://i18n.nuxtjs.org/) |
+#### 客户端模式
+![client](assets/public/docs/client.png)
 
-## 🛠️ 开发
+#### 客户端启动
+![client-start](assets/public/docs/client-start.png)
 
-### 环境要求
+#### 客户端 Hosts 源选择
+![client-select](assets/public/docs/client-select.png)
 
-- Node.js ≥ 20
-- Rust ≥ 1.70
-- macOS / Windows / Linux
+#### 客户端 Hosts 源自定义
+![client-custom](assets/public/docs/client-custom.png)
 
-### 本地开发
-
-```bash
-# 安装依赖
-npm install
-
-# 构建前端静态文件
-NUXT_CLI_WRAPPER=false npx nuxt generate
-
-# 启动 Tauri 开发模式
-npx tauri dev
-```
-
-### 构建发布包
-
-```bash
-# 构建前端
-NUXT_CLI_WRAPPER=false npx nuxt generate
-
-# 构建 Tauri 应用
-npx tauri build
-```
-
-## 📁 项目结构
-
-```
-fetch-github-hosts/
-├── components/          # Vue 组件
-│   ├── ClientMode.vue   # 客户端模式面板
-│   ├── ServerMode.vue   # 服务端模式面板
-│   ├── AboutPanel.vue   # 关于面板
-│   └── LogViewer.vue    # 日志查看器
-├── composables/         # Vue 组合函数
-│   └── useTauri.ts      # Tauri API 封装
-├── i18n/locales/        # 国际化翻译文件
-├── pages/index.vue      # 主页面
-├── public/              # 静态资源
-├── src-tauri/           # Tauri (Rust) 后端
-│   ├── src/
-│   │   ├── lib.rs       # 入口 + 系统托盘
-│   │   ├── commands.rs  # Tauri 命令
-│   │   ├── services.rs  # 客户端/服务端逻辑
-│   │   ├── dns.rs       # DNS 解析
-│   │   ├── hosts.rs     # Hosts 文件操作
-│   │   ├── config.rs    # 配置读写
-│   │   └── models.rs    # 数据模型
-│   └── icons/           # 应用图标
-└── .github/workflows/   # CI/CD
-```
+#### 服务端模式
+![server](assets/public/docs/server.png)
 
 ## 🌟 Star 趋势
 

@@ -85,74 +85,22 @@ sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl https://hosts.gitcdn.t
 
 > 💡 Set up a crontab task for automatic updates
 
-## 🏗️ Tech Stack
+## 📸 Screenshots
 
-| Component | Technology |
-|-----------|-----------|
-| Desktop Framework | [Tauri 2.0](https://v2.tauri.app/) (Rust) |
-| Frontend | [Nuxt 3](https://nuxt.com/) + [Vue 3](https://vuejs.org/) |
-| UI Components | [Nuxt UI](https://ui.nuxt.com/) |
-| Styling | [Tailwind CSS 4](https://tailwindcss.com/) |
-| State Management | [Pinia](https://pinia.vuejs.org/) |
-| i18n | [@nuxtjs/i18n](https://i18n.nuxtjs.org/) |
+#### Client Mode
+![client](assets/public/docs/client.png)
 
-## 🛠️ Development
+#### Client Started
+![client-start](assets/public/docs/client-start.png)
 
-### Requirements
+#### Hosts Source Selection
+![client-select](assets/public/docs/client-select.png)
 
-- Node.js ≥ 20
-- Rust ≥ 1.70
-- macOS / Windows / Linux
+#### Custom Hosts Source
+![client-custom](assets/public/docs/client-custom.png)
 
-### Local Development
-
-```bash
-# Install dependencies
-npm install
-
-# Build static frontend
-NUXT_CLI_WRAPPER=false npx nuxt generate
-
-# Start Tauri dev mode
-npx tauri dev
-```
-
-### Build for Production
-
-```bash
-# Build frontend
-NUXT_CLI_WRAPPER=false npx nuxt generate
-
-# Build Tauri app
-npx tauri build
-```
-
-## 📁 Project Structure
-
-```
-fetch-github-hosts/
-├── components/          # Vue components
-│   ├── ClientMode.vue   # Client mode panel
-│   ├── ServerMode.vue   # Server mode panel
-│   ├── AboutPanel.vue   # About panel
-│   └── LogViewer.vue    # Log viewer
-├── composables/         # Vue composables
-│   └── useTauri.ts      # Tauri API wrappers
-├── i18n/locales/        # i18n translation files
-├── pages/index.vue      # Main page
-├── public/              # Static assets
-├── src-tauri/           # Tauri (Rust) backend
-│   ├── src/
-│   │   ├── lib.rs       # Entry + System tray
-│   │   ├── commands.rs  # Tauri commands
-│   │   ├── services.rs  # Client/Server logic
-│   │   ├── dns.rs       # DNS resolution
-│   │   ├── hosts.rs     # Hosts file operations
-│   │   ├── config.rs    # Config read/write
-│   │   └── models.rs    # Data models
-│   └── icons/           # App icons
-└── .github/workflows/   # CI/CD
-```
+#### Server Mode
+![server](assets/public/docs/server.png)
 
 ## 🌟 Star History
 

@@ -11,7 +11,7 @@
         v-if="logs.length > 0"
       />
     </div>
-    <div ref="logContainer" class="flex-1 overflow-y-auto p-3 font-mono text-xs leading-relaxed">
+    <div ref="logContainer" class="log-selectable flex-1 overflow-y-auto p-3 font-mono text-xs leading-relaxed">
       <div v-if="logs.length === 0" class="opacity-20 text-center py-8">
         {{ $t('log.empty') }}
       </div>
