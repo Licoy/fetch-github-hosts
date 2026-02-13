@@ -53,7 +53,7 @@ pub async fn start_client_task(
 }
 
 /// Fetch hosts from remote URL and write to system hosts file
-async fn client_fetch_hosts(url: &str) -> Result<(), String> {
+pub async fn client_fetch_hosts(url: &str) -> Result<(), String> {
     let clean_hosts = hosts::get_clean_hosts()?;
 
     let resp = reqwest::get(url)
@@ -96,7 +96,7 @@ pub async fn start_server_task(
     };
 
     // Initial fetch
-    match server_fetch_hosts(&app).await {
+    match server_fetch_hosts().await {
         Ok(_) => emit_log("执行更新Github-Hosts成功！".to_string()),
         Err(e) => emit_log(format!("执行更新Github-Hosts失败：{}", e)),
     }
@@ -118,7 +118,7 @@ pub async fn start_server_task(
         _ = async {
             loop {
                 interval_timer.tick().await;
-                match server_fetch_hosts(&app).await {
+                match server_fetch_hosts().await {
                     Ok(_) => emit_log("执行更新Github-Hosts成功！".to_string()),
                     Err(e) => emit_log(format!("执行更新Github-Hosts失败：{}", e)),
                 }
@@ -138,7 +138,7 @@ pub async fn start_server_task(
 }
 
 /// Server-side: resolve DNS for GitHub domains, save to files
-async fn server_fetch_hosts(_app: &AppHandle) -> Result<(), String> {
+pub async fn server_fetch_hosts() -> Result<(), String> {
     let domains = dns::get_github_domains();
     let hosts = dns::fetch_hosts(&domains);
     let now = chrono::Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
@@ -200,25 +200,56 @@ async fn start_http_server(port: u16, app: AppHandle, mut shutdown_rx: tokio::sy
                             .and_then(|line| line.split_whitespace().nth(1))
                             .unwrap_or("/");
 
-                        let exe_dir = std::env::current_exe()
-                            .ok()
-                            .and_then(|p| p.parent().map(|p| p.to_path_buf()))
-                            .unwrap_or_else(|| std::path::PathBuf::from("."));
+                        let (status, content_type, body) = handle_http_request(path);
 
-                        let (status, content_type, body) = match path {
-                    "/hosts.txt" => {
-                        let content = std::fs::read_to_string(exe_dir.join("hosts.txt"))
-                            .unwrap_or_else(|_| "# no hosts yet".to_string());
-                        ("200 OK", "text/plain", content)
+                        let response = format!(
+                            "HTTP/1.1 {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nAccess-Control-Allow-Origin: *\r\n\r\n{}",
+                            status,
+                            content_type,
+                            body.len(),
+                            body
+                        );
+                        let _ = stream.write_all(response.as_bytes()).await;
                     }
-                    "/hosts.json" => {
-                        let content = std::fs::read_to_string(exe_dir.join("hosts.json"))
-                            .unwrap_or_else(|_| "[]".to_string());
-                        ("200 OK", "application/json", content)
-                    }
-                    _ => {
-                        let now = chrono::Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
-                        let content = format!(r##"<!DOCTYPE html>
+                    Err(_) => break,
+                }
+            }
+            _ = shutdown_rx.changed() => {
+                break;
+            }
+        }
+    }
+}
+
+/// Handle HTTP request and return (status, content_type, body)
+pub fn handle_http_request(path: &str) -> (String, String, String) {
+    let exe_dir = std::env::current_exe()
+        .ok()
+        .and_then(|p| p.parent().map(|p| p.to_path_buf()))
+        .unwrap_or_else(|| std::path::PathBuf::from("."));
+
+    match path {
+        "/hosts.txt" => {
+            let content = std::fs::read_to_string(exe_dir.join("hosts.txt"))
+                .unwrap_or_else(|_| "# no hosts yet".to_string());
+            ("200 OK".to_string(), "text/plain".to_string(), content)
+        }
+        "/hosts.json" => {
+            let content = std::fs::read_to_string(exe_dir.join("hosts.json"))
+                .unwrap_or_else(|_| "[]".to_string());
+            ("200 OK".to_string(), "application/json".to_string(), content)
+        }
+        _ => {
+            let now = chrono::Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+            let content = generate_server_html(&now);
+            ("200 OK".to_string(), "text/html; charset=utf-8".to_string(), content)
+        }
+    }
+}
+
+/// Generate the server HTML page content
+pub fn generate_server_html(now: &str) -> String {
+    format!(r##"<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -332,28 +363,5 @@ function switchLang(l){{const t=i18n[l]||i18n.zh;document.querySelectorAll('[dat
 (function(){{const lang=getStoredOrDefault('lang',detectLang);switchLang(lang)}})();
 </script>
 </body>
-</html>"##, now = now);
-                        ("200 OK", "text/html; charset=utf-8", content)
-                    }
-                };
-
-                let response = format!(
-                    "HTTP/1.1 {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nAccess-Control-Allow-Origin: *\r\n\r\n{}",
-                    status,
-                    content_type,
-                    body.len(),
-                    body
-                );
-                let _ = stream.write_all(response.as_bytes()).await;
-                    }
-                    Err(_) => break,
-                }
-            }
-            _ = shutdown_rx.changed() => {
-                // Graceful shutdown: listener is dropped here, releasing the port
-                break;
-            }
-        }
-    }
-    // listener is dropped here, port is released immediately
+</html>"##, now = now)
 }

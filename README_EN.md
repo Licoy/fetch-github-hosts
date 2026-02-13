@@ -55,6 +55,51 @@ Starts a local HTTP server that auto-resolves GitHub domains and serves hosts fi
 - Provides `hosts.txt` (plain text) and `hosts.json` (JSON) formats
 - Built-in web page with dark/light theme and multi-language support
 
+### Command Line
+
+Download your platform's binary from [Releases](https://github.com/Licoy/fetch-github-hosts/releases) and use it directly in the terminal.
+
+#### Parameters
+
+| Parameter | Short | Default | Description |
+|-----------|-------|---------|-------------|
+| `--mode` | `-m` | None (opens GUI) | Mode: `client` or `server` |
+| `--interval` | `-i` | `60` | Fetch interval in minutes |
+| `--port` | `-p` | `9898` | Server mode listening port |
+| `--url` | `-u` | `https://hosts.gitcdn.top/hosts.txt` | Client mode remote hosts URL |
+| `--lang` | `-l` | Auto-detect | Language (`zh-CN`, `en-US`, `ja-JP`) |
+
+#### Start Client
+
+```bash
+# Linux/macOS
+sudo ./fetch-github-hosts -m client
+
+# Windows
+fetch-github-hosts.exe -m client
+
+# Custom interval (every 10 minutes)
+sudo ./fetch-github-hosts -m client -i 10
+
+# Custom URL
+sudo ./fetch-github-hosts -m client -u http://127.0.0.1:9898/hosts.json
+```
+
+#### Start Server
+
+```bash
+# Linux/macOS
+./fetch-github-hosts -m server
+
+# Windows
+fetch-github-hosts.exe -m server
+
+# Custom port
+./fetch-github-hosts -m server -p 6666
+```
+
+> 💡 Omitting the `-m` parameter launches the graphical user interface
+
 ### Manual Method
 
 #### Add Hosts

@@ -29,3 +29,4 @@ dns-lookup = "2"
 chrono = "0.4"
 dirs = "6"
 sys-locale = "0.3.2"
+clap = { version = "4.5.58", features = ["derive"] }

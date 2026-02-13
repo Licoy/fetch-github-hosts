@@ -55,6 +55,51 @@
 - 提供 `hosts.txt`（纯文本）和 `hosts.json`（JSON）两种格式
 - 内置美观的 Web 页面，支持深色/浅色主题和多语言
 
+### 命令行终端
+
+到 [Releases](https://github.com/Licoy/fetch-github-hosts/releases) 中下载您的系统版本，可以直接通过命令行使用。
+
+#### 参数
+
+| 参数名 | 缩写 | 默认值 | 描述 |
+|--------|------|--------|------|
+| `--mode` | `-m` | 无（启动 GUI） | 启动模式：`client`（客户端）/ `server`（服务端） |
+| `--interval` | `-i` | `60` | 获取 hosts 的间隔时间（分钟） |
+| `--port` | `-p` | `9898` | 服务端模式监听端口 |
+| `--url` | `-u` | `https://hosts.gitcdn.top/hosts.txt` | 客户端模式远程 hosts 获取链接 |
+| `--lang` | `-l` | 自动检测 | 界面语言（`zh-CN`、`en-US`、`ja-JP`） |
+
+#### 启动客户端
+
+```bash
+# Linux/macOS
+sudo ./fetch-github-hosts -m client
+
+# Windows
+fetch-github-hosts.exe -m client
+
+# 自定义获取间隔（10分钟）
+sudo ./fetch-github-hosts -m client -i 10
+
+# 自定义获取链接
+sudo ./fetch-github-hosts -m client -u http://127.0.0.1:9898/hosts.json
+```
+
+#### 启动服务端
+
+```bash
+# Linux/macOS
+./fetch-github-hosts -m server
+
+# Windows
+fetch-github-hosts.exe -m server
+
+# 自定义端口
+./fetch-github-hosts -m server -p 6666
+```
+
+> 💡 不指定 `-m` 参数时将启动图形化界面
+
 ### 手动方式
 
 #### 添加 Hosts

@@ -55,6 +55,51 @@
 - `hosts.txt`（プレーンテキスト）と `hosts.json`（JSON）の2形式を提供
 - ダーク/ライトテーマ・多言語対応の Web ページを内蔵
 
+### コマンドライン
+
+[Releases](https://github.com/Licoy/fetch-github-hosts/releases) からお使いのプラットフォーム用のバイナリをダウンロードし、ターミナルから直接使用できます。
+
+#### パラメータ
+
+| パラメータ | 短縮形 | デフォルト値 | 説明 |
+|-----------|--------|------------|------|
+| `--mode` | `-m` | なし（GUI起動） | モード: `client`（クライアント）/ `server`（サーバー） |
+| `--interval` | `-i` | `60` | hosts 取得間隔（分） |
+| `--port` | `-p` | `9898` | サーバーモードのリスニングポート |
+| `--url` | `-u` | `https://hosts.gitcdn.top/hosts.txt` | クライアントモードのリモート hosts URL |
+| `--lang` | `-l` | 自動検出 | 言語（`zh-CN`、`en-US`、`ja-JP`） |
+
+#### クライアント起動
+
+```bash
+# Linux/macOS
+sudo ./fetch-github-hosts -m client
+
+# Windows
+fetch-github-hosts.exe -m client
+
+# カスタム間隔（10分ごと）
+sudo ./fetch-github-hosts -m client -i 10
+
+# カスタム URL
+sudo ./fetch-github-hosts -m client -u http://127.0.0.1:9898/hosts.json
+```
+
+#### サーバー起動
+
+```bash
+# Linux/macOS
+./fetch-github-hosts -m server
+
+# Windows
+fetch-github-hosts.exe -m server
+
+# カスタムポート
+./fetch-github-hosts -m server -p 6666
+```
+
+> 💡 `-m` パラメータを省略するとグラフィカルインターフェースが起動します
+
 ### 手動設定
 
 #### Hosts の追加
