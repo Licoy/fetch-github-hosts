@@ -1,10 +1,31 @@
-.idea
+# Dependencies
+node_modules/
+.nuxt/
+.output/
+dist/
+dist
+
+# Tauri
+src-tauri/target/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+*.swp
+*.log
+
+# Build output
+output/
 hosts.txt
 hosts.json
-index.php
-/index.html
-output
+index.html
+
+# Config (local)
 conf.yaml
-dist
-*.log
+
+# Old Go files
 translate.*.toml
+index.php

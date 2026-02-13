@@ -1,0 +1,102 @@
+{
+  "app": {
+    "title": "Fetch Github Hosts"
+  },
+  "tabs": {
+    "client": "客户端模式",
+    "server": "服务端模式",
+    "about": "关于"
+  },
+  "log": {
+    "title": "运行日志",
+    "empty": "暂无日志"
+  },
+  "client": {
+    "interval": "获取间隔（分钟）",
+    "hostsOrigin": "Hosts源",
+    "officialOrigin": "官方指定hosts源",
+    "customOrigin": "自定义hosts源",
+    "remoteUrl": "远程Hosts链接",
+    "autoFetch": "启动软件自动获取",
+    "autoFetchChanged": "启动软件自动获取状态已改变，将会在下次启动程序时生效！",
+    "clearHosts": "清除hosts",
+    "flushDns": "刷新DNS",
+    "flushDnsSuccess": "DNS缓存已刷新成功",
+    "flushDnsFail": "刷新DNS缓存失败",
+    "clearSuccess": "hosts文件中的github记录已经清除成功",
+    "clearFail": "清除hosts中的github记录失败",
+    "fetchSuccess": "更新Github-Hosts成功！",
+    "fetchFail": "更新Github-Hosts失败: {error}",
+    "fetchStop": "停止获取hosts",
+    "remoteUrlLog": "远程hosts获取链接: {url}",
+    "fetchGetError": "获取最新的hosts失败",
+    "fetchReadError": "读取最新的hosts失败"
+  },
+  "server": {
+    "interval": "获取间隔（分钟）",
+    "port": "启动端口号",
+    "listeningWait": "监听地址：待启动",
+    "listeningAddr": "监听地址 {addr}",
+    "startFail": "服务启动失败（可能是目标端口已被占用）：{error}",
+    "startSuccess": "已监听HTTP服务成功：http://127.0.0.1:{port}",
+    "hostsLink": "hosts文件链接：http://127.0.0.1:{port}/hosts.txt",
+    "hostsJsonLink": "hosts的JSON格式链接：http://127.0.0.1:{port}/hosts.json",
+    "fetchSuccess": "执行更新Github-Hosts成功！",
+    "fetchFail": "执行更新Github-Hosts失败：{error}",
+    "stopLog": "正在停止更新hosts服务",
+    "stopPortFail": "关闭端口监听失败",
+    "stopSuccess": "已停止更新hosts服务",
+    "fetchHostsFail": "获取Github的Host失败",
+    "indexFileErr": "获取首页文件失败：{error}"
+  },
+  "about": {
+    "intro": "介绍",
+    "introContent": "Fetch Github Hosts是主要为解决研究及学习人员访问Github过慢或其他问题而提供的Github Hosts同步工具",
+    "license": "开源协议",
+    "licenseContent": "GNU General Public License v3.0",
+    "version": "版本号",
+    "feedback": "反馈建议",
+    "checkUpdate": "检查更新",
+    "currentNewest": "当前已是最新版本",
+    "updateTip": "更新提示",
+    "updateContent": "检测到有新的版本，是否立即需要去下载最新版本？",
+    "updateLater": "稍后更新",
+    "downloadNow": "立即下载",
+    "updateCheckFail": "检查更新失败",
+    "networkFail": "网络请求错误",
+    "requestFail": "请求失败",
+    "readResponseFail": "读取更新响应内容失败",
+    "parseResponseFail": "解析更新响应内容失败",
+    "versionParseFail": "版本号解析失败",
+    "langChange": "语言已经切换为 {lang}，将会在下次启动程序时生效！"
+  },
+  "colorMode": {
+    "system": "跟随系统",
+    "light": "日光模式",
+    "dark": "暗黑模式"
+  },
+  "common": {
+    "start": "启动",
+    "stop": "停止",
+    "tip": "提示",
+    "ok": "确认",
+    "cancel": "取消",
+    "cancelled": "操作已取消",
+    "openHome": "打开主界面",
+    "intervalNeedInt": "获取间隔必须为整数",
+    "portNeedInt": "端口号必须为整数",
+    "permissionFail": "检查hosts读写权限失败，请以sudo或管理员身份来运行本程序！",
+    "runAsAdminWin": "请鼠标右键选择【以管理员的身份运行】来执行本程序！",
+    "runAsAdminUnix": "请以root账户或sudo来执行本程序！",
+    "hostsWriteFail": "写入hosts文件失败，请用超级管理员身份启动本程序！",
+    "logCreatedFail": "日志文件创建失败",
+    "readDomainsErr": "读取文件domains.json错误",
+    "parseDomainsErr": "domain.json解析失败",
+    "readHostsErr": "读取文件hosts错误",
+    "writeHostsJsonErr": "写入数据到hosts.json文件失败",
+    "writeHostsTxtErr": "写入数据到hosts.txt文件失败",
+    "readIndexErr": "读取首页模板文件失败",
+    "writeIndexErr": "写入更新信息到首页文件失败",
+    "getHostRecordErr": "获取主机记录失败"
+  }
+}

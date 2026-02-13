@@ -1,0 +1,98 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@font-face {
+  font-family: 'ZCOOLCuiYuan';
+  src: url('~/assets/zcool-cryyt.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --fgh-primary: #009966;
+  --fgh-primary-hover: #00aa77;
+  --fgh-bg: #f5f7fa;
+  --fgh-card-bg: #ffffff;
+  --fgh-border: #e2e8f0;
+  --fgh-disabled-btn: #a0aec0;
+  --fgh-text: #1a202c;
+  --fgh-text-muted: rgba(0,0,0,0.5);
+  --fgh-text-dim: rgba(0,0,0,0.3);
+  --ui-primary: #009966;
+}
+
+.dark {
+  --fgh-bg: #191b2c;
+  --fgh-card-bg: #1f2437;
+  --fgh-border: #34364a;
+  --fgh-disabled-btn: #629181;
+  --fgh-text: #e2e8f0;
+  --fgh-text-muted: rgba(255,255,255,0.5);
+  --fgh-text-dim: rgba(255,255,255,0.3);
+  --ui-primary: #009966;
+  --ui-bg: #191b2c;
+  --ui-bg-muted: #1f2437;
+  --ui-bg-elevated: #252a3e;
+  --ui-bg-accented: #2d3350;
+  --ui-bg-inverted: #e2e8f0;
+  --ui-border: #34364a;
+  --ui-border-muted: #2d3350;
+  --ui-border-accented: #3d4263;
+  --ui-text: #e2e8f0;
+  --ui-text-muted: rgba(255,255,255,0.5);
+  --ui-text-dimmed: rgba(255,255,255,0.35);
+  --ui-text-toned: rgba(255,255,255,0.7);
+  --ui-text-highlighted: #ffffff;
+  --ui-text-inverted: #191b2c;
+}
+
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: transparent;
+  font-family: 'ZCOOLCuiYuan', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body, #__nuxt {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--fgh-bg);
+  color: var(--fgh-text);
+  font-family: 'ZCOOLCuiYuan', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  border-radius: 10px;
+}
+
+/* Window rounded corners (for Tauri frameless window) */
+#__nuxt > div {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--fgh-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fgh-disabled-btn);
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 153, 102, 0.35);
+  color: #fff;
+}
+
+

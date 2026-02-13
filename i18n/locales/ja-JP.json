@@ -1,0 +1,102 @@
+{
+  "app": {
+    "title": "Fetch Github Hosts"
+  },
+  "tabs": {
+    "client": "クライアントモード",
+    "server": "サーバーモード",
+    "about": "概要"
+  },
+  "log": {
+    "title": "実行ログ",
+    "empty": "ログはありません"
+  },
+  "client": {
+    "interval": "取得間隔（分）",
+    "hostsOrigin": "Hostsソース",
+    "officialOrigin": "公式指定hostsソース",
+    "customOrigin": "カスタムhostsソース",
+    "remoteUrl": "リモートHostsリンク",
+    "autoFetch": "起動時に自動取得",
+    "autoFetchChanged": "自動取得設定が変更されました。次回起動時に有効になります！",
+    "clearHosts": "hostsをクリア",
+    "flushDns": "DNS更新",
+    "flushDnsSuccess": "DNSキャッシュが正常にクリアされました",
+    "flushDnsFail": "DNSキャッシュのクリアに失敗しました",
+    "clearSuccess": "hostsファイルのGitHubレコードが正常にクリアされました",
+    "clearFail": "hosts内のGitHubレコードのクリアに失敗しました",
+    "fetchSuccess": "Github-Hostsの更新に成功しました！",
+    "fetchFail": "Github-Hostsの更新に失敗しました: {error}",
+    "fetchStop": "hostsの取得を停止しました",
+    "remoteUrlLog": "リモートhosts取得リンク: {url}",
+    "fetchGetError": "最新のhostsの取得に失敗しました",
+    "fetchReadError": "最新のhostsの読み取りに失敗しました"
+  },
+  "server": {
+    "interval": "取得間隔（分）",
+    "port": "ポート番号",
+    "listeningWait": "リッスンアドレス：未起動",
+    "listeningAddr": "リッスンアドレス {addr}",
+    "startFail": "サービスの起動に失敗しました（ポートが使用中の可能性があります）：{error}",
+    "startSuccess": "HTTPサービスのリッスンに成功しました：http://127.0.0.1:{port}",
+    "hostsLink": "hostsファイルリンク：http://127.0.0.1:{port}/hosts.txt",
+    "hostsJsonLink": "hostsのJSONリンク：http://127.0.0.1:{port}/hosts.json",
+    "fetchSuccess": "Github-Hostsの更新に成功しました！",
+    "fetchFail": "Github-Hostsの更新に失敗しました：{error}",
+    "stopLog": "hosts更新サービスを停止中",
+    "stopPortFail": "ポートリスナーの閉鎖に失敗しました",
+    "stopSuccess": "hosts更新サービスを停止しました",
+    "fetchHostsFail": "GitHubのHostの取得に失敗しました",
+    "indexFileErr": "インデックスファイルの取得に失敗しました：{error}"
+  },
+  "about": {
+    "intro": "紹介",
+    "introContent": "Fetch Github Hostsは、研究者や学習者がGitHubへのアクセスが遅い等の問題を解決するためのGithub Hosts同期ツールです",
+    "license": "ライセンス",
+    "licenseContent": "GNU General Public License v3.0",
+    "version": "バージョン",
+    "feedback": "フィードバック",
+    "checkUpdate": "更新確認",
+    "currentNewest": "現在最新バージョンです",
+    "updateTip": "更新のお知らせ",
+    "updateContent": "新しいバージョンが検出されました。最新バージョンをダウンロードしますか？",
+    "updateLater": "後で更新",
+    "downloadNow": "今すぐダウンロード",
+    "updateCheckFail": "更新の確認に失敗しました",
+    "networkFail": "ネットワークリクエストエラー",
+    "requestFail": "リクエスト失敗",
+    "readResponseFail": "更新レスポンスの読み取りに失敗しました",
+    "parseResponseFail": "更新レスポンスの解析に失敗しました",
+    "versionParseFail": "バージョン番号の解析に失敗しました",
+    "langChange": "言語が{lang}に切り替わりました。次回起動時に有効になります！"
+  },
+  "colorMode": {
+    "system": "システムに従う",
+    "light": "ライトモード",
+    "dark": "ダークモード"
+  },
+  "common": {
+    "start": "起動",
+    "stop": "停止",
+    "tip": "ヒント",
+    "ok": "確認",
+    "cancel": "キャンセル",
+    "cancelled": "操作がキャンセルされました",
+    "openHome": "メイン画面を開く",
+    "intervalNeedInt": "取得間隔は整数である必要があります",
+    "portNeedInt": "ポート番号は整数である必要があります",
+    "permissionFail": "hosts読み書き権限の確認に失敗しました。sudoまたは管理者として実行してください！",
+    "runAsAdminWin": "右クリックして【管理者として実行】を選択してください！",
+    "runAsAdminUnix": "rootアカウントまたはsudoで実行してください！",
+    "hostsWriteFail": "hostsファイルの書き込みに失敗しました。管理者として起動してください！",
+    "logCreatedFail": "ログファイルの作成に失敗しました",
+    "readDomainsErr": "domains.jsonの読み取りエラー",
+    "parseDomainsErr": "domains.jsonの解析に失敗しました",
+    "readHostsErr": "hostsファイルの読み取りエラー",
+    "writeHostsJsonErr": "hosts.jsonへの書き込みに失敗しました",
+    "writeHostsTxtErr": "hosts.txtへの書き込みに失敗しました",
+    "readIndexErr": "インデックステンプレートの読み取りに失敗しました",
+    "writeIndexErr": "インデックスファイルへの書き込みに失敗しました",
+    "getHostRecordErr": "ホストレコードの取得に失敗しました"
+  }
+}

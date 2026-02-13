@@ -1,0 +1,102 @@
+{
+  "app": {
+    "title": "Fetch Github Hosts"
+  },
+  "tabs": {
+    "client": "Client Mode",
+    "server": "Server Mode",
+    "about": "About"
+  },
+  "log": {
+    "title": "Logs",
+    "empty": "No logs yet"
+  },
+  "client": {
+    "interval": "Fetch interval (minutes)",
+    "hostsOrigin": "Hosts origin",
+    "officialOrigin": "Official designated hosts source",
+    "customOrigin": "Custom hosts source",
+    "remoteUrl": "Remote hosts URL",
+    "autoFetch": "Auto-fetch on startup",
+    "autoFetchChanged": "Auto-fetch setting changed, will take effect on next startup!",
+    "clearHosts": "Clear hosts",
+    "flushDns": "Flush DNS",
+    "flushDnsSuccess": "DNS cache flushed successfully",
+    "flushDnsFail": "Failed to flush DNS cache",
+    "clearSuccess": "GitHub records in hosts file have been cleared successfully",
+    "clearFail": "Failed to clear GitHub records in hosts",
+    "fetchSuccess": "Successfully updated Github-Hosts!",
+    "fetchFail": "Failed to update Github-Hosts: {error}",
+    "fetchStop": "Stopped fetching hosts",
+    "remoteUrlLog": "Remote hosts URL: {url}",
+    "fetchGetError": "Failed to obtain the latest hosts",
+    "fetchReadError": "Failed to read the latest hosts"
+  },
+  "server": {
+    "interval": "Fetch interval (minutes)",
+    "port": "Port number",
+    "listeningWait": "Listening address: Not started",
+    "listeningAddr": "Listening address {addr}",
+    "startFail": "Service startup failed (port may be in use): {error}",
+    "startSuccess": "HTTP service listening: http://127.0.0.1:{port}",
+    "hostsLink": "Hosts file link: http://127.0.0.1:{port}/hosts.txt",
+    "hostsJsonLink": "Hosts JSON link: http://127.0.0.1:{port}/hosts.json",
+    "fetchSuccess": "Successfully updated Github-Hosts!",
+    "fetchFail": "Failed to update Github-Hosts: {error}",
+    "stopLog": "Stopping hosts update service",
+    "stopPortFail": "Failed to close port listener",
+    "stopSuccess": "Hosts update service stopped",
+    "fetchHostsFail": "Failed to obtain GitHub hosts",
+    "indexFileErr": "Failed to get index file: {error}"
+  },
+  "about": {
+    "intro": "Introduction",
+    "introContent": "Fetch Github Hosts is a Github Hosts synchronization tool primarily designed to address issues such as slow access to Github for researchers and learners",
+    "license": "License",
+    "licenseContent": "GNU General Public License v3.0",
+    "version": "Version",
+    "feedback": "Feedback",
+    "checkUpdate": "Check Update",
+    "currentNewest": "Currently the latest version",
+    "updateTip": "Update Available",
+    "updateContent": "A new version has been detected. Would you like to download the latest version now?",
+    "updateLater": "Update Later",
+    "downloadNow": "Download Now",
+    "updateCheckFail": "Failed to check for updates",
+    "networkFail": "Network request error",
+    "requestFail": "Request failed",
+    "readResponseFail": "Failed to read update response",
+    "parseResponseFail": "Failed to parse update response",
+    "versionParseFail": "Version number parsing failed",
+    "langChange": "Language changed to {lang}, will take effect on next startup!"
+  },
+  "colorMode": {
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "common": {
+    "start": "Start",
+    "stop": "Stop",
+    "tip": "Tip",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "cancelled": "Operation cancelled",
+    "openHome": "Open Home",
+    "intervalNeedInt": "Fetch interval must be an integer",
+    "portNeedInt": "Port number must be an integer",
+    "permissionFail": "Failed to check hosts read/write permissions. Please run as sudo or administrator!",
+    "runAsAdminWin": "Please right-click and select [Run as administrator]!",
+    "runAsAdminUnix": "Please use root account or sudo to run this program!",
+    "hostsWriteFail": "Failed to write hosts file. Please run as administrator!",
+    "logCreatedFail": "Failed to create log file",
+    "readDomainsErr": "Error reading domains.json",
+    "parseDomainsErr": "Failed to parse domains.json",
+    "readHostsErr": "Error reading hosts file",
+    "writeHostsJsonErr": "Failed to write hosts.json",
+    "writeHostsTxtErr": "Failed to write hosts.txt",
+    "readIndexErr": "Failed to read index template",
+    "writeIndexErr": "Failed to write index file",
+    "getHostRecordErr": "Failed to get host record"
+  }
+}
