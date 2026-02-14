@@ -17,18 +17,40 @@ jobs:
       release_id: ${{ steps.create.outputs.result }}
     steps:
       - uses: actions/checkout@v4
-      - name: Create draft release
+
+      - name: Create draft release with auto changelog
         id: create
         uses: actions/github-script@v7
         with:
           script: |
             const tagName = context.ref.replace('refs/tags/', '') || 'v4.0';
+
+            // Use GitHub's built-in release notes generator
+            let generatedNotes = '';
+            try {
+              const { data: notes } = await github.rest.repos.generateReleaseNotes({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag_name: tagName,
+              });
+              generatedNotes = notes.body;
+            } catch (e) {
+              console.log('Auto-generate notes failed, using fallback:', e.message);
+              generatedNotes = '';
+            }
+
+            const downloads = `\n---\n\n**Downloads**\n\n| Platform | File | Architecture |\n|----------|------|--------------|\n| macOS | \`.dmg\` | Universal (Intel + Apple Silicon) |\n| Windows | \`.msi\` / \`.exe\` | x86_64 |\n| Linux | \`.deb\` / \`.AppImage\` | x86_64 |\n| Linux CLI | \`.tar.gz\` | amd64 / aarch64 |`;
+
+            const body = generatedNotes
+              ? `${generatedNotes}${downloads}`
+              : `See the assets below to download the app for your platform.${downloads}`;
+
             const { data } = await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: tagName,
               name: `Fetch Github Hosts ${tagName}`,
-              body: `See the assets below to download the app for your platform.\n\n**macOS**: \`.dmg\` (Universal binary - supports both Intel & Apple Silicon)\n**Windows**: \`.msi\` / \`.exe\`\n**Linux**: \`.deb\` / \`.AppImage\`\n**Linux Standalone Binary**: \`.tar.gz\` (amd64 / aarch64, no installation needed)`,
+              body: body,
               draft: true,
               prerelease: false
             });
