@@ -1,8 +1,9 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Fetch Github Hosts",
+  "mainBinaryName": "fetch-github-hosts",
   "version": "4.0.0",
-  "identifier": "com.licoy.fetch-github-hosts",
+  "identifier": "top.gitcdn.fetch-github-hosts",
   "build": {
     "frontendDist": "../.output/public",
     "beforeDevCommand": "",
@@ -42,6 +43,9 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "macOS": {
+      "minimumSystemVersion": "10.13"
+    }
   }
 }
