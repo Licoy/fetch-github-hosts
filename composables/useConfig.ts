@@ -15,6 +15,7 @@ interface ClientConfig {
 interface ServerConfig {
   interval: number
   port: number
+  template_path: string
 }
 
 interface AppConfig {
@@ -35,6 +36,7 @@ const _config = ref<AppConfig>({
   server: {
     interval: 60,
     port: 9898,
+    template_path: '',
   },
 })
 
@@ -60,6 +62,7 @@ export function useConfig() {
           server: {
             interval: cfg.server?.interval ?? 60,
             port: cfg.server?.port ?? 9898,
+            template_path: cfg.server?.template_path ?? '',
           },
         }
         _loaded.value = true

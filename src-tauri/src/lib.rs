@@ -39,6 +39,7 @@ use std::sync::Mutex;
 use services::{ClientState, ServerState};
 #[cfg(feature = "gui")]
 use tauri::{
+    Emitter,
     Manager,
     menu::{MenuBuilder, MenuItemBuilder},
     tray::TrayIconBuilder,
@@ -127,7 +128,19 @@ pub fn run() {
             commands::save_config,
             commands::get_version,
             commands::check_update,
+            commands::append_log,
+            commands::load_logs,
+            commands::clear_logs,
+            commands::get_default_template,
+            commands::export_default_template,
+            commands::copy_to_clipboard,
         ])
+        .on_window_event(|window, event| {
+            if let tauri::WindowEvent::CloseRequested { api, .. } = event {
+                api.prevent_close();
+                let _ = window.hide();
+            }
+        })
         .setup(|app| {
             // Logger plugin (debug only)
             if cfg!(debug_assertions) {
@@ -177,7 +190,12 @@ pub fn run() {
                 .item(&quit_item)
                 .build()?;
 
+            let tray_icon = tauri::image::Image::from_bytes(include_bytes!("../icons/tray-icon@2x.png"))
+                .expect("Failed to load tray icon");
+
             let _tray = TrayIconBuilder::new()
+                .icon(tray_icon)
+                .icon_as_template(false)
                 .menu(&menu)
                 .show_menu_on_left_click(false)
                 .tooltip("Fetch Github Hosts")
@@ -207,13 +225,27 @@ pub fn run() {
                                         }
                                     }
                                 }
+                                // Do initial fetch (tray doesn't need to handle privilege errors interactively)
+                                if let Err(e) = services::client_fetch_hosts(&url).await {
+                                    let _ = app.emit("client-log", models::LogPayload {
+                                        key: "client.fetchFail".to_string(),
+                                        params: Some(serde_json::json!({"error": e})),
+                                        level: "error".to_string(),
+                                    });
+                                    return;
+                                }
+                                let _ = app.emit("client-log", models::LogPayload {
+                                    key: "client.fetchSuccess".to_string(),
+                                    params: None,
+                                    level: "success".to_string(),
+                                });
                                 let (tx, rx) = tokio::sync::oneshot::channel();
                                 {
                                     if let Ok(mut s) = state.lock() {
                                         s.stop_tx = Some(tx);
                                     }
                                 }
-                                let _ = services::start_client_task(app, url, cfg.client.interval, rx).await;
+                                let _ = services::start_client_periodic_task(app, url, cfg.client.interval, rx).await;
                             });
                         }
                         "stop_client" => {

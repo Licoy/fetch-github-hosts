@@ -1,10 +1,10 @@
 use std::sync::Mutex;
-use tauri::{AppHandle, State};
+use tauri::{AppHandle, Emitter, State};
 use tokio::sync::oneshot;
 
 use crate::config;
 use crate::hosts;
-use crate::models::{AppConfig, UpdateInfo};
+use crate::models::{AppConfig, LogPayload, UpdateInfo};
 use crate::services::{self, ClientState, ServerState};
 
 #[tauri::command]
@@ -22,13 +22,23 @@ pub async fn start_client(
         }
     }
 
+    // Do initial fetch synchronously to catch privilege errors immediately
+    services::client_fetch_hosts(&url).await?;
+
+    // Emit success log for initial fetch
+    let _ = app.emit("client-log", LogPayload {
+        key: "client.fetchSuccess".to_string(),
+        params: None,
+        level: "success".to_string(),
+    });
+
     let (tx, rx) = oneshot::channel();
     {
         let mut s = state.lock().map_err(|e| e.to_string())?;
         s.stop_tx = Some(tx);
     }
 
-    tokio::spawn(services::start_client_task(app, url, interval, rx));
+    tokio::spawn(services::start_client_periodic_task(app, url, interval, rx));
     Ok(())
 }
 
@@ -139,4 +149,46 @@ pub async fn check_update() -> Result<UpdateInfo, String> {
         version: tag.to_string(),
         url: html_url,
     })
+}
+
+/// Append a log entry to persistent log file
+#[tauri::command]
+pub async fn append_log(source: String, entry: String) -> Result<(), String> {
+    config::append_log(&source, &entry)
+}
+
+/// Load persisted logs from file
+#[tauri::command]
+pub async fn load_logs(source: String) -> Result<Vec<String>, String> {
+    config::load_logs(&source)
+}
+
+/// Clear persisted logs
+#[tauri::command]
+pub async fn clear_logs(source: String) -> Result<(), String> {
+    config::clear_logs(&source)
+}
+
+/// Get the default server HTML template content
+#[tauri::command]
+pub fn get_default_template() -> String {
+    services::get_default_template()
+}
+
+/// Export default template to a file in config directory and return file path
+#[tauri::command]
+pub fn export_default_template() -> Result<String, String> {
+    let config_dir = config::config_dir();
+    let template_path = config_dir.join("server_template.html");
+    let content = services::get_default_template();
+    std::fs::write(&template_path, &content)
+        .map_err(|e| format!("Failed to write template file: {}", e))?;
+    Ok(template_path.to_string_lossy().to_string())
+}
+
+/// Copy text to system clipboard
+#[tauri::command]
+pub fn copy_to_clipboard(text: String) -> Result<(), String> {
+    let mut clipboard = arboard::Clipboard::new().map_err(|e| e.to_string())?;
+    clipboard.set_text(&text).map_err(|e| e.to_string())
 }

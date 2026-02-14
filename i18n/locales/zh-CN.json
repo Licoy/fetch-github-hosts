@@ -47,7 +47,16 @@
     "stopPortFail": "关闭端口监听失败",
     "stopSuccess": "已停止更新hosts服务",
     "fetchHostsFail": "获取Github的Host失败",
-    "indexFileErr": "获取首页文件失败：{error}"
+    "indexFileErr": "获取首页文件失败：{error}",
+    "httpStarted": "HTTP 服务已启动：http://0.0.0.0:{port}",
+    "templatePath": "HTML模板文件",
+    "templatePathPlaceholder": "留空使用内置默认模板",
+    "templateVars": "模板变量",
+    "varVersion": "应用版本号",
+    "varUpdateTime": "最近更新时间",
+    "exportTemplate": "导出默认模板",
+    "templateExported": "默认模板已导出到：{path}",
+    "templateExportFail": "导出模板失败"
   },
   "about": {
     "intro": "介绍",
@@ -82,6 +91,7 @@
     "ok": "确认",
     "cancel": "取消",
     "cancelled": "操作已取消",
+    "copied": "已复制到剪贴板",
     "openHome": "打开主界面",
     "intervalNeedInt": "获取间隔必须为整数",
     "portNeedInt": "端口号必须为整数",

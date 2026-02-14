@@ -47,7 +47,16 @@
     "stopPortFail": "ポートリスナーの閉鎖に失敗しました",
     "stopSuccess": "hosts更新サービスを停止しました",
     "fetchHostsFail": "GitHubのHostの取得に失敗しました",
-    "indexFileErr": "インデックスファイルの取得に失敗しました：{error}"
+    "indexFileErr": "インデックスファイルの取得に失敗しました：{error}",
+    "httpStarted": "HTTPサービスが起動しました：http://0.0.0.0:{port}",
+    "templatePath": "HTMLテンプレートファイル",
+    "templatePathPlaceholder": "空のままにするとデフォルトテンプレートを使用",
+    "templateVars": "テンプレート変数",
+    "varVersion": "アプリケーションバージョン",
+    "varUpdateTime": "最終更新時間",
+    "exportTemplate": "デフォルトテンプレートをエクスポート",
+    "templateExported": "デフォルトテンプレートをエクスポートしました：{path}",
+    "templateExportFail": "テンプレートのエクスポートに失敗しました"
   },
   "about": {
     "intro": "紹介",
@@ -82,6 +91,7 @@
     "ok": "確認",
     "cancel": "キャンセル",
     "cancelled": "操作がキャンセルされました",
+    "copied": "クリップボードにコピーしました",
     "openHome": "メイン画面を開く",
     "intervalNeedInt": "取得間隔は整数である必要があります",
     "portNeedInt": "ポート番号は整数である必要があります",

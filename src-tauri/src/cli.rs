@@ -1,4 +1,5 @@
 use clap::Parser;
+use crate::config;
 use crate::hosts;
 use crate::services;
 
@@ -29,6 +30,11 @@ pub struct CliArgs {
     /// 客户端模式远程 hosts 获取链接
     #[arg(short, long, default_value = "https://hosts.gitcdn.top/hosts.txt")]
     pub url: String,
+
+    /// Server mode: custom HTML template file path
+    /// 服务端模式自定义 HTML 模板文件路径
+    #[arg(short, long)]
+    pub template: Option<String>,
 
     /// Interface language (zh-CN, en-US, ja-JP)
     /// 界面语言
@@ -63,7 +69,7 @@ pub async fn run_cli(args: CliArgs) {
     println!();
 
     match mode {
-        "server" => run_server_cli(args.port, interval).await,
+        "server" => run_server_cli(args.port, interval, args.template).await,
         _ => run_client_cli(&args.url, interval).await,
     }
 }
@@ -116,10 +122,17 @@ async fn run_client_cli(url: &str, interval_minutes: u32) {
 }
 
 /// CLI Server mode: resolve DNS, start HTTP, loop
-async fn run_server_cli(port: u16, interval_minutes: u32) {
+async fn run_server_cli(port: u16, interval_minutes: u32, template: Option<String>) {
     println!("🌐 服务端模式启动");
     println!("   监听端口: {}", port);
     println!("   更新间隔: {} 分钟", interval_minutes);
+    if let Some(ref tpl) = template {
+        println!("   HTML模板: {}", tpl);
+        // Update config so generate_server_html picks up the template
+        let mut cfg = config::load_config();
+        cfg.server.template_path = tpl.clone();
+        let _ = config::save_config(&cfg);
+    }
     println!();
 
     // Initial DNS resolve

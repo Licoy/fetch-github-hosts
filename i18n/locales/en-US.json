@@ -47,7 +47,16 @@
     "stopPortFail": "Failed to close port listener",
     "stopSuccess": "Hosts update service stopped",
     "fetchHostsFail": "Failed to obtain GitHub hosts",
-    "indexFileErr": "Failed to get index file: {error}"
+    "indexFileErr": "Failed to get index file: {error}",
+    "httpStarted": "HTTP service started: http://0.0.0.0:{port}",
+    "templatePath": "HTML Template File",
+    "templatePathPlaceholder": "Leave empty for built-in default template",
+    "templateVars": "Template Variables",
+    "varVersion": "Application version",
+    "varUpdateTime": "Last update time",
+    "exportTemplate": "Export default template",
+    "templateExported": "Default template exported to: {path}",
+    "templateExportFail": "Failed to export template"
   },
   "about": {
     "intro": "Introduction",
@@ -82,6 +91,7 @@
     "ok": "OK",
     "cancel": "Cancel",
     "cancelled": "Operation cancelled",
+    "copied": "Copied to clipboard",
     "openHome": "Open Home",
     "intervalNeedInt": "Fetch interval must be an integer",
     "portNeedInt": "Port number must be an integer",

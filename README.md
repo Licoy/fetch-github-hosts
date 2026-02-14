@@ -67,6 +67,7 @@
 | `--interval` | `-i` | `60` | 获取 hosts 的间隔时间（分钟） |
 | `--port` | `-p` | `9898` | 服务端模式监听端口 |
 | `--url` | `-u` | `https://hosts.gitcdn.top/hosts.txt` | 客户端模式远程 hosts 获取链接 |
+| `--template` | `-t` | 无（使用内置模板） | 服务端模式自定义 HTML 模板文件路径 |
 | `--lang` | `-l` | 自动检测 | 界面语言（`zh-CN`、`en-US`、`ja-JP`） |
 
 #### 启动客户端
@@ -96,7 +97,12 @@ fetch-github-hosts.exe -m server
 
 # 自定义端口
 ./fetch-github-hosts -m server -p 6666
+
+# 自定义 HTML 模板文件
+./fetch-github-hosts -m server -t /path/to/template.html
 ```
+
+> 💡 自定义模板支持 `{{FGH_VERSION}}`（版本号）和 `{{FGH_UPDATE_TIME}}`（最近更新时间）两个模板变量
 
 > 💡 不指定 `-m` 参数时将启动图形化界面
 

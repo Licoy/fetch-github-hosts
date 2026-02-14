@@ -67,6 +67,7 @@ Download your platform's binary from [Releases](https://github.com/Licoy/fetch-g
 | `--interval` | `-i` | `60` | Fetch interval in minutes |
 | `--port` | `-p` | `9898` | Server mode listening port |
 | `--url` | `-u` | `https://hosts.gitcdn.top/hosts.txt` | Client mode remote hosts URL |
+| `--template` | `-t` | None (built-in) | Server mode custom HTML template file path |
 | `--lang` | `-l` | Auto-detect | Language (`zh-CN`, `en-US`, `ja-JP`) |
 
 #### Start Client
@@ -96,7 +97,12 @@ fetch-github-hosts.exe -m server
 
 # Custom port
 ./fetch-github-hosts -m server -p 6666
+
+# Custom HTML template
+./fetch-github-hosts -m server -t /path/to/template.html
 ```
+
+> 💡 Custom templates support `{{FGH_VERSION}}` (version) and `{{FGH_UPDATE_TIME}}` (last update time) template variables
 
 > 💡 Omitting the `-m` parameter launches the graphical user interface
 

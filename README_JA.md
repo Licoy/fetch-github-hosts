@@ -67,6 +67,7 @@
 | `--interval` | `-i` | `60` | hosts 取得間隔（分） |
 | `--port` | `-p` | `9898` | サーバーモードのリスニングポート |
 | `--url` | `-u` | `https://hosts.gitcdn.top/hosts.txt` | クライアントモードのリモート hosts URL |
+| `--template` | `-t` | なし（内蔵テンプレート） | サーバーモードのカスタム HTML テンプレートファイルパス |
 | `--lang` | `-l` | 自動検出 | 言語（`zh-CN`、`en-US`、`ja-JP`） |
 
 #### クライアント起動
@@ -96,7 +97,12 @@ fetch-github-hosts.exe -m server
 
 # カスタムポート
 ./fetch-github-hosts -m server -p 6666
+
+# カスタム HTML テンプレート
+./fetch-github-hosts -m server -t /path/to/template.html
 ```
+
+> 💡 カスタムテンプレートは `{{FGH_VERSION}}`（バージョン）と `{{FGH_UPDATE_TIME}}`（最終更新日時）のテンプレート変数をサポートしています
 
 > 💡 `-m` パラメータを省略するとグラフィカルインターフェースが起動します
 

@@ -67,6 +67,8 @@
         :label="$t('common.start')"
         icon="i-heroicons-play"
         color="primary"
+        :loading="isLoading"
+        :disabled="isLoading"
         @click="startFetch"
       />
       <UButton
@@ -74,6 +76,8 @@
         :label="$t('common.stop')"
         icon="i-heroicons-stop"
         color="error"
+        :loading="isLoading"
+        :disabled="isLoading"
         @click="stopFetch"
       />
       <UButton
@@ -93,18 +97,21 @@
     </div>
 
     <!-- Log Viewer -->
-    <LogViewer :logs="logs" class="flex-1 min-h-0" />
+    <LogViewer :logs="logs" class="flex-1 min-h-0" @clear="clearLogs" />
   </div>
 </template>
 
 <script setup lang="ts">
+import type { LogEntry } from './LogViewer.vue'
+
 const { safeInvoke, safeListen } = useTauri()
 const { t } = useI18n()
 const toast = useToast()
 const { config: appConfig, loadConfig, updateClient } = useConfig()
 
 const isRunning = ref(false)
-const logs = ref<string[]>([])
+const isLoading = ref(false)
+const logs = ref<LogEntry[]>([])
 
 const hostsOrigins: Record<string, string> = {
   FetchGithubHosts: 'https://hosts.gitcdn.top/hosts.txt',
@@ -129,9 +136,21 @@ const hostsOriginOptions = Object.keys(hostsOrigins).map(k => ({
   value: k,
 }))
 
-function addLog(msg: string) {
+function addLog(message: string, level: 'info' | 'success' | 'error' = 'info') {
   const now = new Date().toLocaleString()
-  logs.value.unshift(`[${now}] ${msg}`)
+  const entry: LogEntry = { time: now, message, level }
+  logs.value.unshift(entry)
+  // Persist log
+  safeInvoke('append_log', {
+    source: 'client',
+    entry: JSON.stringify(entry),
+  })
+}
+
+/** Translate backend i18n log payload and add to logs */
+function addBackendLog(key: string, params: Record<string, any> | null, level: string) {
+  const message = t(key, params || {})
+  addLog(message, (level as 'info' | 'success' | 'error') || 'info')
 }
 
 async function startFetch() {
@@ -150,23 +169,37 @@ async function startFetch() {
     return
   }
 
+  isLoading.value = true
   try {
     await safeInvoke('start_client', { url, interval })
     isRunning.value = true
-    addLog(t('client.remoteUrlLog', { url }))
+    isLoading.value = false
+    addLog(t('client.remoteUrlLog', { url }), 'info')
     await syncToSharedConfig()
   } catch (e: any) {
-    addLog(t('client.fetchFail', { error: e.toString() }))
+    // Privilege escalation failed or other error: keep isRunning = false (Task 7)
+    isRunning.value = false
+    isLoading.value = false
+    const msg = e?.toString() || ''
+    if (msg.includes('USER_CANCELLED')) {
+      toast.add({ title: t('common.cancelled'), color: 'warning' })
+      addLog(t('common.cancelled'), 'error')
+    } else {
+      addLog(t('client.fetchFail', { error: msg }), 'error')
+    }
   }
 }
 
 async function stopFetch() {
+  isLoading.value = true
   try {
     await safeInvoke('stop_client')
     isRunning.value = false
-    addLog(t('client.fetchStop'))
+    isLoading.value = false
+    addLog(t('client.fetchStop'), 'info')
   } catch (e: any) {
-    addLog(e.toString())
+    isLoading.value = false
+    addLog(e.toString(), 'error')
   }
 }
 
@@ -183,16 +216,21 @@ async function flushDns() {
   try {
     const result = await safeInvoke<string>('flush_dns')
     toast.add({ title: t('client.flushDnsSuccess'), color: 'success' })
-    addLog(result || t('client.flushDnsSuccess'))
+    addLog(result || t('client.flushDnsSuccess'), 'success')
   } catch (e: any) {
     const msg = e?.toString() || ''
     if (msg.includes('USER_CANCELLED')) {
       toast.add({ title: t('common.cancelled'), color: 'warning' })
     } else {
       toast.add({ title: t('client.flushDnsFail') + ': ' + msg, color: 'error' })
-      addLog(t('client.flushDnsFail') + ': ' + msg)
+      addLog(t('client.flushDnsFail') + ': ' + msg, 'error')
     }
   }
+}
+
+async function clearLogs() {
+  logs.value = []
+  await safeInvoke('clear_logs', { source: 'client' })
 }
 
 function onAutoFetchChange(val: boolean) {
@@ -227,12 +265,32 @@ function syncFromSharedConfig() {
 }
 
 onMounted(async () => {
-  // Listen for log events from backend
-  await safeListen<{ message: string }>('client-log', (event) => {
-    addLog(event.payload.message)
+  // Listen for log events from backend (now with i18n key + params + level)
+  await safeListen<{ key: string; params?: Record<string, any>; level: string }>('client-log', (event) => {
+    addBackendLog(event.payload.key, event.payload.params || null, event.payload.level)
   })
   await loadConfig()
   syncFromSharedConfig()
+
+  // Load persisted logs
+  try {
+    const persisted = await safeInvoke<string[]>('load_logs', { source: 'client' })
+    if (persisted && persisted.length > 0) {
+      // Load in reverse order (newest first, matching display order)
+      for (const line of [...persisted].reverse()) {
+        try {
+          const entry = JSON.parse(line)
+          if (entry.time && entry.message) {
+            logs.value.push(entry)
+          }
+        } catch {
+          // Legacy plain text log line — display as info
+          logs.value.push({ time: '', message: line, level: 'info' })
+        }
+      }
+    }
+  } catch {}
+
   // Auto fetch on startup if enabled
   if (config.autoFetch) {
     startFetch()

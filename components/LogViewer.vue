@@ -18,18 +18,39 @@
       <div
         v-for="(log, idx) in logs"
         :key="idx"
-        class="opacity-70 py-0.5 border-b border-[var(--fgh-border)]/50 last:border-0"
+        class="py-0.5 border-b border-[var(--fgh-border)]/50 last:border-0"
+        :class="getLogClass(log)"
       >
-        {{ log }}
+        {{ getLogText(log) }}
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+export interface LogEntry {
+  time: string
+  message: string
+  level: 'info' | 'success' | 'error'
+}
+
 defineProps<{
-  logs: string[]
+  logs: (string | LogEntry)[]
 }>()
 
 defineEmits(['clear'])
+
+function getLogClass(log: string | LogEntry): string {
+  if (typeof log === 'string') return 'opacity-70'
+  switch (log.level) {
+    case 'error': return 'text-red-500'
+    case 'success': return 'text-green-500'
+    default: return 'opacity-70'
+  }
+}
+
+function getLogText(log: string | LogEntry): string {
+  if (typeof log === 'string') return log
+  return `[${log.time}] ${log.message}`
+}
 </script>

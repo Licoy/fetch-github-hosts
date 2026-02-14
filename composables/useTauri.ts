@@ -67,7 +67,7 @@ export function useTauri() {
   }
 
   /**
-   * Window control: close
+   * Window control: close (will be intercepted by backend to hide on macOS)
    */
   async function windowClose(): Promise<void> {
     if (!isTauri()) return
@@ -77,5 +77,16 @@ export function useTauri() {
     } catch {}
   }
 
-  return { isTauri: isTauri(), safeInvoke, safeListen, safeOpenUrl, windowMinimize, windowToggleMaximize, windowClose }
+  /**
+   * Window control: hide to tray
+   */
+  async function windowHide(): Promise<void> {
+    if (!isTauri()) return
+    try {
+      const { getCurrentWindow } = await import('@tauri-apps/api/window')
+      await getCurrentWindow().hide()
+    } catch {}
+  }
+
+  return { isTauri: isTauri(), safeInvoke, safeListen, safeOpenUrl, windowMinimize, windowToggleMaximize, windowClose, windowHide }
 }
