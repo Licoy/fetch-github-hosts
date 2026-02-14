@@ -9,7 +9,34 @@ env:
   APP_NAME: fetch-github-hosts
 
 jobs:
+  create-release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.create.outputs.result }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create draft release
+        id: create
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tagName = context.ref.replace('refs/tags/', '') || 'v4.0';
+            const { data } = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tagName,
+              name: `Fetch Github Hosts ${tagName}`,
+              body: `See the assets below to download the app for your platform.\n\n**macOS**: \`.dmg\` (Universal binary - supports both Intel & Apple Silicon)\n**Windows**: \`.msi\` / \`.exe\`\n**Linux**: \`.deb\` / \`.AppImage\``,
+              draft: true,
+              prerelease: false
+            });
+            return data.id;
+          result-encoding: string
+
   build-tauri:
+    needs: create-release
     permissions:
       contents: write
     strategy:
@@ -83,14 +110,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: 'Fetch Github Hosts ${{ github.ref_name }}'
-          releaseBody: |
-            See the assets below to download the app for your platform.
-
-            **macOS**: `.dmg` (Universal binary - supports both Intel & Apple Silicon)
-            **Windows**: `.msi` / `.exe`
-            **Linux**: `.deb` / `.AppImage`
-          releaseDraft: true
-          prerelease: false
+          releaseId: ${{ needs.create-release.outputs.release_id }}
           args: ${{ matrix.args }}
