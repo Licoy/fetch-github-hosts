@@ -103,11 +103,15 @@ jobs:
         run: npm ci
 
       - name: Inject version from tag
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
+          RAW_VERSION=${GITHUB_REF#refs/tags/v}
+          IFS='.' read -ra parts <<< "$RAW_VERSION"
+          VERSION="${parts[0]:-0}.${parts[1]:-0}.${parts[2]:-0}"
           echo "Injecting version: $VERSION"
-          sed -i.bak "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" src-tauri/tauri.conf.json
-          sed -i.bak "s/^version = \".*\"/version = \"$VERSION\"/" src-tauri/Cargo.toml
+          sed -i.bak 's/"version": "[^"]*"/"version": "'"$VERSION"'"/' src-tauri/tauri.conf.json
+          sed -i.bak 's/^version = "[^"]*"/version = "'"$VERSION"'"/' src-tauri/Cargo.toml
+          sed -i.bak 's/"version": "[^"]*"/"version": "'"$VERSION"'"/' package.json
 
       - name: Build static frontend
         run: npx cross-env NUXT_CLI_WRAPPER=false npx nuxt generate
@@ -155,10 +159,13 @@ jobs:
           workspaces: './src-tauri -> target'
 
       - name: Inject version from tag
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
+          RAW_VERSION=${GITHUB_REF#refs/tags/v}
+          IFS='.' read -ra parts <<< "$RAW_VERSION"
+          VERSION="${parts[0]:-0}.${parts[1]:-0}.${parts[2]:-0}"
           echo "Injecting version: $VERSION"
-          sed -i.bak "s/^version = \".*\"/version = \"$VERSION\"/" src-tauri/Cargo.toml
+          sed -i.bak 's/^version = "[^"]*"/version = "'"$VERSION"'"/' src-tauri/Cargo.toml
 
       - name: Build CLI binary (fully static, no system dependencies)
         working-directory: src-tauri
