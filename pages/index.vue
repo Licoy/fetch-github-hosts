@@ -32,7 +32,7 @@
         </div>
         <img src="/logo.png" alt="logo" class="w-5 h-5" />
         <span class="text-sm font-semibold opacity-90">
-          {{ $t('app.title') }} - V4.0
+          {{ $t('app.title') }} - {{ versionLabel }}
         </span>
       </div>
       <!-- Right side controls -->
@@ -105,8 +105,13 @@
 const { t, locale, setLocale } = useI18n()
 const colorMode = useColorMode()
 const { safeOpenUrl, windowMinimize, windowToggleMaximize, windowClose } = useTauri()
+const { versionLabel, loadVersion } = useAppVersion()
 
 const activeTab = ref('client')
+
+onMounted(() => {
+  loadVersion()
+})
 
 const isDark = computed(() => colorMode.value === 'dark')
 

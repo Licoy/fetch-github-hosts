@@ -7,6 +7,32 @@ pub(crate) mod hosts;
 pub(crate) mod models;
 pub(crate) mod services;
 
+/// Application version (read from Cargo.toml at compile time)
+pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
+
+/// Compare two semver-like version strings: returns true if remote > local
+pub fn version_gt(remote: &str, local: &str) -> bool {
+    let parse = |s: &str| -> Vec<u32> {
+        s.split('.')
+            .filter_map(|p| p.parse::<u32>().ok())
+            .collect()
+    };
+    let r = parse(remote);
+    let l = parse(local);
+    let max_len = r.len().max(l.len());
+    for i in 0..max_len {
+        let rv = r.get(i).copied().unwrap_or(0);
+        let lv = l.get(i).copied().unwrap_or(0);
+        if rv > lv {
+            return true;
+        }
+        if rv < lv {
+            return false;
+        }
+    }
+    false
+}
+
 #[cfg(feature = "gui")]
 use std::sync::Mutex;
 #[cfg(feature = "gui")]
@@ -99,6 +125,7 @@ pub fn run() {
             commands::flush_dns,
             commands::load_config,
             commands::save_config,
+            commands::get_version,
             commands::check_update,
         ])
         .setup(|app| {

@@ -5,7 +5,7 @@ use crate::services;
 #[derive(Parser, Debug)]
 #[command(
     name = "fetch-github-hosts",
-    version = "4.0",
+    version = env!("CARGO_PKG_VERSION"),
     about = "GitHub Hosts synchronization tool / Github Hosts 同步工具",
     long_about = "A tool to help researchers and learners access Github faster by syncing DNS hosts.\n为解决研究及学习人员访问 Github 过慢或其他问题而提供的 Github Hosts 同步工具"
 )]
@@ -58,7 +58,7 @@ pub async fn run_cli(args: CliArgs) {
     };
 
     println!("╔════════════════════════════════════════════════╗");
-    println!("║        Fetch Github Hosts  V4.0               ║");
+    println!("║        Fetch Github Hosts  V{}               ║", crate::APP_VERSION);
     println!("╚════════════════════════════════════════════════╝");
     println!();
 

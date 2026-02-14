@@ -102,6 +102,13 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+      - name: Inject version from tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "Injecting version: $VERSION"
+          sed -i.bak "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" src-tauri/tauri.conf.json
+          sed -i.bak "s/^version = \".*\"/version = \"$VERSION\"/" src-tauri/Cargo.toml
+
       - name: Build static frontend
         run: npx cross-env NUXT_CLI_WRAPPER=false npx nuxt generate
 
@@ -146,6 +153,12 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           workspaces: './src-tauri -> target'
+
+      - name: Inject version from tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "Injecting version: $VERSION"
+          sed -i.bak "s/^version = \".*\"/version = \"$VERSION\"/" src-tauri/Cargo.toml
 
       - name: Build CLI binary (fully static, no system dependencies)
         working-directory: src-tauri

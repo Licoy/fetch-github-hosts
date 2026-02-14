@@ -12,7 +12,7 @@
       <USeparator class="my-4" />
       <div class="text-sm opacity-50">
         <p>{{ $t('about.license') }}: {{ $t('about.licenseContent') }}</p>
-        <p class="mt-1">{{ $t('about.version') }}: V4.0</p>
+        <p class="mt-1">{{ $t('about.version') }}: {{ versionLabel }}</p>
       </div>
     </div>
 
@@ -50,6 +50,7 @@
 const { safeInvoke, safeOpenUrl } = useTauri()
 const { t } = useI18n()
 const toast = useToast()
+const { versionLabel } = useAppVersion()
 
 const checking = ref(false)
 

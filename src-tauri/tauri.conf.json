@@ -13,7 +13,7 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "Fetch Github Hosts - V4.0",
+        "title": "Fetch Github Hosts",
         "width": 860,
         "height": 640,
         "minWidth": 700,

@@ -87,7 +87,12 @@ pub async fn client_fetch_hosts(url: &str) -> Result<(), String> {
         result.push_str(newline);
     }
 
-    hosts::write_hosts(&result)
+    hosts::write_hosts(&result)?;
+
+    // Auto flush DNS cache after writing hosts
+    let _ = hosts::flush_dns_cache();
+
+    Ok(())
 }
 
 /// Start the server mode: resolve DNS and serve hosts via HTTP
@@ -257,6 +262,7 @@ pub fn handle_http_request(path: &str) -> (String, String, String) {
 
 /// Generate the server HTML page content
 pub fn generate_server_html(now: &str) -> String {
+    let version = crate::APP_VERSION;
     format!(r##"<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -351,7 +357,7 @@ a.link-btn:hover{{filter:brightness(1.15)}}
         <span data-i18n="downloadClient"></span>
       </a>
     </div>
-    Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank">Fetch Github Hosts</a> V4.0
+    Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank">Fetch Github Hosts</a> V{version}
   </div>
 </div>
 <script>
@@ -371,5 +377,5 @@ function switchLang(l){{const t=i18n[l]||i18n.zh;document.querySelectorAll('[dat
 (function(){{const lang=getStoredOrDefault('lang',detectLang);switchLang(lang)}})();
 </script>
 </body>
-</html>"##, now = now)
+</html>"##, now = now, version = version)
 }

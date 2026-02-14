@@ -101,38 +101,41 @@ pub async fn save_config(config_data: AppConfig) -> Result<(), String> {
 }
 
 #[tauri::command]
+pub fn get_version() -> String {
+    crate::APP_VERSION.to_string()
+}
+
+#[tauri::command]
 pub async fn check_update() -> Result<UpdateInfo, String> {
-    let resp = reqwest::get("https://api.github.com/repos/Licoy/fetch-github-hosts/releases")
+    let client = reqwest::Client::new();
+    let resp = client
+        .get("https://api.github.com/repos/Licoy/fetch-github-hosts/releases/latest")
+        .header("User-Agent", format!("fetch-github-hosts/{}", env!("CARGO_PKG_VERSION")))
+        .header("Accept", "application/vnd.github.v3+json")
+        .send()
         .await
         .map_err(|e| format!("网络请求错误: {}", e))?;
 
     if !resp.status().is_success() {
-        return Err("请求失败".to_string());
+        return Err(format!("请求失败: HTTP {}", resp.status()));
     }
 
-    let releases: Vec<serde_json::Value> = resp
+    let latest: serde_json::Value = resp
         .json()
         .await
         .map_err(|e| format!("解析响应失败: {}", e))?;
 
-    if releases.is_empty() {
-        return Err("检查更新失败: 无发布版本".to_string());
-    }
-
-    let latest = &releases[0];
     let tag = latest["tag_name"]
         .as_str()
         .unwrap_or("0")
         .trim_start_matches('v')
         .trim_start_matches('V');
 
-    let remote_version: f64 = tag.parse().unwrap_or(0.0);
-    let current_version: f64 = 4.0;
-
+    let has_update = crate::version_gt(tag, env!("CARGO_PKG_VERSION"));
     let html_url = latest["html_url"].as_str().unwrap_or("").to_string();
 
     Ok(UpdateInfo {
-        has_update: remote_version > current_version,
+        has_update,
         version: tag.to_string(),
         url: html_url,
     })
