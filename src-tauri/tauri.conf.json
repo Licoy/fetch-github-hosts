@@ -6,7 +6,7 @@
   "build": {
     "frontendDist": "../.output/public",
     "beforeDevCommand": "",
-    "beforeBuildCommand": "NUXT_CLI_WRAPPER=false npx nuxt generate"
+    "beforeBuildCommand": "npx cross-env NUXT_CLI_WRAPPER=false npx nuxt generate"
   },
   "app": {
     "macOSPrivateApi": true,

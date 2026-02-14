@@ -76,8 +76,7 @@ jobs:
         run: npm ci
 
       - name: Build static frontend
-        run: NUXT_CLI_WRAPPER=false npx nuxt generate
-        shell: bash
+        run: npx cross-env NUXT_CLI_WRAPPER=false npx nuxt generate
 
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0
