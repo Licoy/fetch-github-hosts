@@ -28,7 +28,7 @@ jobs:
               repo: context.repo.repo,
               tag_name: tagName,
               name: `Fetch Github Hosts ${tagName}`,
-              body: `See the assets below to download the app for your platform.\n\n**macOS**: \`.dmg\` (Universal binary - supports both Intel & Apple Silicon)\n**Windows**: \`.msi\` / \`.exe\`\n**Linux**: \`.deb\` / \`.AppImage\``,
+              body: `See the assets below to download the app for your platform.\n\n**macOS**: \`.dmg\` (Universal binary - supports both Intel & Apple Silicon)\n**Windows**: \`.msi\` / \`.exe\`\n**Linux**: \`.deb\` / \`.AppImage\`\n**Linux Standalone Binary**: \`.tar.gz\` (amd64 / aarch64, no installation needed)`,
               draft: true,
               prerelease: false
             });
@@ -48,11 +48,16 @@ jobs:
             args: --target universal-apple-darwin
             rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
             name: macos-universal
-          # Linux
+          # Linux x86_64
           - platform: ubuntu-22.04
             args: ''
             rust_targets: ''
             name: linux-x86_64
+          # Linux ARM64
+          - platform: ubuntu-22.04-arm
+            args: ''
+            rust_targets: ''
+            name: linux-aarch64
           # Windows
           - platform: windows-latest
             args: ''
@@ -82,7 +87,7 @@ jobs:
           workspaces: './src-tauri -> target'
 
       - name: Install system dependencies (Linux)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: contains(matrix.name, 'linux')
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -112,3 +117,20 @@ jobs:
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           args: ${{ matrix.args }}
+
+      - name: Package standalone binary (Linux)
+        if: contains(matrix.name, 'linux')
+        run: |
+          ARCH=$([[ "${{ matrix.name }}" == *"aarch64"* ]] && echo "aarch64" || echo "amd64")
+          BINARY="src-tauri/target/release/fetch-github-hosts"
+          TAR_NAME="fetch-github-hosts_linux_${ARCH}.tar.gz"
+          tar -czf "$TAR_NAME" -C "$(dirname "$BINARY")" "$(basename "$BINARY")"
+          echo "TAR_NAME=$TAR_NAME" >> "$GITHUB_ENV"
+
+      - name: Upload standalone binary (Linux)
+        if: contains(matrix.name, 'linux')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          gh release upload "$TAG_NAME" "$TAR_NAME" --repo "${{ github.repository }}" --clobber
