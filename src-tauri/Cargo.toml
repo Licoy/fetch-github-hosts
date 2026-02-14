@@ -12,6 +12,10 @@ rust-version = "1.77.2"
 name = "app_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
+[features]
+default = ["gui"]
+gui = ["dep:tauri", "dep:tauri-plugin-log", "dep:tauri-plugin-shell"]
+
 [build-dependencies]
 tauri-build = { version = "2.5.4", features = [] }
 
@@ -20,9 +24,9 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
 log = "0.4"
-tauri = { version = "2.10.0", features = ["macos-private-api", "tray-icon"] }
-tauri-plugin-log = "2"
-tauri-plugin-shell = "2"
+tauri = { version = "2.10.0", features = ["macos-private-api", "tray-icon"], optional = true }
+tauri-plugin-log = { version = "2", optional = true }
+tauri-plugin-shell = { version = "2", optional = true }
 tokio = { version = "1", features = ["full"] }
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
 dns-lookup = "2"

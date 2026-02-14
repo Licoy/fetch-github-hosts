@@ -14,6 +14,15 @@ fn main() {
         });
     } else {
         // GUI mode: launch Tauri window
+        #[cfg(feature = "gui")]
         app_lib::run();
+
+        #[cfg(not(feature = "gui"))]
+        {
+            eprintln!("GUI mode is not available in this build.");
+            eprintln!("Use -m client or -m server for CLI mode.");
+            eprintln!("Example: fetch-github-hosts -m client");
+            std::process::exit(1);
+        }
     }
 }

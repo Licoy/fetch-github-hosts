@@ -1,21 +1,27 @@
+#[cfg(feature = "gui")]
 use tauri::{AppHandle, Emitter};
+#[cfg(feature = "gui")]
 use tokio::sync::oneshot;
 
 use crate::dns;
 use crate::hosts;
+#[cfg(feature = "gui")]
 use crate::models::LogPayload;
 
 /// State for managing client ticker
+#[cfg(feature = "gui")]
 pub struct ClientState {
     pub stop_tx: Option<oneshot::Sender<()>>,
 }
 
 /// State for managing server ticker
+#[cfg(feature = "gui")]
 pub struct ServerState {
     pub stop_tx: Option<oneshot::Sender<()>>,
 }
 
 /// Start the client mode: periodically fetch hosts from remote URL
+#[cfg(feature = "gui")]
 pub async fn start_client_task(
     app: AppHandle,
     url: String,
@@ -85,6 +91,7 @@ pub async fn client_fetch_hosts(url: &str) -> Result<(), String> {
 }
 
 /// Start the server mode: resolve DNS and serve hosts via HTTP
+#[cfg(feature = "gui")]
 pub async fn start_server_task(
     app: AppHandle,
     port: u16,
@@ -160,6 +167,7 @@ pub async fn server_fetch_hosts() -> Result<(), String> {
 }
 
 /// Simple HTTP server for serving hosts files (async with graceful shutdown)
+#[cfg(feature = "gui")]
 async fn start_http_server(port: u16, app: AppHandle, mut shutdown_rx: tokio::sync::watch::Receiver<bool>) {
     use tokio::io::{AsyncReadExt, AsyncWriteExt};
     use tokio::net::TcpListener;

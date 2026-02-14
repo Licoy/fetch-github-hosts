@@ -1,13 +1,17 @@
 pub mod cli;
+#[cfg(feature = "gui")]
 mod commands;
-mod config;
-mod dns;
-mod hosts;
-mod models;
-mod services;
+pub(crate) mod config;
+pub(crate) mod dns;
+pub(crate) mod hosts;
+pub(crate) mod models;
+pub(crate) mod services;
 
+#[cfg(feature = "gui")]
 use std::sync::Mutex;
+#[cfg(feature = "gui")]
 use services::{ClientState, ServerState};
+#[cfg(feature = "gui")]
 use tauri::{
     Manager,
     menu::{MenuBuilder, MenuItemBuilder},
@@ -15,7 +19,7 @@ use tauri::{
 };
 
 /// Detect system language and return supported locale code
-fn detect_system_lang() -> &'static str {
+pub fn detect_system_lang() -> &'static str {
     let lang = sys_locale::get_locale().unwrap_or_else(|| "en-US".to_string());
     if lang.starts_with("zh") {
         "zh-CN"
@@ -27,6 +31,7 @@ fn detect_system_lang() -> &'static str {
 }
 
 /// Known hosts origins (must match frontend)
+#[cfg(feature = "gui")]
 fn get_hosts_url(select_origin: &str, custom_url: &str, method: &str) -> String {
     if method == "custom" && !custom_url.is_empty() {
         return custom_url.to_string();
@@ -38,6 +43,7 @@ fn get_hosts_url(select_origin: &str, custom_url: &str, method: &str) -> String 
 }
 
 /// Get tray menu text by key and locale
+#[cfg(feature = "gui")]
 fn tray_text(key: &str, lang: &str) -> &'static str {
     match (key, lang) {
         ("show", "zh-CN") => "显示主窗口",
@@ -76,6 +82,7 @@ fn tray_text(key: &str, lang: &str) -> &'static str {
     }
 }
 
+#[cfg(feature = "gui")]
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()

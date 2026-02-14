@@ -53,11 +53,6 @@ jobs:
             args: ''
             rust_targets: ''
             name: linux-x86_64
-          # Linux ARM64
-          - platform: ubuntu-22.04-arm
-            args: ''
-            rust_targets: ''
-            name: linux-aarch64
           # Windows
           - platform: windows-latest
             args: ''
@@ -118,17 +113,46 @@ jobs:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           args: ${{ matrix.args }}
 
-      - name: Package standalone binary (Linux)
-        if: contains(matrix.name, 'linux')
+  build-cli:
+    needs: create-release
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            arch: amd64
+          - platform: ubuntu-22.04-arm
+            target: aarch64-unknown-linux-gnu
+            arch: aarch64
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Build CLI binary (no GUI dependencies)
+        working-directory: src-tauri
+        run: cargo build --release --no-default-features
+
+      - name: Package standalone binary
         run: |
-          ARCH=$([[ "${{ matrix.name }}" == *"aarch64"* ]] && echo "aarch64" || echo "amd64")
-          BINARY="src-tauri/target/release/fetch-github-hosts"
-          TAR_NAME="fetch-github-hosts_linux_${ARCH}.tar.gz"
-          tar -czf "$TAR_NAME" -C "$(dirname "$BINARY")" "$(basename "$BINARY")"
+          TAR_NAME="fetch-github-hosts_linux_${{ matrix.arch }}.tar.gz"
+          tar -czf "$TAR_NAME" -C "src-tauri/target/release" "fetch-github-hosts"
           echo "TAR_NAME=$TAR_NAME" >> "$GITHUB_ENV"
 
-      - name: Upload standalone binary (Linux)
-        if: contains(matrix.name, 'linux')
+      - name: Upload standalone binary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
