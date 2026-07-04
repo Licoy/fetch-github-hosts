@@ -302,7 +302,8 @@ pub fn run() {
                     }
                 })
                 .on_tray_icon_event(|tray, event| {
-                    if let tauri::tray::TrayIconEvent::Click { .. } = event {
+                    use tauri::tray::MouseButton;
+                    if let tauri::tray::TrayIconEvent::Click { button: MouseButton::Left, .. } = event {
                         let app = tray.app_handle();
                         if let Some(window) = app.get_webview_window("main") {
                             let _ = window.show();
