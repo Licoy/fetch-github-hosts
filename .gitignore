@@ -29,3 +29,6 @@ conf.yaml
 # Old Go files
 translate.*.toml
 index.php
+
+# Pnpm files
+pnpm-*
