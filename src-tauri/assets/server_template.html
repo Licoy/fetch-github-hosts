@@ -1,115 +1,2383 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en" data-theme="auto">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Fetch Github Hosts</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0f1117;--card:#1a1d2e;--border:#2d3148;--text:#e2e8f0;--muted:rgba(255,255,255,0.5);--primary:#009966;--primary-glow:rgba(0,153,102,0.15)}
-.light{--bg:#f5f7fa;--card:#ffffff;--border:#e2e8f0;--text:#1a202c;--muted:rgba(0,0,0,0.5);--primary-glow:rgba(0,153,102,0.1)}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;transition:background .3s,color .3s}
-.container{max-width:640px;width:100%}
-.toolbar{display:flex;justify-content:flex-end;gap:0.5rem;margin-bottom:1.5rem}
-.toolbar button,.toolbar select{background:var(--card);border:1px solid var(--border);color:var(--text);padding:0.35rem 0.7rem;border-radius:6px;font-size:0.8rem;cursor:pointer;transition:all .2s}
-.toolbar button:hover,.toolbar select:hover{border-color:var(--primary)}
-.header{text-align:center;margin-bottom:2.5rem}
-.logo-wrap{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,var(--primary-glow),rgba(0,153,102,0.05));margin-bottom:1rem}
-.logo-wrap svg{width:40px;height:40px;color:var(--primary)}
-h1{font-size:1.5rem;font-weight:700;margin-bottom:0.5rem}
-.subtitle{color:var(--muted);font-size:0.875rem;line-height:1.6;max-width:460px;margin:0 auto}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem;transition:background .3s,border-color .3s}
-.card-title{font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:1rem;font-weight:600}
-.link-row{display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0;border-bottom:1px solid var(--border);gap:0.75rem;flex-wrap:wrap}
-.link-row:last-child{border-bottom:none}
-.link-info{display:flex;align-items:center;gap:0.75rem;flex:1;min-width:0}
-.link-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);flex-shrink:0}
-.link-name{font-weight:500;font-size:0.9rem}
-.link-desc{font-size:0.75rem;color:var(--muted);margin-top:2px}
-a.link-btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 0.9rem;background:var(--primary);color:#fff;border-radius:6px;font-size:0.8rem;text-decoration:none;font-weight:500;transition:filter 0.2s;white-space:nowrap;flex-shrink:0}
-a.link-btn:hover{filter:brightness(1.15)}
-.time-badge{display:inline-flex;align-items:center;gap:0.5rem;background:var(--primary-glow);border:1px solid rgba(0,153,102,0.2);border-radius:8px;padding:0.5rem 1rem;font-size:0.8rem;color:var(--primary);margin-top:1rem}
-.footer{text-align:center;margin-top:2rem;font-size:0.75rem;color:var(--muted)}
-.footer a{color:var(--primary);text-decoration:none}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fetch GitHub Hosts — A GitHub Hosts sync tool for faster access. Desktop client, CLI, and one-click hosts.">
+  <meta name="theme-color" content="#0b0f0c">
+  <title>Fetch GitHub Hosts</title>
+  <style>
+/* Fetch GitHub Hosts — Terminal Console landing */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --nav-h: 52px;
+  --nav-ctrl-h: 30px;
+  --max: 1080px;
+  --ease: 0.2s ease;
+  --danger: #ff5f56;
+  --warn: #ffbd2e;
+  --ok: #27c93f;
+}
+
+/* —— Dark (default terminal) —— */
+html,
+html[data-theme="dark"],
+html[data-theme="auto"] {
+  --bg: #0b0f0c;
+  --bg-elevated: #121a14;
+  --bg-soft: #0f1511;
+  --bg-code: #0a100c;
+  --border: #1e2e24;
+  --border-hover: #2d4a38;
+  --text: #c8e6c9;
+  --text-bright: #e8f5e9;
+  --muted: #6b8f71;
+  --primary: #00c853;
+  --primary-dim: #009966;
+  --primary-fg: #041208;
+  --glow: rgba(0, 200, 83, 0.14);
+  --glow-strong: rgba(0, 200, 83, 0.28);
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --nav-bg: rgba(11, 15, 12, 0.82);
+  --grid-line: rgba(0, 200, 83, 0.04);
+  --scrim: rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  html[data-theme="auto"] {
+    --bg: #f4f7f4;
+    --bg-elevated: #ffffff;
+    --bg-soft: #eef3ee;
+    --bg-code: #1a2420;
+    --border: #d0ddd2;
+    --border-hover: #a8c4b0;
+    --text: #1a2e1c;
+    --text-bright: #0d1a0f;
+    --muted: #5a6b5c;
+    --primary: #008f4c;
+    --primary-dim: #007a41;
+    --primary-fg: #ffffff;
+    --glow: rgba(0, 143, 76, 0.1);
+    --glow-strong: rgba(0, 143, 76, 0.2);
+    --shadow: 0 12px 36px rgba(26, 46, 28, 0.08);
+    --nav-bg: rgba(244, 247, 244, 0.88);
+    --grid-line: rgba(0, 143, 76, 0.06);
+    --scrim: rgba(0, 0, 0, 0.08);
+    color-scheme: light;
+  }
+}
+
+html[data-theme="light"] {
+  --bg: #f4f7f4;
+  --bg-elevated: #ffffff;
+  --bg-soft: #eef3ee;
+  --bg-code: #1a2420;
+  --border: #d0ddd2;
+  --border-hover: #a8c4b0;
+  --text: #1a2e1c;
+  --text-bright: #0d1a0f;
+  --muted: #5a6b5c;
+  --primary: #008f4c;
+  --primary-dim: #007a41;
+  --primary-fg: #ffffff;
+  --glow: rgba(0, 143, 76, 0.1);
+  --glow-strong: rgba(0, 143, 76, 0.2);
+  --shadow: 0 12px 36px rgba(26, 46, 28, 0.08);
+  --nav-bg: rgba(244, 247, 244, 0.88);
+  --grid-line: rgba(0, 143, 76, 0.06);
+  --scrim: rgba(0, 0, 0, 0.08);
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-h) + 16px);
+  /* 与滚动条槽同色，避免主题切换时 gutter 透出闪烁 */
+  background-color: var(--bg);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--bg);
+}
+
+body {
+  font-family: var(--sans);
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  /* 不过渡 background：否则滚动条未滚动区域会跟着变色闪烁 */
+}
+
+/* Ambient grid + glow */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+    radial-gradient(ellipse 80% 50% at 50% -10%, var(--glow-strong), transparent 55%);
+  background-size: 48px 48px, 48px 48px, 100% 100%;
+  opacity: 1;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--ease), opacity var(--ease);
+}
+
+a:hover {
+  color: var(--primary-dim);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+code,
+.mono {
+  font-family: var(--mono);
+}
+
+/* —— Layout —— */
+.wrap {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 2rem, var(--max));
+  margin-inline: auto;
+}
+
+.section {
+  padding: 4rem 0;
+}
+
+.section-head {
+  margin-bottom: 1.75rem;
+}
+
+.section-title {
+  font-family: var(--mono);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  letter-spacing: -0.02em;
+}
+
+.section-title .prompt {
+  color: var(--primary);
+  margin-right: 0.4rem;
+  user-select: none;
+}
+
+.section-desc {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 42rem;
+}
+
+/* —— Nav —— */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: min(100% - 2rem, var(--max));
+  margin-inline: auto;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-bright);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.brand:hover {
+  color: var(--primary);
+}
+
+.brand img {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.brand span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+}
+
+.nav-links a:hover {
+  color: var(--text-bright);
+  background: var(--glow);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.lang-select-wrap,
+.theme-select-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* PC: compact language select + segmented theme (original scale) */
+.lang-select,
+.theme-select {
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  height: auto;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.2;
+  color: var(--text);
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.32rem 1.5rem 0.32rem 0.7rem;
+  cursor: pointer;
+  max-width: none;
+  width: auto;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 11px) calc(50% - 1px),
+    calc(100% - 7px) calc(50% - 1px);
+  background-size: 4px 4px, 4px 4px;
+  background-repeat: no-repeat;
+  transition: border-color var(--ease), color var(--ease), background-color var(--ease);
+}
+
+.lang-select:hover,
+.lang-select:focus,
+.theme-select:hover,
+.theme-select:focus {
+  border-color: var(--primary);
+  outline: none;
+  color: var(--text-bright);
+}
+
+/* Mobile only: emoji-only language chip (class toggled by JS ≤900px) */
+.lang-select.lang-select--emoji {
+  width: 2.75rem;
+  min-width: 2.75rem;
+  max-width: 2.75rem;
+  padding: 0.32rem 1.15rem 0.32rem 0.3rem;
+  font-size: 0.95rem;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Desktop: segmented theme. Mobile: select */
+.theme-select-wrap {
+  display: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  padding: 2px;
+  gap: 1px;
+}
+
+.theme-switch button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  cursor: pointer;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background var(--ease), color var(--ease);
+}
+
+.theme-switch button:hover {
+  color: var(--text);
+}
+
+.theme-switch button[aria-pressed="true"] {
+  background: var(--glow-strong);
+  color: var(--primary);
+}
+
+.nav-toggle {
+  display: none;
+  box-sizing: border-box;
+  width: var(--nav-ctrl-h);
+  min-width: var(--nav-ctrl-h);
+  height: var(--nav-ctrl-h);
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color var(--ease), color var(--ease), background var(--ease);
+}
+
+.nav-toggle svg {
+  display: block;
+  width: 15px;
+  height: 15px;
+}
+
+.nav-toggle:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* —— Buttons —— */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.65rem 1.1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: filter var(--ease), background var(--ease), border-color var(--ease),
+    color var(--ease), box-shadow var(--ease);
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-fg);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0 transparent;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.08);
+  color: var(--primary-fg);
+  box-shadow: 0 0 20px var(--glow-strong);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.btn-ghost:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--glow);
+}
+
+.btn-soft {
+  background: var(--glow);
+  color: var(--primary);
+  border-color: rgba(0, 200, 83, 0.25);
+}
+
+.btn-soft:hover {
+  background: var(--glow-strong);
+  color: var(--primary);
+}
+
+.btn-sm {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.btn-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* —— Hero —— */
+.hero {
+  padding: 3.5rem 0 2.5rem;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+}
+
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  background: var(--glow);
+  border: 1px solid rgba(0, 200, 83, 0.28);
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 0 var(--glow-strong);
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--glow-strong);
+  }
+  70% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.update-badge {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+}
+
+.hero h1 {
+  font-size: clamp(1.85rem, 4vw, 2.55rem);
+  font-weight: 750;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--text-bright);
+  margin-bottom: 0.9rem;
+}
+
+.hero h1 .accent {
+  color: var(--primary);
+}
+
+.hero-lead {
+  color: var(--muted);
+  font-size: 1.02rem;
+  max-width: 34rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+}
+
+.hero-meta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.hero-meta a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.hero-meta a:hover {
+  color: var(--primary);
+}
+
+/* Terminal window */
+.term {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: border-color var(--ease), box-shadow var(--ease);
+}
+
+.term:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow), 0 0 0 1px var(--glow);
+}
+
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+}
+
+.term-dots {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.term-dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.term-dots .d1 {
+  background: var(--danger);
+}
+.term-dots .d2 {
+  background: var(--warn);
+}
+.term-dots .d3 {
+  background: var(--ok);
+}
+
+.term-title {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.term-body {
+  padding: 1rem 1.1rem 1.15rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.7;
+  color: #b7e0bc;
+  background: var(--bg-code);
+  min-height: 220px;
+}
+
+.term-line {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.term-line .c-prompt {
+  color: var(--primary);
+}
+
+.term-line .c-dim {
+  color: #5f7a64;
+}
+
+.term-line .c-out {
+  color: #9ad4a2;
+}
+
+.term-line .c-comment {
+  color: #4d6b55;
+}
+
+.term-cursor {
+  display: inline-block;
+  width: 0.55ch;
+  height: 1.05em;
+  background: var(--primary);
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  animation: blink 1.05s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* —— Cards —— */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  transition: border-color var(--ease), box-shadow var(--ease), transform var(--ease);
+}
+
+.card:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 0 0 1px var(--glow), var(--shadow);
+}
+
+.card-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 0.65rem;
+  font-weight: 600;
+}
+
+.resource-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.resource-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.resource-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin-top: 0.4rem;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px var(--glow-strong);
+}
+
+.resource-dot.blue {
+  background: #3b82f6;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.35);
+}
+
+.resource-name {
+  font-family: var(--mono);
+  font-weight: 650;
+  font-size: 1rem;
+  color: var(--text-bright);
+}
+
+.resource-desc {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+}
+
+.resource-url {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.7rem;
+  word-break: break-all;
+}
+
+.resource-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+/* Feature cards */
+.feature-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: var(--glow);
+  border: 1px solid rgba(0, 200, 83, 0.2);
+  color: var(--primary);
+  margin-bottom: 0.85rem;
+}
+
+.feature-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.feature-title {
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: var(--text-bright);
+  margin-bottom: 0.35rem;
+}
+
+.feature-desc {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* —— Code block —— */
+.code-block {
+  position: relative;
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.code-block .code-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-soft);
+}
+
+.code-block .code-label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.code-block pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.65;
+  color: #b7e0bc;
+}
+
+.code-block pre code {
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  padding: 0;
+}
+
+.copy-btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  padding: 0.28rem 0.55rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--ease), border-color var(--ease), background var(--ease);
+}
+
+.copy-btn:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.copy-btn.copied {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--glow);
+}
+
+/* —— Usage tabs —— */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+  padding: 0.3rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.tab-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--ease), color var(--ease);
+}
+
+.tab-btn:hover {
+  color: var(--text);
+}
+
+.tab-btn[aria-selected="true"] {
+  background: var(--glow-strong);
+  color: var(--primary);
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+.usage-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.usage-note {
+  font-size: 0.88rem;
+  color: var(--muted);
+  padding: 0.85rem 1rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-sm);
+}
+
+.usage-note strong {
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+.path-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.path-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+  font-size: 0.88rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.path-list .os {
+  font-family: var(--mono);
+  font-weight: 650;
+  color: var(--primary);
+  min-width: 5.5rem;
+}
+
+.path-list code {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-bright);
+  background: var(--bg-soft);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
+/* Screenshots */
+.shots {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.shot {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-elevated);
+}
+
+.shot img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top;
+}
+
+.shot figcaption {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+/* CLI table */
+.cli-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+}
+
+.cli-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.cli-table th,
+.cli-table td {
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.cli-table th {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  background: var(--bg-soft);
+  font-weight: 600;
+}
+
+.cli-table tr:last-child td {
+  border-bottom: none;
+}
+
+.cli-table code {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--primary);
+  background: var(--glow);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+/* —— Download —— */
+.download-box {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.download-main {
+  padding: 1.75rem;
+  background:
+    radial-gradient(ellipse 80% 80% at 100% 0%, var(--glow-strong), transparent 50%),
+    var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.download-main h3 {
+  font-size: 1.2rem;
+  color: var(--text-bright);
+  margin-bottom: 0.5rem;
+}
+
+.download-main p {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-bottom: 1.25rem;
+}
+
+.platform-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  font-size: 0.88rem;
+  height: 100%;
+  margin: 0;
+}
+
+.platform-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 0.7rem 0.85rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.platform-list .name {
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.platform-list .meta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* —— Footer —— */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 0 2.5rem;
+  margin-top: 1rem;
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.footer-links a {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.footer-links a:hover {
+  color: var(--primary);
+}
+
+/* —— Mobile —— */
+@media (max-width: 900px) {
+  .hero-grid,
+  .download-box {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-3 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: grid;
+  }
+
+  .nav-actions {
+    gap: 0.4rem;
+  }
+
+  .theme-switch {
+    display: none;
+  }
+
+  .theme-select-wrap {
+    display: inline-flex;
+  }
+
+  .theme-select {
+    max-width: 4.75rem;
+    font-size: 0.7rem;
+    padding: 0.32rem 1.3rem 0.32rem 0.55rem;
+  }
+
+  .platform-list {
+    height: auto;
+  }
+
+  .platform-list li {
+    flex: none;
+  }
+
+  .nav.open .nav-links {
+    display: flex;
+    position: absolute;
+    top: var(--nav-h);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0.5rem;
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav.open .nav-links a {
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: 3rem 0;
+  }
+
+  .hero {
+    padding: 2.25rem 0 1.5rem;
+  }
+
+  .grid-2,
+  .grid-3,
+  .shots {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-select {
+    max-width: 5rem;
+  }
+
+  .tabs {
+    width: 100%;
+  }
+
+  .tab-btn {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem 0.4rem;
+    font-size: 0.72rem;
+  }
+
+  .term-body {
+    min-height: 180px;
+    font-size: 0.72rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 200, 83, 0.35);
+  color: #fff;
+}
+
+/* Focus */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Scrollbar — 轨道用实色背景，避免主题切换时 gutter 闪烁 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+  border: 2px solid var(--bg);
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+  border: 2px solid var(--bg);
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-corner {
+  background: var(--bg);
+}
+
+  
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: var(--glow);
+  color: var(--primary);
+}
+.brand-logo svg {
+  width: 16px;
+  height: 16px;
+}
 </style>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('fgh_site_theme') || 'auto';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'auto');
+      }
+    })();
+  </script>
 </head>
 <body>
-<div class="container">
-  <div class="toolbar">
-    <select id="lang" onchange="switchLang(this.value)">
-      <option value="zh">简体中文</option>
-      <option value="en">English</option>
-      <option value="ja">日本語</option>
-    </select>
-    <button onclick="toggleTheme()" id="themeBtn">☀️</button>
-  </div>
-  <div class="header">
-    <div class="logo-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-      </svg>
+  <nav class="nav" id="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="brand" href="#">
+        <span class="brand-logo" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span>
+        <span>fetch-github-hosts</span>
+      </a>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#get" data-i18n="navGet">$ get</a></li>
+        <li><a href="#features" data-i18n="navFeatures">$ features</a></li>
+        <li><a href="#usage" data-i18n="navUsage">$ usage</a></li>
+        <li><a href="#download" data-i18n="navDownload">$ download</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <label class="lang-select-wrap">
+          <span class="sr-only" data-i18n="langLabel">Language</span>
+          <select id="langSelect" class="lang-select" aria-label="Language">
+            <option value="zh-CN">🇨🇳 简体中文</option>
+            <option value="zh-TW">🇭🇰 繁體中文</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="ko">🇰🇷 한국어</option>
+          </select>
+        </label>
+        <div class="theme-switch" role="group" data-i18n-aria="themeGroup" aria-label="Theme">
+          <button type="button" data-theme-set="light" data-i18n="themeLight" data-i18n-title="themeLightTitle" title="Light">Light</button>
+          <button type="button" data-theme-set="dark" data-i18n="themeDark" data-i18n-title="themeDarkTitle" title="Dark">Dark</button>
+          <button type="button" data-theme-set="auto" data-i18n="themeAuto" data-i18n-title="themeAutoTitle" title="Auto">Auto</button>
+        </div>
+        <label class="theme-select-wrap">
+          <span class="sr-only" data-i18n="themeGroup">Theme</span>
+          <select id="themeSelect" class="theme-select" data-i18n-aria="themeGroup" aria-label="Theme">
+            <option value="light" data-i18n="themeLight">Light</option>
+            <option value="dark" data-i18n="themeDark">Dark</option>
+            <option value="auto" data-i18n="themeAuto">Auto</option>
+          </select>
+        </label>
+        <button type="button" class="nav-toggle" id="navToggle" data-i18n-aria="menuOpen" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"/>
+          </svg>
+        </button>
+      </div>
     </div>
-    <h1>Fetch Github Hosts</h1>
-    <p class="subtitle" data-i18n="subtitle"></p>
-    <div class="time-badge">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      <span data-i18n="lastUpdate"></span> {{FGH_UPDATE_TIME}}
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title" data-i18n="resources"></div>
-    <div class="link-row">
-      <div class="link-info">
-        <div class="link-dot"></div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="wrap hero-grid">
         <div>
-          <div class="link-name">hosts.txt</div>
-          <div class="link-desc" data-i18n="txtDesc"></div>
+          <div class="badge-row">
+            <span class="live-badge"><span class="live-dot" aria-hidden="true"></span> LIVE</span>
+            <span class="update-badge"><span data-i18n="lastUpdate">Last update: </span>{{FGH_UPDATE_TIME}}</span>
+          </div>
+          <h1 data-i18n-html="heroTitle">Speed up <span class="accent">GitHub</span><br>with Hosts sync</h1>
+          <p class="hero-lead" data-i18n="heroLead">
+            A GitHub Hosts synchronization tool for research and learning. Use the desktop client, local server, CLI, or pull hosts files directly into your system.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="/hosts.txt" target="_blank" rel="noopener">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              hosts.txt
+            </a>
+            <a class="btn btn-ghost" href="/hosts.json" target="_blank" rel="noopener">hosts.json</a>
+            <a class="btn btn-soft" href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener" data-i18n="downloadClient">Download client</a>
+          </div>
+          <p class="hero-meta">
+            open source ·
+            <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub</a>
+            · GPL-3.0
+          </p>
+        </div>
+
+        <div class="term" aria-hidden="true">
+          <div class="term-bar">
+            <div class="term-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+            <div class="term-title">fgh@hosts:~ — fetch-github-hosts</div>
+          </div>
+          <div class="term-body">
+            <span class="term-line"><span class="c-prompt">$</span> curl -sL https://hosts.gitcdn.top/hosts.txt | head -n 8</span>
+            <span class="term-line"><span class="c-comment"># fetch-github-hosts begin</span></span>
+            <span class="term-line"><span class="c-dim"># last update: just now</span></span>
+            <span class="term-line"><span class="c-out">140.82.112.4    github.com</span></span>
+            <span class="term-line"><span class="c-out">140.82.114.4    api.github.com</span></span>
+            <span class="term-line"><span class="c-out">185.199.108.153 github.githubassets.com</span></span>
+            <span class="term-line"><span class="c-out">185.199.109.153 camo.githubusercontent.com</span></span>
+            <span class="term-line"><span class="c-comment"># ... more entries</span></span>
+            <span class="term-line"><span class="c-prompt">$</span> <span class="term-cursor"></span></span>
+          </div>
         </div>
       </div>
-      <a href="/hosts.txt" target="_blank" class="link-btn">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span data-i18n="view"></span>
-      </a>
-    </div>
-    <div class="link-row">
-      <div class="link-info">
-        <div class="link-dot" style="background:#3b82f6"></div>
-        <div>
-          <div class="link-name">hosts.json</div>
-          <div class="link-desc" data-i18n="jsonDesc"></div>
+    </section>
+
+    <section class="section" id="get">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title"><span class="prompt">$</span><span data-i18n="getTitle">get — one-click fetch</span></h2>
+          <p class="section-desc" data-i18n="getDesc">Use the public hosts sources or copy commands to write them locally. Great for manual maintenance and automation.</p>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 1rem;">
+          <article class="card resource-card">
+            <div class="resource-top">
+              <span class="resource-dot" aria-hidden="true"></span>
+              <div>
+                <div class="resource-name">hosts.txt</div>
+                <div class="resource-desc" data-i18n="txtDesc">Plain text format — append directly to your system hosts file</div>
+              </div>
+            </div>
+            <div class="resource-url">https://hosts.gitcdn.top/hosts.txt</div>
+            <div class="resource-actions">
+              <a class="btn btn-primary btn-sm" href="/hosts.txt" target="_blank" rel="noopener" data-i18n="open">Open</a>
+              <button type="button" class="btn btn-ghost btn-sm" data-copy="https://hosts.gitcdn.top/hosts.txt" data-i18n="copyLink">Copy link</button>
+            </div>
+          </article>
+
+          <article class="card resource-card">
+            <div class="resource-top">
+              <span class="resource-dot blue" aria-hidden="true"></span>
+              <div>
+                <div class="resource-name">hosts.json</div>
+                <div class="resource-desc" data-i18n="jsonDesc">JSON format — ideal for programmatic use and client sources</div>
+              </div>
+            </div>
+            <div class="resource-url">https://hosts.gitcdn.top/hosts.json</div>
+            <div class="resource-actions">
+              <a class="btn btn-primary btn-sm" href="/hosts.json" target="_blank" rel="noopener" style="background:#3b82f6;border-color:#3b82f6" data-i18n="open">Open</a>
+              <button type="button" class="btn btn-ghost btn-sm" data-copy="https://hosts.gitcdn.top/hosts.json" data-i18n="copyLink">Copy link</button>
+            </div>
+          </article>
+        </div>
+
+        <div class="code-block">
+          <div class="code-head">
+            <span class="code-label" data-i18n="oneClickLabel">Unix / Linux one-liner</span>
+            <button type="button" class="copy-btn" data-copy='sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl -sL https://hosts.gitcdn.top/hosts.txt >> /etc/hosts' data-i18n="copy">Copy</button>
+          </div>
+          <pre><code>sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl -sL https://hosts.gitcdn.top/hosts.txt >> /etc/hosts</code></pre>
+        </div>
+        <p class="usage-note" style="margin-top: 0.85rem;" data-i18n-html="cronTip">
+          <strong>Tip:</strong> Schedule the command with crontab to keep hosts up to date automatically.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title"><span class="prompt">$</span><span data-i18n="featuresTitle">features</span></h2>
+          <p class="section-desc" data-i18n="featuresDesc">Desktop client and server in one — daily sync and private deployment covered.</p>
+        </div>
+        <div class="grid-3">
+          <article class="card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="f1Title">Cross-platform desktop client</h3>
+            <p class="feature-desc" data-i18n="f1Desc">macOS (Intel &amp; Apple Silicon), Windows, and Linux — ready out of the box.</p>
+          </article>
+          <article class="card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9"/><polyline points="21 3 21 9 15 9"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="f2Title">Client mode</h3>
+            <p class="feature-desc" data-i18n="f2Desc">Auto-sync hosts from remote sources. Multiple sources, custom URLs, and scheduled pulls.</p>
+          </article>
+          <article class="card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1"/><circle cx="6" cy="18" r="1"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="f3Title">Server mode</h3>
+            <p class="feature-desc" data-i18n="f3Desc">Self-host DNS resolution with HTTP API and hosts downloads for devices on your network.</p>
+          </article>
+          <article class="card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="f4Title">Dark / light / system theme</h3>
+            <p class="feature-desc" data-i18n="f4Desc">Theme switching on both the desktop app and this site.</p>
+          </article>
+          <article class="card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="f5Title">Multi-language</h3>
+            <p class="feature-desc" data-i18n="f5Desc">Simplified Chinese, Traditional Chinese, English, Japanese, and Korean.</p>
+          </article>
+          <article class="card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h14"/><circle cx="19" cy="12" r="2"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="f6Title">System tray &amp; smart elevation</h3>
+            <p class="feature-desc" data-i18n="f6Desc">Run in the background with one-click start/stop. Session-level privilege for writing hosts.</p>
+          </article>
         </div>
       </div>
-      <a href="/hosts.json" target="_blank" class="link-btn" style="background:#3b82f6">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span data-i18n="view"></span>
-      </a>
+    </section>
+
+    <section class="section" id="usage">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title"><span class="prompt">$</span><span data-i18n="usageTitle">usage</span></h2>
+          <p class="section-desc" data-i18n="usageDesc">Choose desktop client, CLI, or manual hosts editing for your workflow.</p>
+        </div>
+
+        <div class="tabs" role="tablist" data-i18n-aria="usageTabs" aria-label="Usage">
+          <button type="button" class="tab-btn" role="tab" id="tab-client" aria-selected="true" aria-controls="panel-client" data-tab="client" data-i18n="tabClient">Desktop</button>
+          <button type="button" class="tab-btn" role="tab" id="tab-cli" aria-selected="false" aria-controls="panel-cli" data-tab="cli" data-i18n="tabCli">CLI</button>
+          <button type="button" class="tab-btn" role="tab" id="tab-manual" aria-selected="false" aria-controls="panel-manual" data-tab="manual" data-i18n="tabManual">Manual</button>
+        </div>
+
+        <div class="tab-panel active" role="tabpanel" id="panel-client" aria-labelledby="tab-client">
+          <div class="usage-stack">
+            <p class="usage-note" data-i18n-html="clientNote">
+              Download the installer for your platform from
+              <a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">Releases</a>
+              and run the GUI.
+            </p>
+            <div class="shots">
+              <figure class="shot">
+                <img src="https://raw.githubusercontent.com/Licoy/fetch-github-hosts/main/assets/public/docs/client.png" alt="" data-i18n-alt="shotClient" loading="lazy" width="800" height="500">
+                <figcaption data-i18n="shotClient">Client mode</figcaption>
+              </figure>
+              <figure class="shot">
+                <img src="https://raw.githubusercontent.com/Licoy/fetch-github-hosts/main/assets/public/docs/client-start.png" alt="" data-i18n-alt="shotStart" loading="lazy" width="800" height="500">
+                <figcaption data-i18n="shotStart">Start &amp; status</figcaption>
+              </figure>
+              <figure class="shot">
+                <img src="https://raw.githubusercontent.com/Licoy/fetch-github-hosts/main/assets/public/docs/client-select.png" alt="" data-i18n-alt="shotSelect" loading="lazy" width="800" height="500">
+                <figcaption data-i18n="shotSelect">Hosts source selection</figcaption>
+              </figure>
+              <figure class="shot">
+                <img src="https://raw.githubusercontent.com/Licoy/fetch-github-hosts/main/assets/public/docs/server.png" alt="" data-i18n-alt="shotServer" loading="lazy" width="800" height="500">
+                <figcaption data-i18n="shotServer">Server mode</figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" role="tabpanel" id="panel-cli" aria-labelledby="tab-cli" hidden>
+          <div class="usage-stack">
+            <p class="usage-note" data-i18n-html="cliNote">
+              <strong>Note:</strong> On Linux, client mode needs <code class="mono">sudo</code>. Windows / macOS elevate when required.
+            </p>
+
+            <div class="code-block">
+              <div class="code-head">
+                <span class="code-label" data-i18n="startClient">Start client</span>
+                <button type="button" class="copy-btn" data-copy="sudo ./fetch-github-hosts -m client" data-i18n="copy">Copy</button>
+              </div>
+              <pre><code># Linux / macOS
+sudo ./fetch-github-hosts -m client
+
+# Windows
+fetch-github-hosts.exe -m client</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-head">
+                <span class="code-label" data-i18n="startServer">Start server</span>
+                <button type="button" class="copy-btn" data-copy="./fetch-github-hosts -m server" data-i18n="copy">Copy</button>
+              </div>
+              <pre><code># default port 9898
+./fetch-github-hosts -m server
+
+# custom port
+./fetch-github-hosts -m server -p 6666</code></pre>
+            </div>
+
+            <div class="cli-table-wrap">
+              <table class="cli-table">
+                <thead>
+                  <tr>
+                    <th data-i18n="thFlag">Flag</th>
+                    <th data-i18n="thDefault">Default</th>
+                    <th data-i18n="thDesc">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>-m, --mode</code></td>
+                    <td>GUI</td>
+                    <td><code>client</code> / <code>server</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>-i, --interval</code></td>
+                    <td>60</td>
+                    <td data-i18n="cliInterval">Fetch interval (minutes)</td>
+                  </tr>
+                  <tr>
+                    <td><code>-p, --port</code></td>
+                    <td>9898</td>
+                    <td data-i18n="cliPort">Server listen port</td>
+                  </tr>
+                  <tr>
+                    <td><code>-u, --url</code></td>
+                    <td>hosts.gitcdn.top</td>
+                    <td data-i18n="cliUrl">Remote hosts URL for client mode</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" role="tabpanel" id="panel-manual" aria-labelledby="tab-manual" hidden>
+          <div class="usage-stack">
+            <p class="usage-note" data-i18n-html="manualNote">
+              Open
+              <a href="https://hosts.gitcdn.top/hosts.txt" target="_blank" rel="noopener">hosts.txt</a>
+              , paste the content into your system hosts file, then flush DNS.
+            </p>
+
+            <ul class="path-list">
+              <li><span class="os">Linux / macOS</span><code>/etc/hosts</code></li>
+              <li><span class="os">Windows</span><code>C:\Windows\System32\drivers\etc\hosts</code></li>
+            </ul>
+
+            <div class="code-block">
+              <div class="code-head">
+                <span class="code-label" data-i18n="flushDns">Flush DNS</span>
+                <button type="button" class="copy-btn" data-copy="ipconfig /flushdns" data-i18n="copyWindows">Copy Windows</button>
+              </div>
+              <pre><code># Linux (example)
+sudo systemctl restart NetworkManager
+# or: /etc/init.d/network restart
+
+# Windows
+ipconfig /flushdns
+
+# macOS
+sudo killall -HUP mDNSResponder</code></pre>
+            </div>
+
+            <p class="usage-note" data-i18n-html="deployNote">
+              Private deploy: run
+              <code class="mono">fetch-github-hosts -m server -p 9898</code>,
+              then open <code class="mono">http://127.0.0.1:9898</code>.
+              Prefer an overseas node. See the
+              <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub README</a>
+              for details.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="download">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title"><span class="prompt">$</span><span data-i18n="downloadTitle">download</span></h2>
+          <p class="section-desc" data-i18n="downloadDesc">Get the latest desktop packages from GitHub Releases.</p>
+        </div>
+        <div class="download-box">
+          <div class="download-main">
+            <h3 data-i18n="desktopClient">Desktop client</h3>
+            <p data-i18n="desktopClientDesc">GUI · client / server modes · system tray · multi-language</p>
+            <a class="btn btn-primary" href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span data-i18n="goReleases">Go to Releases</span>
+            </a>
+          </div>
+          <ul class="platform-list">
+            <li>
+              <span class="name">macOS</span>
+              <span class="meta">.dmg · Universal</span>
+            </li>
+            <li>
+              <span class="name">Windows</span>
+              <span class="meta">.msi / .exe · x86_64</span>
+            </li>
+            <li>
+              <span class="name">Linux</span>
+              <span class="meta">.deb / AppImage · x86_64</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div><span data-i18n-html="poweredBy">Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">Fetch GitHub Hosts</a></span> V{{FGH_VERSION}}</div>
+      <div class="footer-links">
+        <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/Licoy/fetch-github-hosts/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0</a>
+        <a href="/hosts.txt" target="_blank" rel="noopener">hosts.txt</a>
+        <a href="/hosts.json" target="_blank" rel="noopener">hosts.json</a>
+      </div>
     </div>
-  </div>
-  <div class="footer">
-    <div style="margin-bottom:0.5rem">
-      <a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:6px;background:var(--primary);color:#fff;font-size:0.8rem;text-decoration:none">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span data-i18n="downloadClient"></span>
-      </a>
-    </div>
-    Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank">Fetch Github Hosts</a> V{{FGH_VERSION}}
-  </div>
-</div>
-<script>
-var i18n={
-  zh:{subtitle:"为解决研究及学习人员访问 GitHub 过慢或其他问题而提供的 Github Hosts 同步工具",lastUpdate:"最近更新：",resources:"可用资源",txtDesc:"纯文本格式，可直接追加到系统 hosts 文件",jsonDesc:"JSON 格式，适合程序化调用",view:"查看",downloadClient:"下载桌面客户端"},
-  en:{subtitle:"A Github Hosts synchronization tool to help researchers and learners access GitHub faster",lastUpdate:"Last update: ",resources:"AVAILABLE RESOURCES",txtDesc:"Plain text format, can be appended to system hosts file",jsonDesc:"JSON format, suitable for programmatic use",view:"View",downloadClient:"Download Desktop Client"},
-  ja:{subtitle:"研究者や学習者がGitHubへのアクセスを高速化するためのGithub Hosts同期ツール",lastUpdate:"最終更新：",resources:"利用可能なリソース",txtDesc:"プレーンテキスト形式、システムhostsファイルに追記可能",jsonDesc:"JSON形式、プログラムでの利用に適しています",view:"表示",downloadClient:"デスクトップクライアントをダウンロード"}
-};
-function getStoredOrDefault(key,detectFn){return localStorage.getItem('fgh_'+key)||detectFn()}
-function detectLang(){var l=navigator.language||'zh-CN';if(l.startsWith('ja'))return'ja';if(l.startsWith('en'))return'en';return'zh'}
-function detectTheme(){return window.matchMedia&&window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'}
-var isDark=getStoredOrDefault('theme',detectTheme)==='dark';
-document.body.classList.toggle('light',!isDark);
-document.getElementById('themeBtn').textContent=isDark?'☀️':'🌙';
-function toggleTheme(){isDark=!isDark;document.body.classList.toggle('light',!isDark);document.getElementById('themeBtn').textContent=isDark?'☀️':'🌙';localStorage.setItem('fgh_theme',isDark?'dark':'light')}
-function switchLang(l){var t=i18n[l]||i18n.zh;document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.dataset.i18n;if(t[k])el.textContent=t[k]});document.getElementById('lang').value=l;localStorage.setItem('fgh_lang',l)}
-(function(){var lang=getStoredOrDefault('lang',detectLang);switchLang(lang)})();
-</script>
+  </footer>
+
+  <script>
+    (function () {
+      var THEME_KEY = 'fgh_site_theme';
+      var LANG_KEY = 'fgh_site_lang';
+      var FALLBACK = 'en';
+      var SUPPORTED = ['zh-CN', 'zh-TW', 'en', 'ja', 'ko'];
+
+      var i18n = {
+        en: {
+          langLabel: 'Language',
+          themeGroup: 'Theme',
+          themeLight: 'Light',
+          themeDark: 'Dark',
+          themeAuto: 'Auto',
+          themeLightTitle: 'Light mode',
+          themeDarkTitle: 'Dark mode',
+          themeAutoTitle: 'Follow system',
+          menuOpen: 'Open menu',
+          menuClose: 'Close menu',
+          navGet: '$ get',
+          navFeatures: '$ features',
+          navUsage: '$ usage',
+          navDownload: '$ download',
+          lastUpdate: 'Last update: ',
+          heroTitle: 'Speed up <span class="accent">GitHub</span><br>with Hosts sync',
+          heroLead: 'A GitHub Hosts synchronization tool for research and learning. Use the desktop client, local server, CLI, or pull hosts files directly into your system.',
+          downloadClient: 'Download client',
+          metaDesc: 'Fetch GitHub Hosts — A GitHub Hosts sync tool for faster access. Desktop client, CLI, and one-click hosts.',
+          getTitle: 'get — one-click fetch',
+          getDesc: 'Use the public hosts sources or copy commands to write them locally. Great for manual maintenance and automation.',
+          txtDesc: 'Plain text format — append directly to your system hosts file',
+          jsonDesc: 'JSON format — ideal for programmatic use and client sources',
+          open: 'Open',
+          copyLink: 'Copy link',
+          copy: 'Copy',
+          copied: 'Copied',
+          oneClickLabel: 'Unix / Linux one-liner',
+          cronTip: '<strong>Tip:</strong> Schedule the command with crontab to keep hosts up to date automatically.',
+          featuresTitle: 'features',
+          featuresDesc: 'Desktop client and server in one — daily sync and private deployment covered.',
+          f1Title: 'Cross-platform desktop client',
+          f1Desc: 'macOS (Intel & Apple Silicon), Windows, and Linux — ready out of the box.',
+          f2Title: 'Client mode',
+          f2Desc: 'Auto-sync hosts from remote sources. Multiple sources, custom URLs, and scheduled pulls.',
+          f3Title: 'Server mode',
+          f3Desc: 'Self-host DNS resolution with HTTP API and hosts downloads for devices on your network.',
+          f4Title: 'Dark / light / system theme',
+          f4Desc: 'Theme switching on both the desktop app and this site.',
+          f5Title: 'Multi-language',
+          f5Desc: 'Simplified Chinese, Traditional Chinese, English, Japanese, and Korean.',
+          f6Title: 'System tray & smart elevation',
+          f6Desc: 'Run in the background with one-click start/stop. Session-level privilege for writing hosts.',
+          usageTitle: 'usage',
+          usageDesc: 'Choose desktop client, CLI, or manual hosts editing for your workflow.',
+          usageTabs: 'Usage',
+          tabClient: 'Desktop',
+          tabCli: 'CLI',
+          tabManual: 'Manual',
+          clientNote: 'Download the installer for your platform from <a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">Releases</a> and run the GUI.',
+          shotClient: 'Client mode',
+          shotStart: 'Start & status',
+          shotSelect: 'Hosts source selection',
+          shotServer: 'Server mode',
+          cliNote: '<strong>Note:</strong> On Linux, client mode needs <code class="mono">sudo</code>. Windows / macOS elevate when required.',
+          startClient: 'Start client',
+          startServer: 'Start server',
+          thFlag: 'Flag',
+          thDefault: 'Default',
+          thDesc: 'Description',
+          cliInterval: 'Fetch interval (minutes)',
+          cliPort: 'Server listen port',
+          cliUrl: 'Remote hosts URL for client mode',
+          manualNote: 'Open <a href="https://hosts.gitcdn.top/hosts.txt" target="_blank" rel="noopener">hosts.txt</a>, paste the content into your system hosts file, then flush DNS.',
+          flushDns: 'Flush DNS',
+          copyWindows: 'Copy Windows',
+          deployNote: 'Private deploy: run <code class="mono">fetch-github-hosts -m server -p 9898</code>, then open <code class="mono">http://127.0.0.1:9898</code>. Prefer an overseas node. See the <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub README</a> for details.',
+          downloadTitle: 'download',
+          downloadDesc: 'Get the latest desktop packages from GitHub Releases.',
+          desktopClient: 'Desktop client',
+          desktopClientDesc: 'GUI · client / server modes · system tray · multi-language',
+          goReleases: 'Go to Releases',
+          poweredBy: 'Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">Fetch GitHub Hosts</a>'
+        },
+        'zh-CN': {
+          langLabel: '语言',
+          themeGroup: '主题切换',
+          themeLight: '浅色',
+          themeDark: '深色',
+          themeAuto: '自动',
+          themeLightTitle: '浅色模式',
+          themeDarkTitle: '深色模式',
+          themeAutoTitle: '跟随系统',
+          menuOpen: '打开菜单',
+          menuClose: '关闭菜单',
+          navGet: '$ 获取',
+          navFeatures: '$ 特性',
+          navUsage: '$ 使用',
+          navDownload: '$ 下载',
+          lastUpdate: '最近更新：',
+          heroTitle: '加速访问 <span class="accent">GitHub</span><br>的 Hosts 同步工具',
+          heroLead: '为研究与学习场景提供 GitHub 相关域名解析同步。支持桌面客户端、本地服务端与命令行，也可直接拉取 hosts 文件写入系统。',
+          downloadClient: '下载客户端',
+          metaDesc: 'Fetch GitHub Hosts — 解决访问 GitHub 过慢的 Hosts 同步工具，支持桌面客户端、命令行与一键获取。',
+          getTitle: 'get — 一键获取',
+          getDesc: '直接使用公开 hosts 源，或复制命令写入本机。适合手动维护与自动化脚本。',
+          txtDesc: '纯文本格式，可直接追加到系统 hosts 文件',
+          jsonDesc: 'JSON 格式，适合程序化调用与客户端源',
+          open: '打开',
+          copyLink: '复制链接',
+          copy: '复制',
+          copied: '已复制',
+          oneClickLabel: 'Unix / Linux 一键追加',
+          cronTip: '<strong>提示：</strong>可配合 crontab 定时执行上述命令，保持 hosts 自动更新。',
+          featuresTitle: 'features — 特性',
+          featuresDesc: '桌面端与服务端一体，覆盖日常同步与私有部署场景。',
+          f1Title: '跨平台桌面客户端',
+          f1Desc: '支持 macOS（Intel & Apple Silicon）、Windows、Linux，开箱即用。',
+          f2Title: '客户端模式',
+          f2Desc: '从远程源自动同步 Hosts 到系统，支持多源与自定义 URL、定时拉取。',
+          f3Title: '服务端模式',
+          f3Desc: '自建解析服务，提供 HTTP API 与 hosts 文件下载，供局域网设备共用。',
+          f4Title: '深色 / 浅色 / 跟随系统',
+          f4Desc: '客户端与本站均支持主题切换，适配不同环境与偏好。',
+          f5Title: '多语言',
+          f5Desc: '支持简体中文、繁体中文、English、日本語、한국어。',
+          f6Title: '系统托盘 & 智能提权',
+          f6Desc: '后台运行、一键启停；写入 Hosts 时会话级授权，减少重复输入密码。',
+          usageTitle: 'usage — 使用方式',
+          usageDesc: '按场景选择桌面客户端、命令行，或手动写入 hosts。',
+          usageTabs: '使用方式',
+          tabClient: '桌面客户端',
+          tabCli: '命令行',
+          tabManual: '手动写入',
+          clientNote: '前往 <a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">Releases</a> 下载对应平台安装包，安装后即可使用图形界面。',
+          shotClient: '客户端模式',
+          shotStart: '启动与运行状态',
+          shotSelect: 'Hosts 源选择',
+          shotServer: '服务端模式',
+          cliNote: '<strong>注意：</strong>Linux 下客户端模式需使用 <code class="mono">sudo</code>；Windows / macOS 会按需提权。',
+          startClient: '启动客户端',
+          startServer: '启动服务端',
+          thFlag: '参数',
+          thDefault: '默认',
+          thDesc: '说明',
+          cliInterval: '获取间隔（分钟）',
+          cliPort: '服务端监听端口',
+          cliUrl: '客户端远程 hosts 地址',
+          manualNote: '打开 <a href="https://hosts.gitcdn.top/hosts.txt" target="_blank" rel="noopener">hosts.txt</a>，将内容粘贴到系统 hosts 文件中，然后刷新 DNS。',
+          flushDns: '刷新生效',
+          copyWindows: '复制 Windows',
+          deployNote: '私有部署：以服务模式运行 <code class="mono">fetch-github-hosts -m server -p 9898</code>，浏览器访问 <code class="mono">http://127.0.0.1:9898</code>。建议部署在海外节点。更多说明见 <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub README</a>。',
+          downloadTitle: 'download — 下载',
+          downloadDesc: '从 GitHub Releases 获取最新桌面安装包。',
+          desktopClient: '桌面客户端',
+          desktopClientDesc: '图形界面 · 客户端 / 服务端模式 · 系统托盘 · 多语言',
+          goReleases: '前往 Releases 下载',
+          poweredBy: 'Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">Fetch GitHub Hosts</a>'
+        },
+        'zh-TW': {
+          langLabel: '語言',
+          themeGroup: '主題切換',
+          themeLight: '淺色',
+          themeDark: '深色',
+          themeAuto: '自動',
+          themeLightTitle: '淺色模式',
+          themeDarkTitle: '深色模式',
+          themeAutoTitle: '跟隨系統',
+          menuOpen: '開啟選單',
+          menuClose: '關閉選單',
+          navGet: '$ 取得',
+          navFeatures: '$ 特性',
+          navUsage: '$ 使用',
+          navDownload: '$ 下載',
+          lastUpdate: '最近更新：',
+          heroTitle: '加速存取 <span class="accent">GitHub</span><br>的 Hosts 同步工具',
+          heroLead: '為研究與學習場景提供 GitHub 相關網域解析同步。支援桌面用戶端、本機伺服器與命令列，也可直接擷取 hosts 檔寫入系統。',
+          downloadClient: '下載用戶端',
+          metaDesc: 'Fetch GitHub Hosts — 解決存取 GitHub 過慢的 Hosts 同步工具，支援桌面用戶端、命令列與一鍵取得。',
+          getTitle: 'get — 一鍵取得',
+          getDesc: '直接使用公開 hosts 來源，或複製指令寫入本機。適合手動維護與自動化腳本。',
+          txtDesc: '純文字格式，可直接追加到系統 hosts 檔',
+          jsonDesc: 'JSON 格式，適合程式化呼叫與用戶端來源',
+          open: '開啟',
+          copyLink: '複製連結',
+          copy: '複製',
+          copied: '已複製',
+          oneClickLabel: 'Unix / Linux 一鍵追加',
+          cronTip: '<strong>提示：</strong>可搭配 crontab 定時執行上述指令，保持 hosts 自動更新。',
+          featuresTitle: 'features — 特性',
+          featuresDesc: '桌面端與伺服器端一體，涵蓋日常同步與私有部署場景。',
+          f1Title: '跨平台桌面用戶端',
+          f1Desc: '支援 macOS（Intel & Apple Silicon）、Windows、Linux，開箱即用。',
+          f2Title: '用戶端模式',
+          f2Desc: '從遠端來源自動同步 Hosts 到系統，支援多來源、自訂 URL 與定時拉取。',
+          f3Title: '伺服器模式',
+          f3Desc: '自建解析服務，提供 HTTP API 與 hosts 檔下載，供區網裝置共用。',
+          f4Title: '深色 / 淺色 / 跟隨系統',
+          f4Desc: '用戶端與本站皆支援主題切換，適配不同環境與偏好。',
+          f5Title: '多語言',
+          f5Desc: '支援簡體中文、繁體中文、English、日本語、한국어。',
+          f6Title: '系統匣 & 智慧提權',
+          f6Desc: '背景執行、一鍵啟停；寫入 Hosts 時工作階段級授權，減少重複輸入密碼。',
+          usageTitle: 'usage — 使用方式',
+          usageDesc: '依場景選擇桌面用戶端、命令列，或手動寫入 hosts。',
+          usageTabs: '使用方式',
+          tabClient: '桌面用戶端',
+          tabCli: '命令列',
+          tabManual: '手動寫入',
+          clientNote: '前往 <a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">Releases</a> 下載對應平台安裝包，安裝後即可使用圖形介面。',
+          shotClient: '用戶端模式',
+          shotStart: '啟動與執行狀態',
+          shotSelect: 'Hosts 來源選擇',
+          shotServer: '伺服器模式',
+          cliNote: '<strong>注意：</strong>Linux 下用戶端模式需使用 <code class="mono">sudo</code>；Windows / macOS 會按需提權。',
+          startClient: '啟動用戶端',
+          startServer: '啟動伺服器',
+          thFlag: '參數',
+          thDefault: '預設',
+          thDesc: '說明',
+          cliInterval: '取得間隔（分鐘）',
+          cliPort: '伺服器監聽埠',
+          cliUrl: '用戶端遠端 hosts 位址',
+          manualNote: '開啟 <a href="https://hosts.gitcdn.top/hosts.txt" target="_blank" rel="noopener">hosts.txt</a>，將內容貼到系統 hosts 檔，然後重新整理 DNS。',
+          flushDns: '重新整理生效',
+          copyWindows: '複製 Windows',
+          deployNote: '私有部署：以伺服器模式執行 <code class="mono">fetch-github-hosts -m server -p 9898</code>，瀏覽器造訪 <code class="mono">http://127.0.0.1:9898</code>。建議部署在海外節點。更多說明見 <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub README</a>。',
+          downloadTitle: 'download — 下載',
+          downloadDesc: '從 GitHub Releases 取得最新桌面安裝包。',
+          desktopClient: '桌面用戶端',
+          desktopClientDesc: '圖形介面 · 用戶端 / 伺服器模式 · 系統匣 · 多語言',
+          goReleases: '前往 Releases 下載',
+          poweredBy: 'Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">Fetch GitHub Hosts</a>'
+        },
+        ja: {
+          langLabel: '言語',
+          themeGroup: 'テーマ',
+          themeLight: 'ライト',
+          themeDark: 'ダーク',
+          themeAuto: '自動',
+          themeLightTitle: 'ライトモード',
+          themeDarkTitle: 'ダークモード',
+          themeAutoTitle: 'システムに合わせる',
+          menuOpen: 'メニューを開く',
+          menuClose: 'メニューを閉じる',
+          navGet: '$ 取得',
+          navFeatures: '$ 機能',
+          navUsage: '$ 使い方',
+          navDownload: '$ ダウンロード',
+          lastUpdate: '最終更新：',
+          heroTitle: '<span class="accent">GitHub</span> を高速化する<br>Hosts 同期ツール',
+          heroLead: '研究・学習向けの GitHub Hosts 同期ツールです。デスクトップ、ローカルサーバー、CLI、または hosts ファイルの直接取得に対応します。',
+          downloadClient: 'クライアントをダウンロード',
+          metaDesc: 'Fetch GitHub Hosts — GitHub へのアクセスを高速化する Hosts 同期ツール。デスクトップ、CLI、ワンクリック取得対応。',
+          getTitle: 'get — ワンクリック取得',
+          getDesc: '公開 hosts ソースを使うか、コマンドをコピーしてローカルに書き込みます。手動管理や自動化に便利です。',
+          txtDesc: 'プレーンテキスト形式。システムの hosts に追記可能',
+          jsonDesc: 'JSON 形式。プログラムやクライアントソース向け',
+          open: '開く',
+          copyLink: 'リンクをコピー',
+          copy: 'コピー',
+          copied: 'コピー済み',
+          oneClickLabel: 'Unix / Linux ワンライナー',
+          cronTip: '<strong>ヒント：</strong>crontab で上記コマンドを定期実行すると hosts を自動更新できます。',
+          featuresTitle: 'features — 機能',
+          featuresDesc: 'デスクトップとサーバーを一体化。日常の同期とプライベート配備をカバー。',
+          f1Title: 'クロスプラットフォーム',
+          f1Desc: 'macOS（Intel & Apple Silicon）、Windows、Linux に対応。すぐ使えます。',
+          f2Title: 'クライアントモード',
+          f2Desc: 'リモートソースから hosts を自動同期。複数ソース、カスタム URL、定期取得に対応。',
+          f3Title: 'サーバーモード',
+          f3Desc: '独自の解決サービスを立て、HTTP API と hosts 配信で LAN 機器と共有。',
+          f4Title: 'ダーク / ライト / システム',
+          f4Desc: 'デスクトップと本サイトの両方でテーマ切替が可能。',
+          f5Title: '多言語',
+          f5Desc: '簡体字中国語、繁体字中国語、English、日本語、한국어に対応。',
+          f6Title: 'トレイ & スマート昇格',
+          f6Desc: 'バックグラウンド実行とワンクリック起動/停止。hosts 書き込み時のセッション昇格。',
+          usageTitle: 'usage — 使い方',
+          usageDesc: 'デスクトップ、CLI、手動 hosts 編集から選べます。',
+          usageTabs: '使い方',
+          tabClient: 'デスクトップ',
+          tabCli: 'CLI',
+          tabManual: '手動',
+          clientNote: '<a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">Releases</a> から対応プラットフォームのインストーラーを入手し、GUI を起動してください。',
+          shotClient: 'クライアントモード',
+          shotStart: '起動と状態',
+          shotSelect: 'Hosts ソース選択',
+          shotServer: 'サーバーモード',
+          cliNote: '<strong>注意：</strong>Linux のクライアントモードは <code class="mono">sudo</code> が必要です。Windows / macOS は必要時に昇格します。',
+          startClient: 'クライアント起動',
+          startServer: 'サーバー起動',
+          thFlag: 'フラグ',
+          thDefault: '既定',
+          thDesc: '説明',
+          cliInterval: '取得間隔（分）',
+          cliPort: 'サーバー待受ポート',
+          cliUrl: 'クライアント用リモート hosts URL',
+          manualNote: '<a href="https://hosts.gitcdn.top/hosts.txt" target="_blank" rel="noopener">hosts.txt</a> を開き、内容をシステムの hosts に貼り付けた後、DNS をフラッシュしてください。',
+          flushDns: 'DNS をフラッシュ',
+          copyWindows: 'Windows をコピー',
+          deployNote: 'プライベート配備：<code class="mono">fetch-github-hosts -m server -p 9898</code> を実行し、<code class="mono">http://127.0.0.1:9898</code> を開きます。海外ノード推奨。詳細は <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub README</a> を参照。',
+          downloadTitle: 'download — ダウンロード',
+          downloadDesc: 'GitHub Releases から最新のデスクトップパッケージを取得。',
+          desktopClient: 'デスクトップクライアント',
+          desktopClientDesc: 'GUI · クライアント / サーバー · トレイ · 多言語',
+          goReleases: 'Releases へ',
+          poweredBy: 'Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">Fetch GitHub Hosts</a>'
+        },
+        ko: {
+          langLabel: '언어',
+          themeGroup: '테마',
+          themeLight: '라이트',
+          themeDark: '다크',
+          themeAuto: '자동',
+          themeLightTitle: '라이트 모드',
+          themeDarkTitle: '다크 모드',
+          themeAutoTitle: '시스템 따르기',
+          menuOpen: '메뉴 열기',
+          menuClose: '메뉴 닫기',
+          navGet: '$ 가져오기',
+          navFeatures: '$ 기능',
+          navUsage: '$ 사용',
+          navDownload: '$ 다운로드',
+          lastUpdate: '최근 업데이트: ',
+          heroTitle: '<span class="accent">GitHub</span> 접속을 가속하는<br>Hosts 동기화 도구',
+          heroLead: '연구·학습을 위한 GitHub Hosts 동기화 도구입니다. 데스크톱 클라이언트, 로컬 서버, CLI, 또는 hosts 파일 직접 가져오기를 지원합니다.',
+          downloadClient: '클라이언트 다운로드',
+          metaDesc: 'Fetch GitHub Hosts — GitHub 접속을 빠르게 하는 Hosts 동기화 도구. 데스크톱, CLI, 원클릭 제공.',
+          getTitle: 'get — 원클릭 가져오기',
+          getDesc: '공개 hosts 소스를 사용하거나 명령을 복사해 로컬에 기록하세요. 수동 관리와 자동화에 적합합니다.',
+          txtDesc: '순수 텍스트 형식 — 시스템 hosts에 바로 추가 가능',
+          jsonDesc: 'JSON 형식 — 프로그래밍 호출 및 클라이언트 소스에 적합',
+          open: '열기',
+          copyLink: '링크 복사',
+          copy: '복사',
+          copied: '복사됨',
+          oneClickLabel: 'Unix / Linux 원라이너',
+          cronTip: '<strong>팁:</strong> crontab으로 위 명령을 주기 실행하면 hosts를 자동 갱신할 수 있습니다.',
+          featuresTitle: 'features — 기능',
+          featuresDesc: '데스크톱과 서버를 하나로 — 일상 동기화와 사설 배포를 지원합니다.',
+          f1Title: '크로스 플랫폼 데스크톱',
+          f1Desc: 'macOS(Intel & Apple Silicon), Windows, Linux 지원. 바로 사용 가능.',
+          f2Title: '클라이언트 모드',
+          f2Desc: '원격 소스에서 hosts를 자동 동기화. 다중 소스, 사용자 URL, 예약 가져오기 지원.',
+          f3Title: '서버 모드',
+          f3Desc: '자체 DNS 해석 서비스와 HTTP API, hosts 다운로드로 LAN 기기와 공유.',
+          f4Title: '다크 / 라이트 / 시스템',
+          f4Desc: '데스크톱 앱과 이 사이트 모두 테마 전환을 지원합니다.',
+          f5Title: '다국어',
+          f5Desc: '간체 중국어, 번체 중국어, English, 日本語, 한국어 지원.',
+          f6Title: '시스템 트레이 & 스마트 권한',
+          f6Desc: '백그라운드 실행, 원클릭 시작/중지. hosts 쓰기 시 세션 권한 상승.',
+          usageTitle: 'usage — 사용 방법',
+          usageDesc: '데스크톱, CLI, 수동 hosts 편집 중 선택하세요.',
+          usageTabs: '사용 방법',
+          tabClient: '데스크톱',
+          tabCli: 'CLI',
+          tabManual: '수동',
+          clientNote: '<a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">Releases</a>에서 플랫폼 설치 파일을 받아 GUI를 실행하세요.',
+          shotClient: '클라이언트 모드',
+          shotStart: '시작 및 상태',
+          shotSelect: 'Hosts 소스 선택',
+          shotServer: '서버 모드',
+          cliNote: '<strong>참고:</strong> Linux 클라이언트 모드는 <code class="mono">sudo</code>가 필요합니다. Windows / macOS는 필요 시 권한을 상승합니다.',
+          startClient: '클라이언트 시작',
+          startServer: '서버 시작',
+          thFlag: '플래그',
+          thDefault: '기본값',
+          thDesc: '설명',
+          cliInterval: '가져오기 간격(분)',
+          cliPort: '서버 수신 포트',
+          cliUrl: '클라이언트 원격 hosts URL',
+          manualNote: '<a href="https://hosts.gitcdn.top/hosts.txt" target="_blank" rel="noopener">hosts.txt</a>를 열어 시스템 hosts에 붙여 넣은 뒤 DNS를 플러시하세요.',
+          flushDns: 'DNS 플러시',
+          copyWindows: 'Windows 복사',
+          deployNote: '사설 배포: <code class="mono">fetch-github-hosts -m server -p 9898</code> 실행 후 <code class="mono">http://127.0.0.1:9898</code> 접속. 해외 노드 권장. 자세한 내용은 <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub README</a> 참고.',
+          downloadTitle: 'download — 다운로드',
+          downloadDesc: 'GitHub Releases에서 최신 데스크톱 패키지를 받으세요.',
+          desktopClient: '데스크톱 클라이언트',
+          desktopClientDesc: 'GUI · 클라이언트 / 서버 · 트레이 · 다국어',
+          goReleases: 'Releases로 이동',
+          poweredBy: 'Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">Fetch GitHub Hosts</a>'
+        }
+      };
+
+      var root = document.documentElement;
+      var nav = document.getElementById('nav');
+      var navToggle = document.getElementById('navToggle');
+      var navLinks = document.getElementById('navLinks');
+      var langSelect = document.getElementById('langSelect');
+      var themeSelect = document.getElementById('themeSelect');
+      var mql = window.matchMedia('(prefers-color-scheme: dark)');
+      var compactMql = window.matchMedia('(max-width: 900px)');
+      var currentLang = FALLBACK;
+
+      var LANG_META = {
+        'zh-CN': { emoji: '🇨🇳', name: '简体中文' },
+        'zh-TW': { emoji: '🇭🇰', name: '繁體中文' },
+        en: { emoji: '🇺🇸', name: 'English' },
+        ja: { emoji: '🇯🇵', name: '日本語' },
+        ko: { emoji: '🇰🇷', name: '한국어' }
+      };
+
+      function t(key) {
+        var pack = i18n[currentLang] || i18n[FALLBACK];
+        if (pack[key] != null) return pack[key];
+        return i18n[FALLBACK][key] != null ? i18n[FALLBACK][key] : key;
+      }
+
+      function detectLang() {
+        var list = [];
+        if (navigator.languages && navigator.languages.length) {
+          for (var i = 0; i < navigator.languages.length; i++) list.push(navigator.languages[i]);
+        }
+        if (navigator.language) list.push(navigator.language);
+        if (navigator.userLanguage) list.push(navigator.userLanguage);
+
+        for (var j = 0; j < list.length; j++) {
+          var raw = (list[j] || '').replace(/_/g, '-');
+          if (!raw) continue;
+          var lower = raw.toLowerCase();
+          var base = lower.split('-')[0];
+          var region = lower.split('-')[1] || '';
+
+          if (base === 'zh') {
+            if (region === 'tw' || region === 'hk' || region === 'mo' || lower.indexOf('hant') !== -1) {
+              return 'zh-TW';
+            }
+            return 'zh-CN';
+          }
+          if (base === 'ja') return 'ja';
+          if (base === 'ko') return 'ko';
+          if (base === 'en') return 'en';
+        }
+        return FALLBACK;
+      }
+
+      function getStoredLang() {
+        try {
+          var stored = localStorage.getItem(LANG_KEY);
+          if (stored && SUPPORTED.indexOf(stored) !== -1) return stored;
+        } catch (e) {}
+        return null;
+      }
+
+      function isCompactNav() {
+        return compactMql.matches;
+      }
+
+      function refreshLangOptions() {
+        if (!langSelect) return;
+        var compact = isCompactNav();
+        var selected = langSelect.value;
+        Array.prototype.forEach.call(langSelect.options, function (opt) {
+          var meta = LANG_META[opt.value];
+          if (!meta) return;
+          opt.textContent = compact ? meta.emoji : meta.emoji + ' ' + meta.name;
+        });
+        langSelect.value = selected;
+        langSelect.classList.toggle('lang-select--emoji', compact);
+      }
+
+      function applyLang(lang) {
+        if (SUPPORTED.indexOf(lang) === -1) lang = FALLBACK;
+        currentLang = lang;
+        root.setAttribute('lang', lang === 'zh-CN' ? 'zh-CN' : lang === 'zh-TW' ? 'zh-TW' : lang);
+        try {
+          localStorage.setItem(LANG_KEY, lang);
+        } catch (e) {}
+        if (langSelect) langSelect.value = lang;
+        refreshLangOptions();
+
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n');
+          var val = t(key);
+          if (val != null) el.textContent = val;
+        });
+        document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n-html');
+          var val = t(key);
+          if (val != null) el.innerHTML = val;
+        });
+        document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n-title');
+          var val = t(key);
+          if (val != null) el.setAttribute('title', val);
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n-aria');
+          var val = t(key);
+          if (val != null) el.setAttribute('aria-label', val);
+        });
+        document.querySelectorAll('[data-i18n-alt]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n-alt');
+          var val = t(key);
+          if (val != null) el.setAttribute('alt', val);
+        });
+
+        var meta = document.querySelector('meta[name="description"]');
+        if (meta) meta.setAttribute('content', t('metaDesc'));
+
+        if (navToggle) {
+          var open = nav.classList.contains('open');
+          navToggle.setAttribute('aria-label', open ? t('menuClose') : t('menuOpen'));
+        }
+      }
+
+      /* Theme */
+      function getTheme() {
+        try {
+          return localStorage.getItem(THEME_KEY) || 'auto';
+        } catch (e) {
+          return 'auto';
+        }
+      }
+
+      function resolvedTheme(mode) {
+        if (mode === 'light' || mode === 'dark') return mode;
+        return mql.matches ? 'dark' : 'light';
+      }
+
+      function applyTheme(mode) {
+        if (mode !== 'light' && mode !== 'dark' && mode !== 'auto') mode = 'auto';
+        root.setAttribute('data-theme', mode);
+        try {
+          localStorage.setItem(THEME_KEY, mode);
+        } catch (e) {}
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+          meta.setAttribute('content', resolvedTheme(mode) === 'light' ? '#f4f7f4' : '#0b0f0c');
+        }
+        document.querySelectorAll('[data-theme-set]').forEach(function (btn) {
+          btn.setAttribute('aria-pressed', btn.getAttribute('data-theme-set') === mode ? 'true' : 'false');
+        });
+        if (themeSelect) themeSelect.value = mode;
+      }
+
+      applyTheme(getTheme());
+      applyLang(getStoredLang() || detectLang());
+
+      document.querySelectorAll('[data-theme-set]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          applyTheme(btn.getAttribute('data-theme-set'));
+        });
+      });
+
+      if (themeSelect) {
+        themeSelect.addEventListener('change', function () {
+          applyTheme(themeSelect.value);
+        });
+      }
+
+      if (langSelect) {
+        langSelect.addEventListener('change', function () {
+          applyLang(langSelect.value);
+        });
+      }
+
+      function onSchemeChange() {
+        if (getTheme() === 'auto') applyTheme('auto');
+      }
+      if (mql.addEventListener) mql.addEventListener('change', onSchemeChange);
+      else if (mql.addListener) mql.addListener(onSchemeChange);
+
+      function onCompactChange() {
+        refreshLangOptions();
+      }
+      if (compactMql.addEventListener) compactMql.addEventListener('change', onCompactChange);
+      else if (compactMql.addListener) compactMql.addListener(onCompactChange);
+
+      /* Mobile nav */
+      if (navToggle) {
+        navToggle.addEventListener('click', function () {
+          var open = nav.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          navToggle.setAttribute('aria-label', open ? t('menuClose') : t('menuOpen'));
+        });
+        navLinks.querySelectorAll('a').forEach(function (a) {
+          a.addEventListener('click', function () {
+            nav.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+            navToggle.setAttribute('aria-label', t('menuOpen'));
+          });
+        });
+      }
+
+      /* Tabs */
+      var tabs = document.querySelectorAll('.tab-btn');
+      var panels = {
+        client: document.getElementById('panel-client'),
+        cli: document.getElementById('panel-cli'),
+        manual: document.getElementById('panel-manual')
+      };
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var name = tab.getAttribute('data-tab');
+          tabs.forEach(function (tb) {
+            tb.setAttribute('aria-selected', tb === tab ? 'true' : 'false');
+          });
+          Object.keys(panels).forEach(function (key) {
+            var panel = panels[key];
+            var on = key === name;
+            panel.classList.toggle('active', on);
+            if (on) panel.removeAttribute('hidden');
+            else panel.setAttribute('hidden', '');
+          });
+        });
+      });
+
+      /* Copy */
+      function fallbackCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+        } catch (e) {}
+        document.body.removeChild(ta);
+      }
+
+      function copyText(text, el) {
+        var done = function () {
+          if (!el) return;
+          var prev = el.textContent;
+          el.textContent = t('copied');
+          el.classList.add('copied');
+          setTimeout(function () {
+            el.textContent = prev;
+            el.classList.remove('copied');
+          }, 1400);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {
+            fallbackCopy(text);
+            done();
+          });
+        } else {
+          fallbackCopy(text);
+          done();
+        }
+      }
+
+      document.querySelectorAll('[data-copy]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          copyText(el.getAttribute('data-copy') || '', el);
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
