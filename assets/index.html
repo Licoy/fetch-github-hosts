@@ -1,166 +1,1072 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="auto">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fetch Github Hosts</title>
-    <link rel="stylesheet" href="public/style.min.css" type="text/css" charset="utf-8"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fetch GitHub Hosts — A GitHub Hosts sync tool for faster access. Desktop client, CLI, and one-click hosts.">
+  <meta name="theme-color" content="#0b0f0c">
+  <title>Fetch GitHub Hosts</title>
+  <link rel="icon" href="public/logo.png" type="image/png">
+  <link rel="stylesheet" href="public/style.css">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('fgh_site_theme') || 'auto';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'auto');
+      }
+    })();
+  </script>
 </head>
 <body>
-<div align="center">
-    <h2>Fetch GitHub Hosts</h2>
-    <p><img src="public/logo.png" alt="LOGO" /></p>
-    <p><code>fetch-github-hosts</code> 是主要为解决研究及学习人员访问 <code>Github</code> 过慢或其他问题而提供的 <code>Github Hosts</code> 同步工具</p>
-    <p><a href="https://github.com/Licoy/fetch-github-hosts"><img src="https://img.shields.io/github/v/release/Licoy/fetch-github-hosts.svg?logo=git" alt="Release" /></a>
-        <a href="https://github.com/Licoy/fetch-github-hosts"><img src="https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20Linux%20&%20Windows/badge.svg" alt="Build Linux & Windows" /></a>
-        <a href="https://github.com/Licoy/fetch-github-hosts"><img src="https://github.com/Licoy/fetch-github-hosts/workflows/Build%20for%20MacOS/badge.svg" alt="Build MacOS" /></a>
-</div>
-<h2>原理</h2>
-<p>此项目是通过部署此项目本身的服务器来获取 <code>github.com</code> 的 <code>hosts</code>，而不是通过第三方ip地址接口来进行获取，例如 <code>ipaddress.com</code> 等。</p>
-<p>最近获取时间：
-    <span style="color:green">
-            <!--time-->
-        </span>
-    <span>&nbsp;</span>
-    [<a href="/hosts.txt" target="_blank">hosts.txt</a>]
-    [<a href="/hosts.json" target="_blank">hosts.json</a>]
-</p>
-<h2>使用方法</h2>
-<h3>图形化界面</h3>
-<p>到 <a href="https://github.com/Licoy/fetch-github-hosts/releases">Releases</a> 中下载您的系统版本（目前支持<code>Windows</code>/<code>Linux</code>/<code>MacOS</code>
-    ）</p>
-<p>下载完成解压<code>tar.gz</code>压缩包，运行对应平台的执行文件即可运行（ ⚠️ 注意：Linux下需要用<code>sudo</code>进行启动，Windows和MacOS会自动进行提权操作。）</p>
-<h4>客户端模式</h4>
-<p><img src="public/docs/client.png" alt="client" /></p>
-<h4>客户端启动</h4>
-<p><img src="public/docs/client-start.png" alt="client-start" /></p>
-<h4>客户端hosts源选择</h4>
-<p><img src="public/docs/client-select.png" alt="client-select" /></p>
-<h4>客户端hosts源自定义</h4>
-<p><img src="public/docs/client-custom.png" alt="client-custom" /></p>
-<h4>服务端模式</h4>
-<p><img src="public/docs/server.png" alt="server" /></p>
-<h3>命令行终端</h3>
-<p>到 <a href="https://github.com/Licoy/fetch-github-hosts/releases">Releases</a> 中下载您的系统版本（目前支持<code>Windows</code>/<code>Linux</code>/<code>MacOS</code>
-    ）</p>
-<h4>参数</h4>
-<table>
-    <thead>
-    <tr>
-        <th>参数名</th>
-        <th>缩写</th>
-        <th>默认值</th>
-        <th>必填</th>
-        <th>描述</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td><code>mode</code></td>
-        <td><code>m</code></td>
-        <td>无</td>
-        <td>是</td>
-        <td>启动模式 <code>server（服务端）</code> / <code>client（客户端）</code></td>
-    </tr>
-    <tr>
-        <td><code>interval</code></td>
-        <td><code>i</code></td>
-        <td>60</td>
-        <td>否</td>
-        <td>获取记录值间隔（分钟）</td>
-    </tr>
-    <tr>
-        <td><code>port</code></td>
-        <td><code>p</code></td>
-        <td>9898</td>
-        <td>否</td>
-        <td>服务模式监听端口以访问HTTP服务</td>
-    </tr>
-    <tr>
-        <td><code>url</code></td>
-        <td><code>u</code></td>
-        <td><code>https://hosts.gitcdn.top/hosts.txt</code></td>
-        <td>否</td>
-        <td>客户端模式远程hosts获取链接</td>
-    </tr>
-    </tbody>
-</table>
-<h4>启动客户端：</h4>
-<blockquote>
-    <p>注意：</p>
-    <p>Linux下需要使用<code>sudo</code>运行；</p>
-    <p>Windows和MacOS会自动进行提权操作。</p>
-</blockquote>
-<ul>
-    <li>直接运行</li>
-</ul>
-<pre><code class="language-bash"># Linux/Macos
-sudo fetch-github-hosts -m=client
+  <nav class="nav" id="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="brand" href="#">
+        <img src="public/logo.png" width="28" height="28" alt="">
+        <span>fetch-github-hosts</span>
+      </a>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#get" data-i18n="navGet">$ get</a></li>
+        <li><a href="#features" data-i18n="navFeatures">$ features</a></li>
+        <li><a href="#usage" data-i18n="navUsage">$ usage</a></li>
+        <li><a href="#download" data-i18n="navDownload">$ download</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <label class="lang-select-wrap">
+          <span class="sr-only" data-i18n="langLabel">Language</span>
+          <select id="langSelect" class="lang-select" aria-label="Language">
+            <option value="zh-CN">🇨🇳 简体中文</option>
+            <option value="zh-TW">🇭🇰 繁體中文</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="ko">🇰🇷 한국어</option>
+          </select>
+        </label>
+        <div class="theme-switch" role="group" data-i18n-aria="themeGroup" aria-label="Theme">
+          <button type="button" data-theme-set="light" data-i18n="themeLight" data-i18n-title="themeLightTitle" title="Light">Light</button>
+          <button type="button" data-theme-set="dark" data-i18n="themeDark" data-i18n-title="themeDarkTitle" title="Dark">Dark</button>
+          <button type="button" data-theme-set="auto" data-i18n="themeAuto" data-i18n-title="themeAutoTitle" title="Auto">Auto</button>
+        </div>
+        <label class="theme-select-wrap">
+          <span class="sr-only" data-i18n="themeGroup">Theme</span>
+          <select id="themeSelect" class="theme-select" data-i18n-aria="themeGroup" aria-label="Theme">
+            <option value="light" data-i18n="themeLight">Light</option>
+            <option value="dark" data-i18n="themeDark">Dark</option>
+            <option value="auto" data-i18n="themeAuto">Auto</option>
+          </select>
+        </label>
+        <button type="button" class="nav-toggle" id="navToggle" data-i18n-aria="menuOpen" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <div class="badge-row">
+            <span class="live-badge"><span class="live-dot" aria-hidden="true"></span> LIVE</span>
+            <span class="update-badge"><span data-i18n="lastUpdate">Last update: </span><!--time--></span>
+          </div>
+          <h1 data-i18n-html="heroTitle">Speed up <span class="accent">GitHub</span><br>with Hosts sync</h1>
+          <p class="hero-lead" data-i18n="heroLead">
+            A GitHub Hosts synchronization tool for research and learning. Use the desktop client, local server, CLI, or pull hosts files directly into your system.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="/hosts.txt" target="_blank" rel="noopener">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              hosts.txt
+            </a>
+            <a class="btn btn-ghost" href="/hosts.json" target="_blank" rel="noopener">hosts.json</a>
+            <a class="btn btn-soft" href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener" data-i18n="downloadClient">Download client</a>
+          </div>
+          <p class="hero-meta">
+            open source ·
+            <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub</a>
+            · GPL-3.0
+          </p>
+        </div>
+
+        <div class="term" aria-hidden="true">
+          <div class="term-bar">
+            <div class="term-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+            <div class="term-title">fgh@hosts:~ — fetch-github-hosts</div>
+          </div>
+          <div class="term-body">
+            <span class="term-line"><span class="c-prompt">$</span> curl -sL https://hosts.gitcdn.top/hosts.txt | head -n 8</span>
+            <span class="term-line"><span class="c-comment"># fetch-github-hosts begin</span></span>
+            <span class="term-line"><span class="c-dim"># last update: just now</span></span>
+            <span class="term-line"><span class="c-out">140.82.112.4    github.com</span></span>
+            <span class="term-line"><span class="c-out">140.82.114.4    api.github.com</span></span>
+            <span class="term-line"><span class="c-out">185.199.108.153 github.githubassets.com</span></span>
+            <span class="term-line"><span class="c-out">185.199.109.153 camo.githubusercontent.com</span></span>
+            <span class="term-line"><span class="c-comment"># ... more entries</span></span>
+            <span class="term-line"><span class="c-prompt">$</span> <span class="term-cursor"></span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="get">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title"><span class="prompt">$</span><span data-i18n="getTitle">get — one-click fetch</span></h2>
+          <p class="section-desc" data-i18n="getDesc">Use the public hosts sources or copy commands to write them locally. Great for manual maintenance and automation.</p>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 1rem;">
+          <article class="card resource-card">
+            <div class="resource-top">
+              <span class="resource-dot" aria-hidden="true"></span>
+              <div>
+                <div class="resource-name">hosts.txt</div>
+                <div class="resource-desc" data-i18n="txtDesc">Plain text format — append directly to your system hosts file</div>
+              </div>
+            </div>
+            <div class="resource-url">https://hosts.gitcdn.top/hosts.txt</div>
+            <div class="resource-actions">
+              <a class="btn btn-primary btn-sm" href="/hosts.txt" target="_blank" rel="noopener" data-i18n="open">Open</a>
+              <button type="button" class="btn btn-ghost btn-sm" data-copy="https://hosts.gitcdn.top/hosts.txt" data-i18n="copyLink">Copy link</button>
+            </div>
+          </article>
+
+          <article class="card resource-card">
+            <div class="resource-top">
+              <span class="resource-dot blue" aria-hidden="true"></span>
+              <div>
+                <div class="resource-name">hosts.json</div>
+                <div class="resource-desc" data-i18n="jsonDesc">JSON format — ideal for programmatic use and client sources</div>
+              </div>
+            </div>
+            <div class="resource-url">https://hosts.gitcdn.top/hosts.json</div>
+            <div class="resource-actions">
+              <a class="btn btn-primary btn-sm" href="/hosts.json" target="_blank" rel="noopener" style="background:#3b82f6;border-color:#3b82f6" data-i18n="open">Open</a>
+              <button type="button" class="btn btn-ghost btn-sm" data-copy="https://hosts.gitcdn.top/hosts.json" data-i18n="copyLink">Copy link</button>
+            </div>
+          </article>
+        </div>
+
+        <div class="code-block">
+          <div class="code-head">
+            <span class="code-label" data-i18n="oneClickLabel">Unix / Linux one-liner</span>
+            <button type="button" class="copy-btn" data-copy='sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl -sL https://hosts.gitcdn.top/hosts.txt >> /etc/hosts' data-i18n="copy">Copy</button>
+          </div>
+          <pre><code>sed -i "/# fetch-github-hosts begin/Q" /etc/hosts && curl -sL https://hosts.gitcdn.top/hosts.txt >> /etc/hosts</code></pre>
+        </div>
+        <p class="usage-note" style="margin-top: 0.85rem;" data-i18n-html="cronTip">
+          <strong>Tip:</strong> Schedule the command with crontab to keep hosts up to date automatically.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title"><span class="prompt">$</span><span data-i18n="featuresTitle">features</span></h2>
+          <p class="section-desc" data-i18n="featuresDesc">Desktop client and server in one — daily sync and private deployment covered.</p>
+        </div>
+        <div class="grid-3">
+          <article class="card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="f1Title">Cross-platform desktop client</h3>
+            <p class="feature-desc" data-i18n="f1Desc">macOS (Intel &amp; Apple Silicon), Windows, and Linux — ready out of the box.</p>
+          </article>
+          <article class="card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9"/><polyline points="21 3 21 9 15 9"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="f2Title">Client mode</h3>
+            <p class="feature-desc" data-i18n="f2Desc">Auto-sync hosts from remote sources. Multiple sources, custom URLs, and scheduled pulls.</p>
+          </article>
+          <article class="card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1"/><circle cx="6" cy="18" r="1"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="f3Title">Server mode</h3>
+            <p class="feature-desc" data-i18n="f3Desc">Self-host DNS resolution with HTTP API and hosts downloads for devices on your network.</p>
+          </article>
+          <article class="card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="f4Title">Dark / light / system theme</h3>
+            <p class="feature-desc" data-i18n="f4Desc">Theme switching on both the desktop app and this site.</p>
+          </article>
+          <article class="card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="f5Title">Multi-language</h3>
+            <p class="feature-desc" data-i18n="f5Desc">Simplified Chinese, Traditional Chinese, English, Japanese, and Korean.</p>
+          </article>
+          <article class="card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h14"/><circle cx="19" cy="12" r="2"/></svg>
+            </div>
+            <h3 class="feature-title" data-i18n="f6Title">System tray &amp; smart elevation</h3>
+            <p class="feature-desc" data-i18n="f6Desc">Run in the background with one-click start/stop. Session-level privilege for writing hosts.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="usage">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title"><span class="prompt">$</span><span data-i18n="usageTitle">usage</span></h2>
+          <p class="section-desc" data-i18n="usageDesc">Choose desktop client, CLI, or manual hosts editing for your workflow.</p>
+        </div>
+
+        <div class="tabs" role="tablist" data-i18n-aria="usageTabs" aria-label="Usage">
+          <button type="button" class="tab-btn" role="tab" id="tab-client" aria-selected="true" aria-controls="panel-client" data-tab="client" data-i18n="tabClient">Desktop</button>
+          <button type="button" class="tab-btn" role="tab" id="tab-cli" aria-selected="false" aria-controls="panel-cli" data-tab="cli" data-i18n="tabCli">CLI</button>
+          <button type="button" class="tab-btn" role="tab" id="tab-manual" aria-selected="false" aria-controls="panel-manual" data-tab="manual" data-i18n="tabManual">Manual</button>
+        </div>
+
+        <div class="tab-panel active" role="tabpanel" id="panel-client" aria-labelledby="tab-client">
+          <div class="usage-stack">
+            <p class="usage-note" data-i18n-html="clientNote">
+              Download the installer for your platform from
+              <a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">Releases</a>
+              and run the GUI.
+            </p>
+            <div class="shots">
+              <figure class="shot">
+                <img src="public/docs/client.png" alt="" data-i18n-alt="shotClient" loading="lazy" width="800" height="500">
+                <figcaption data-i18n="shotClient">Client mode</figcaption>
+              </figure>
+              <figure class="shot">
+                <img src="public/docs/client-start.png" alt="" data-i18n-alt="shotStart" loading="lazy" width="800" height="500">
+                <figcaption data-i18n="shotStart">Start &amp; status</figcaption>
+              </figure>
+              <figure class="shot">
+                <img src="public/docs/client-select.png" alt="" data-i18n-alt="shotSelect" loading="lazy" width="800" height="500">
+                <figcaption data-i18n="shotSelect">Hosts source selection</figcaption>
+              </figure>
+              <figure class="shot">
+                <img src="public/docs/server.png" alt="" data-i18n-alt="shotServer" loading="lazy" width="800" height="500">
+                <figcaption data-i18n="shotServer">Server mode</figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" role="tabpanel" id="panel-cli" aria-labelledby="tab-cli" hidden>
+          <div class="usage-stack">
+            <p class="usage-note" data-i18n-html="cliNote">
+              <strong>Note:</strong> On Linux, client mode needs <code class="mono">sudo</code>. Windows / macOS elevate when required.
+            </p>
+
+            <div class="code-block">
+              <div class="code-head">
+                <span class="code-label" data-i18n="startClient">Start client</span>
+                <button type="button" class="copy-btn" data-copy="sudo ./fetch-github-hosts -m client" data-i18n="copy">Copy</button>
+              </div>
+              <pre><code># Linux / macOS
+sudo ./fetch-github-hosts -m client
 
 # Windows
-fetch-github-hosts.exe -m=client</code></pre>
-<ul>
-    <li>自定义获取时间间隔</li>
-</ul>
-<pre><code class="language-bash"># Linux/Macos（10分钟获取一次）
-sudo fetch-github-hosts -i=10
+fetch-github-hosts.exe -m client</code></pre>
+            </div>
 
-# Windows（10分钟获取一次）
-fetch-github-hosts.exe -i=10</code></pre>
-<ul>
-    <li>自定义获取链接</li>
-</ul>
-<pre><code class="language-bash"># Linux/Macos
-sudo fetch-github-hosts -u=http://127.0.0.1:9898/hosts.json
+            <div class="code-block">
+              <div class="code-head">
+                <span class="code-label" data-i18n="startServer">Start server</span>
+                <button type="button" class="copy-btn" data-copy="./fetch-github-hosts -m server" data-i18n="copy">Copy</button>
+              </div>
+              <pre><code># default port 9898
+./fetch-github-hosts -m server
+
+# custom port
+./fetch-github-hosts -m server -p 6666</code></pre>
+            </div>
+
+            <div class="cli-table-wrap">
+              <table class="cli-table">
+                <thead>
+                  <tr>
+                    <th data-i18n="thFlag">Flag</th>
+                    <th data-i18n="thDefault">Default</th>
+                    <th data-i18n="thDesc">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>-m, --mode</code></td>
+                    <td>GUI</td>
+                    <td><code>client</code> / <code>server</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>-i, --interval</code></td>
+                    <td>60</td>
+                    <td data-i18n="cliInterval">Fetch interval (minutes)</td>
+                  </tr>
+                  <tr>
+                    <td><code>-p, --port</code></td>
+                    <td>9898</td>
+                    <td data-i18n="cliPort">Server listen port</td>
+                  </tr>
+                  <tr>
+                    <td><code>-u, --url</code></td>
+                    <td>hosts.gitcdn.top</td>
+                    <td data-i18n="cliUrl">Remote hosts URL for client mode</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" role="tabpanel" id="panel-manual" aria-labelledby="tab-manual" hidden>
+          <div class="usage-stack">
+            <p class="usage-note" data-i18n-html="manualNote">
+              Open
+              <a href="https://hosts.gitcdn.top/hosts.txt" target="_blank" rel="noopener">hosts.txt</a>
+              , paste the content into your system hosts file, then flush DNS.
+            </p>
+
+            <ul class="path-list">
+              <li><span class="os">Linux / macOS</span><code>/etc/hosts</code></li>
+              <li><span class="os">Windows</span><code>C:\Windows\System32\drivers\etc\hosts</code></li>
+            </ul>
+
+            <div class="code-block">
+              <div class="code-head">
+                <span class="code-label" data-i18n="flushDns">Flush DNS</span>
+                <button type="button" class="copy-btn" data-copy="ipconfig /flushdns" data-i18n="copyWindows">Copy Windows</button>
+              </div>
+              <pre><code># Linux (example)
+sudo systemctl restart NetworkManager
+# or: /etc/init.d/network restart
 
 # Windows
-fetch-github-hosts.exe -u=http://127.0.0.1:9898/hosts.json</code></pre>
-<h4>启动服务端：</h4>
-<ul>
-    <li>直接运行</li>
-</ul>
-<pre><code class="language-bash"># Linux/Macos
-fetch-github-hosts -m=server
+ipconfig /flushdns
 
-# Windows
-fetch-github-hosts.exe -m=server</code></pre>
-<ul>
-    <li>自定义监听端口</li>
-</ul>
-<pre><code class="language-bash"># Linux/Macos
-fetch-github-hosts -m=server -p=6666
+# macOS
+sudo killall -HUP mDNSResponder</code></pre>
+            </div>
 
-# Windows
-fetch-github-hosts.exe -m=server -p=6666</code></pre>
-<h3>手动</h3>
-<h4>添加hosts</h4>
-<p>访问 <a href="https://hosts.gitcdn.top/hosts.txt">https://hosts.gitcdn.top/hosts.txt</a> ，
-    将其全部内容粘贴到你的hosts文件中，即可。</p>
-<ul>
-    <li><code>Linux / MacOS</code> hosts路径：<code>/etc/hosts</code></li>
-    <li><code>Windows</code> hosts路径：<code>C:\Windows\System32\drivers\etc\hosts</code></li>
-</ul>
-<h4>刷新生效</h4>
-<ul>
-    <li><code>Linux</code>: <code>/etc/init.d/network restart</code></li>
-    <li><code>Windows</code>: <code>ipconfig /flushdns</code></li>
-    <li><code>Macos</code>: <code>sudo killall -HUP mDNSResponder</code></li>
-</ul>
-<h4>Unix/Linux 一键使用</h4>
-<pre><code class="language-shell">sed -i "/# fetch-github-hosts begin/Q" /etc/hosts &amp;&amp; curl https://hosts.gitcdn.top/hosts.txt &gt;&gt; /etc/hosts</code></pre>
-<blockquote>
-    <p>提示：可以设置crontab定时任务定时获取更新即可，解放双手！</p>
-</blockquote>
-<h2>私有部署</h2>
-<p>下载最新的发行版（到 <a href="https://github.com/Licoy/fetch-github-hosts/releases">Releases</a> 进行下载）
-    ，并选择您的系统对应版本，直接以服务模式运行即可：<code>fetch-github-hosts -m=server -p=9898</code>，会自动监听<code>0.0.0.0:9898</code>，您可以直接浏览器访问 <code>http://127.0.0.1:9898</code>
-    以访问您自定义服务。
-    （具体方法可参见【启动服务端】小节详细说明）</p>
-<blockquote>
-    <p>注意：因网络影响，尽量部署到海外服务器节点！</p>
-</blockquote>
-<h3>开源协议</h3>
-<p><a href="https://github.com/Licoy/fetch-github-hosts/blob/main/LICENSE">GPL 3.0</a></p>
+            <p class="usage-note" data-i18n-html="deployNote">
+              Private deploy: run
+              <code class="mono">fetch-github-hosts -m server -p 9898</code>,
+              then open <code class="mono">http://127.0.0.1:9898</code>.
+              Prefer an overseas node. See the
+              <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub README</a>
+              for details.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="download">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="section-title"><span class="prompt">$</span><span data-i18n="downloadTitle">download</span></h2>
+          <p class="section-desc" data-i18n="downloadDesc">Get the latest desktop packages from GitHub Releases.</p>
+        </div>
+        <div class="download-box">
+          <div class="download-main">
+            <h3 data-i18n="desktopClient">Desktop client</h3>
+            <p data-i18n="desktopClientDesc">GUI · client / server modes · system tray · multi-language</p>
+            <a class="btn btn-primary" href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span data-i18n="goReleases">Go to Releases</span>
+            </a>
+          </div>
+          <ul class="platform-list">
+            <li>
+              <span class="name">macOS</span>
+              <span class="meta">.dmg · Universal</span>
+            </li>
+            <li>
+              <span class="name">Windows</span>
+              <span class="meta">.msi / .exe · x86_64</span>
+            </li>
+            <li>
+              <span class="name">Linux</span>
+              <span class="meta">.deb / AppImage · x86_64</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div data-i18n-html="poweredBy">Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">Fetch GitHub Hosts</a></div>
+      <div class="footer-links">
+        <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/Licoy/fetch-github-hosts/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0</a>
+        <a href="/hosts.txt" target="_blank" rel="noopener">hosts.txt</a>
+        <a href="/hosts.json" target="_blank" rel="noopener">hosts.json</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var THEME_KEY = 'fgh_site_theme';
+      var LANG_KEY = 'fgh_site_lang';
+      var FALLBACK = 'en';
+      var SUPPORTED = ['zh-CN', 'zh-TW', 'en', 'ja', 'ko'];
+
+      var i18n = {
+        en: {
+          langLabel: 'Language',
+          themeGroup: 'Theme',
+          themeLight: 'Light',
+          themeDark: 'Dark',
+          themeAuto: 'Auto',
+          themeLightTitle: 'Light mode',
+          themeDarkTitle: 'Dark mode',
+          themeAutoTitle: 'Follow system',
+          menuOpen: 'Open menu',
+          menuClose: 'Close menu',
+          navGet: '$ get',
+          navFeatures: '$ features',
+          navUsage: '$ usage',
+          navDownload: '$ download',
+          lastUpdate: 'Last update: ',
+          heroTitle: 'Speed up <span class="accent">GitHub</span><br>with Hosts sync',
+          heroLead: 'A GitHub Hosts synchronization tool for research and learning. Use the desktop client, local server, CLI, or pull hosts files directly into your system.',
+          downloadClient: 'Download client',
+          metaDesc: 'Fetch GitHub Hosts — A GitHub Hosts sync tool for faster access. Desktop client, CLI, and one-click hosts.',
+          getTitle: 'get — one-click fetch',
+          getDesc: 'Use the public hosts sources or copy commands to write them locally. Great for manual maintenance and automation.',
+          txtDesc: 'Plain text format — append directly to your system hosts file',
+          jsonDesc: 'JSON format — ideal for programmatic use and client sources',
+          open: 'Open',
+          copyLink: 'Copy link',
+          copy: 'Copy',
+          copied: 'Copied',
+          oneClickLabel: 'Unix / Linux one-liner',
+          cronTip: '<strong>Tip:</strong> Schedule the command with crontab to keep hosts up to date automatically.',
+          featuresTitle: 'features',
+          featuresDesc: 'Desktop client and server in one — daily sync and private deployment covered.',
+          f1Title: 'Cross-platform desktop client',
+          f1Desc: 'macOS (Intel & Apple Silicon), Windows, and Linux — ready out of the box.',
+          f2Title: 'Client mode',
+          f2Desc: 'Auto-sync hosts from remote sources. Multiple sources, custom URLs, and scheduled pulls.',
+          f3Title: 'Server mode',
+          f3Desc: 'Self-host DNS resolution with HTTP API and hosts downloads for devices on your network.',
+          f4Title: 'Dark / light / system theme',
+          f4Desc: 'Theme switching on both the desktop app and this site.',
+          f5Title: 'Multi-language',
+          f5Desc: 'Simplified Chinese, Traditional Chinese, English, Japanese, and Korean.',
+          f6Title: 'System tray & smart elevation',
+          f6Desc: 'Run in the background with one-click start/stop. Session-level privilege for writing hosts.',
+          usageTitle: 'usage',
+          usageDesc: 'Choose desktop client, CLI, or manual hosts editing for your workflow.',
+          usageTabs: 'Usage',
+          tabClient: 'Desktop',
+          tabCli: 'CLI',
+          tabManual: 'Manual',
+          clientNote: 'Download the installer for your platform from <a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">Releases</a> and run the GUI.',
+          shotClient: 'Client mode',
+          shotStart: 'Start & status',
+          shotSelect: 'Hosts source selection',
+          shotServer: 'Server mode',
+          cliNote: '<strong>Note:</strong> On Linux, client mode needs <code class="mono">sudo</code>. Windows / macOS elevate when required.',
+          startClient: 'Start client',
+          startServer: 'Start server',
+          thFlag: 'Flag',
+          thDefault: 'Default',
+          thDesc: 'Description',
+          cliInterval: 'Fetch interval (minutes)',
+          cliPort: 'Server listen port',
+          cliUrl: 'Remote hosts URL for client mode',
+          manualNote: 'Open <a href="https://hosts.gitcdn.top/hosts.txt" target="_blank" rel="noopener">hosts.txt</a>, paste the content into your system hosts file, then flush DNS.',
+          flushDns: 'Flush DNS',
+          copyWindows: 'Copy Windows',
+          deployNote: 'Private deploy: run <code class="mono">fetch-github-hosts -m server -p 9898</code>, then open <code class="mono">http://127.0.0.1:9898</code>. Prefer an overseas node. See the <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub README</a> for details.',
+          downloadTitle: 'download',
+          downloadDesc: 'Get the latest desktop packages from GitHub Releases.',
+          desktopClient: 'Desktop client',
+          desktopClientDesc: 'GUI · client / server modes · system tray · multi-language',
+          goReleases: 'Go to Releases',
+          poweredBy: 'Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">Fetch GitHub Hosts</a>'
+        },
+        'zh-CN': {
+          langLabel: '语言',
+          themeGroup: '主题切换',
+          themeLight: '浅色',
+          themeDark: '深色',
+          themeAuto: '自动',
+          themeLightTitle: '浅色模式',
+          themeDarkTitle: '深色模式',
+          themeAutoTitle: '跟随系统',
+          menuOpen: '打开菜单',
+          menuClose: '关闭菜单',
+          navGet: '$ 获取',
+          navFeatures: '$ 特性',
+          navUsage: '$ 使用',
+          navDownload: '$ 下载',
+          lastUpdate: '最近更新：',
+          heroTitle: '加速访问 <span class="accent">GitHub</span><br>的 Hosts 同步工具',
+          heroLead: '为研究与学习场景提供 GitHub 相关域名解析同步。支持桌面客户端、本地服务端与命令行，也可直接拉取 hosts 文件写入系统。',
+          downloadClient: '下载客户端',
+          metaDesc: 'Fetch GitHub Hosts — 解决访问 GitHub 过慢的 Hosts 同步工具，支持桌面客户端、命令行与一键获取。',
+          getTitle: 'get — 一键获取',
+          getDesc: '直接使用公开 hosts 源，或复制命令写入本机。适合手动维护与自动化脚本。',
+          txtDesc: '纯文本格式，可直接追加到系统 hosts 文件',
+          jsonDesc: 'JSON 格式，适合程序化调用与客户端源',
+          open: '打开',
+          copyLink: '复制链接',
+          copy: '复制',
+          copied: '已复制',
+          oneClickLabel: 'Unix / Linux 一键追加',
+          cronTip: '<strong>提示：</strong>可配合 crontab 定时执行上述命令，保持 hosts 自动更新。',
+          featuresTitle: 'features — 特性',
+          featuresDesc: '桌面端与服务端一体，覆盖日常同步与私有部署场景。',
+          f1Title: '跨平台桌面客户端',
+          f1Desc: '支持 macOS（Intel & Apple Silicon）、Windows、Linux，开箱即用。',
+          f2Title: '客户端模式',
+          f2Desc: '从远程源自动同步 Hosts 到系统，支持多源与自定义 URL、定时拉取。',
+          f3Title: '服务端模式',
+          f3Desc: '自建解析服务，提供 HTTP API 与 hosts 文件下载，供局域网设备共用。',
+          f4Title: '深色 / 浅色 / 跟随系统',
+          f4Desc: '客户端与本站均支持主题切换，适配不同环境与偏好。',
+          f5Title: '多语言',
+          f5Desc: '支持简体中文、繁体中文、English、日本語、한국어。',
+          f6Title: '系统托盘 & 智能提权',
+          f6Desc: '后台运行、一键启停；写入 Hosts 时会话级授权，减少重复输入密码。',
+          usageTitle: 'usage — 使用方式',
+          usageDesc: '按场景选择桌面客户端、命令行，或手动写入 hosts。',
+          usageTabs: '使用方式',
+          tabClient: '桌面客户端',
+          tabCli: '命令行',
+          tabManual: '手动写入',
+          clientNote: '前往 <a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">Releases</a> 下载对应平台安装包，安装后即可使用图形界面。',
+          shotClient: '客户端模式',
+          shotStart: '启动与运行状态',
+          shotSelect: 'Hosts 源选择',
+          shotServer: '服务端模式',
+          cliNote: '<strong>注意：</strong>Linux 下客户端模式需使用 <code class="mono">sudo</code>；Windows / macOS 会按需提权。',
+          startClient: '启动客户端',
+          startServer: '启动服务端',
+          thFlag: '参数',
+          thDefault: '默认',
+          thDesc: '说明',
+          cliInterval: '获取间隔（分钟）',
+          cliPort: '服务端监听端口',
+          cliUrl: '客户端远程 hosts 地址',
+          manualNote: '打开 <a href="https://hosts.gitcdn.top/hosts.txt" target="_blank" rel="noopener">hosts.txt</a>，将内容粘贴到系统 hosts 文件中，然后刷新 DNS。',
+          flushDns: '刷新生效',
+          copyWindows: '复制 Windows',
+          deployNote: '私有部署：以服务模式运行 <code class="mono">fetch-github-hosts -m server -p 9898</code>，浏览器访问 <code class="mono">http://127.0.0.1:9898</code>。建议部署在海外节点。更多说明见 <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub README</a>。',
+          downloadTitle: 'download — 下载',
+          downloadDesc: '从 GitHub Releases 获取最新桌面安装包。',
+          desktopClient: '桌面客户端',
+          desktopClientDesc: '图形界面 · 客户端 / 服务端模式 · 系统托盘 · 多语言',
+          goReleases: '前往 Releases 下载',
+          poweredBy: 'Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">Fetch GitHub Hosts</a>'
+        },
+        'zh-TW': {
+          langLabel: '語言',
+          themeGroup: '主題切換',
+          themeLight: '淺色',
+          themeDark: '深色',
+          themeAuto: '自動',
+          themeLightTitle: '淺色模式',
+          themeDarkTitle: '深色模式',
+          themeAutoTitle: '跟隨系統',
+          menuOpen: '開啟選單',
+          menuClose: '關閉選單',
+          navGet: '$ 取得',
+          navFeatures: '$ 特性',
+          navUsage: '$ 使用',
+          navDownload: '$ 下載',
+          lastUpdate: '最近更新：',
+          heroTitle: '加速存取 <span class="accent">GitHub</span><br>的 Hosts 同步工具',
+          heroLead: '為研究與學習場景提供 GitHub 相關網域解析同步。支援桌面用戶端、本機伺服器與命令列，也可直接擷取 hosts 檔寫入系統。',
+          downloadClient: '下載用戶端',
+          metaDesc: 'Fetch GitHub Hosts — 解決存取 GitHub 過慢的 Hosts 同步工具，支援桌面用戶端、命令列與一鍵取得。',
+          getTitle: 'get — 一鍵取得',
+          getDesc: '直接使用公開 hosts 來源，或複製指令寫入本機。適合手動維護與自動化腳本。',
+          txtDesc: '純文字格式，可直接追加到系統 hosts 檔',
+          jsonDesc: 'JSON 格式，適合程式化呼叫與用戶端來源',
+          open: '開啟',
+          copyLink: '複製連結',
+          copy: '複製',
+          copied: '已複製',
+          oneClickLabel: 'Unix / Linux 一鍵追加',
+          cronTip: '<strong>提示：</strong>可搭配 crontab 定時執行上述指令，保持 hosts 自動更新。',
+          featuresTitle: 'features — 特性',
+          featuresDesc: '桌面端與伺服器端一體，涵蓋日常同步與私有部署場景。',
+          f1Title: '跨平台桌面用戶端',
+          f1Desc: '支援 macOS（Intel & Apple Silicon）、Windows、Linux，開箱即用。',
+          f2Title: '用戶端模式',
+          f2Desc: '從遠端來源自動同步 Hosts 到系統，支援多來源、自訂 URL 與定時拉取。',
+          f3Title: '伺服器模式',
+          f3Desc: '自建解析服務，提供 HTTP API 與 hosts 檔下載，供區網裝置共用。',
+          f4Title: '深色 / 淺色 / 跟隨系統',
+          f4Desc: '用戶端與本站皆支援主題切換，適配不同環境與偏好。',
+          f5Title: '多語言',
+          f5Desc: '支援簡體中文、繁體中文、English、日本語、한국어。',
+          f6Title: '系統匣 & 智慧提權',
+          f6Desc: '背景執行、一鍵啟停；寫入 Hosts 時工作階段級授權，減少重複輸入密碼。',
+          usageTitle: 'usage — 使用方式',
+          usageDesc: '依場景選擇桌面用戶端、命令列，或手動寫入 hosts。',
+          usageTabs: '使用方式',
+          tabClient: '桌面用戶端',
+          tabCli: '命令列',
+          tabManual: '手動寫入',
+          clientNote: '前往 <a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">Releases</a> 下載對應平台安裝包，安裝後即可使用圖形介面。',
+          shotClient: '用戶端模式',
+          shotStart: '啟動與執行狀態',
+          shotSelect: 'Hosts 來源選擇',
+          shotServer: '伺服器模式',
+          cliNote: '<strong>注意：</strong>Linux 下用戶端模式需使用 <code class="mono">sudo</code>；Windows / macOS 會按需提權。',
+          startClient: '啟動用戶端',
+          startServer: '啟動伺服器',
+          thFlag: '參數',
+          thDefault: '預設',
+          thDesc: '說明',
+          cliInterval: '取得間隔（分鐘）',
+          cliPort: '伺服器監聽埠',
+          cliUrl: '用戶端遠端 hosts 位址',
+          manualNote: '開啟 <a href="https://hosts.gitcdn.top/hosts.txt" target="_blank" rel="noopener">hosts.txt</a>，將內容貼到系統 hosts 檔，然後重新整理 DNS。',
+          flushDns: '重新整理生效',
+          copyWindows: '複製 Windows',
+          deployNote: '私有部署：以伺服器模式執行 <code class="mono">fetch-github-hosts -m server -p 9898</code>，瀏覽器造訪 <code class="mono">http://127.0.0.1:9898</code>。建議部署在海外節點。更多說明見 <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub README</a>。',
+          downloadTitle: 'download — 下載',
+          downloadDesc: '從 GitHub Releases 取得最新桌面安裝包。',
+          desktopClient: '桌面用戶端',
+          desktopClientDesc: '圖形介面 · 用戶端 / 伺服器模式 · 系統匣 · 多語言',
+          goReleases: '前往 Releases 下載',
+          poweredBy: 'Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">Fetch GitHub Hosts</a>'
+        },
+        ja: {
+          langLabel: '言語',
+          themeGroup: 'テーマ',
+          themeLight: 'ライト',
+          themeDark: 'ダーク',
+          themeAuto: '自動',
+          themeLightTitle: 'ライトモード',
+          themeDarkTitle: 'ダークモード',
+          themeAutoTitle: 'システムに合わせる',
+          menuOpen: 'メニューを開く',
+          menuClose: 'メニューを閉じる',
+          navGet: '$ 取得',
+          navFeatures: '$ 機能',
+          navUsage: '$ 使い方',
+          navDownload: '$ ダウンロード',
+          lastUpdate: '最終更新：',
+          heroTitle: '<span class="accent">GitHub</span> を高速化する<br>Hosts 同期ツール',
+          heroLead: '研究・学習向けの GitHub Hosts 同期ツールです。デスクトップ、ローカルサーバー、CLI、または hosts ファイルの直接取得に対応します。',
+          downloadClient: 'クライアントをダウンロード',
+          metaDesc: 'Fetch GitHub Hosts — GitHub へのアクセスを高速化する Hosts 同期ツール。デスクトップ、CLI、ワンクリック取得対応。',
+          getTitle: 'get — ワンクリック取得',
+          getDesc: '公開 hosts ソースを使うか、コマンドをコピーしてローカルに書き込みます。手動管理や自動化に便利です。',
+          txtDesc: 'プレーンテキスト形式。システムの hosts に追記可能',
+          jsonDesc: 'JSON 形式。プログラムやクライアントソース向け',
+          open: '開く',
+          copyLink: 'リンクをコピー',
+          copy: 'コピー',
+          copied: 'コピー済み',
+          oneClickLabel: 'Unix / Linux ワンライナー',
+          cronTip: '<strong>ヒント：</strong>crontab で上記コマンドを定期実行すると hosts を自動更新できます。',
+          featuresTitle: 'features — 機能',
+          featuresDesc: 'デスクトップとサーバーを一体化。日常の同期とプライベート配備をカバー。',
+          f1Title: 'クロスプラットフォーム',
+          f1Desc: 'macOS（Intel & Apple Silicon）、Windows、Linux に対応。すぐ使えます。',
+          f2Title: 'クライアントモード',
+          f2Desc: 'リモートソースから hosts を自動同期。複数ソース、カスタム URL、定期取得に対応。',
+          f3Title: 'サーバーモード',
+          f3Desc: '独自の解決サービスを立て、HTTP API と hosts 配信で LAN 機器と共有。',
+          f4Title: 'ダーク / ライト / システム',
+          f4Desc: 'デスクトップと本サイトの両方でテーマ切替が可能。',
+          f5Title: '多言語',
+          f5Desc: '簡体字中国語、繁体字中国語、English、日本語、한국어に対応。',
+          f6Title: 'トレイ & スマート昇格',
+          f6Desc: 'バックグラウンド実行とワンクリック起動/停止。hosts 書き込み時のセッション昇格。',
+          usageTitle: 'usage — 使い方',
+          usageDesc: 'デスクトップ、CLI、手動 hosts 編集から選べます。',
+          usageTabs: '使い方',
+          tabClient: 'デスクトップ',
+          tabCli: 'CLI',
+          tabManual: '手動',
+          clientNote: '<a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">Releases</a> から対応プラットフォームのインストーラーを入手し、GUI を起動してください。',
+          shotClient: 'クライアントモード',
+          shotStart: '起動と状態',
+          shotSelect: 'Hosts ソース選択',
+          shotServer: 'サーバーモード',
+          cliNote: '<strong>注意：</strong>Linux のクライアントモードは <code class="mono">sudo</code> が必要です。Windows / macOS は必要時に昇格します。',
+          startClient: 'クライアント起動',
+          startServer: 'サーバー起動',
+          thFlag: 'フラグ',
+          thDefault: '既定',
+          thDesc: '説明',
+          cliInterval: '取得間隔（分）',
+          cliPort: 'サーバー待受ポート',
+          cliUrl: 'クライアント用リモート hosts URL',
+          manualNote: '<a href="https://hosts.gitcdn.top/hosts.txt" target="_blank" rel="noopener">hosts.txt</a> を開き、内容をシステムの hosts に貼り付けた後、DNS をフラッシュしてください。',
+          flushDns: 'DNS をフラッシュ',
+          copyWindows: 'Windows をコピー',
+          deployNote: 'プライベート配備：<code class="mono">fetch-github-hosts -m server -p 9898</code> を実行し、<code class="mono">http://127.0.0.1:9898</code> を開きます。海外ノード推奨。詳細は <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub README</a> を参照。',
+          downloadTitle: 'download — ダウンロード',
+          downloadDesc: 'GitHub Releases から最新のデスクトップパッケージを取得。',
+          desktopClient: 'デスクトップクライアント',
+          desktopClientDesc: 'GUI · クライアント / サーバー · トレイ · 多言語',
+          goReleases: 'Releases へ',
+          poweredBy: 'Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">Fetch GitHub Hosts</a>'
+        },
+        ko: {
+          langLabel: '언어',
+          themeGroup: '테마',
+          themeLight: '라이트',
+          themeDark: '다크',
+          themeAuto: '자동',
+          themeLightTitle: '라이트 모드',
+          themeDarkTitle: '다크 모드',
+          themeAutoTitle: '시스템 따르기',
+          menuOpen: '메뉴 열기',
+          menuClose: '메뉴 닫기',
+          navGet: '$ 가져오기',
+          navFeatures: '$ 기능',
+          navUsage: '$ 사용',
+          navDownload: '$ 다운로드',
+          lastUpdate: '최근 업데이트: ',
+          heroTitle: '<span class="accent">GitHub</span> 접속을 가속하는<br>Hosts 동기화 도구',
+          heroLead: '연구·학습을 위한 GitHub Hosts 동기화 도구입니다. 데스크톱 클라이언트, 로컬 서버, CLI, 또는 hosts 파일 직접 가져오기를 지원합니다.',
+          downloadClient: '클라이언트 다운로드',
+          metaDesc: 'Fetch GitHub Hosts — GitHub 접속을 빠르게 하는 Hosts 동기화 도구. 데스크톱, CLI, 원클릭 제공.',
+          getTitle: 'get — 원클릭 가져오기',
+          getDesc: '공개 hosts 소스를 사용하거나 명령을 복사해 로컬에 기록하세요. 수동 관리와 자동화에 적합합니다.',
+          txtDesc: '순수 텍스트 형식 — 시스템 hosts에 바로 추가 가능',
+          jsonDesc: 'JSON 형식 — 프로그래밍 호출 및 클라이언트 소스에 적합',
+          open: '열기',
+          copyLink: '링크 복사',
+          copy: '복사',
+          copied: '복사됨',
+          oneClickLabel: 'Unix / Linux 원라이너',
+          cronTip: '<strong>팁:</strong> crontab으로 위 명령을 주기 실행하면 hosts를 자동 갱신할 수 있습니다.',
+          featuresTitle: 'features — 기능',
+          featuresDesc: '데스크톱과 서버를 하나로 — 일상 동기화와 사설 배포를 지원합니다.',
+          f1Title: '크로스 플랫폼 데스크톱',
+          f1Desc: 'macOS(Intel & Apple Silicon), Windows, Linux 지원. 바로 사용 가능.',
+          f2Title: '클라이언트 모드',
+          f2Desc: '원격 소스에서 hosts를 자동 동기화. 다중 소스, 사용자 URL, 예약 가져오기 지원.',
+          f3Title: '서버 모드',
+          f3Desc: '자체 DNS 해석 서비스와 HTTP API, hosts 다운로드로 LAN 기기와 공유.',
+          f4Title: '다크 / 라이트 / 시스템',
+          f4Desc: '데스크톱 앱과 이 사이트 모두 테마 전환을 지원합니다.',
+          f5Title: '다국어',
+          f5Desc: '간체 중국어, 번체 중국어, English, 日本語, 한국어 지원.',
+          f6Title: '시스템 트레이 & 스마트 권한',
+          f6Desc: '백그라운드 실행, 원클릭 시작/중지. hosts 쓰기 시 세션 권한 상승.',
+          usageTitle: 'usage — 사용 방법',
+          usageDesc: '데스크톱, CLI, 수동 hosts 편집 중 선택하세요.',
+          usageTabs: '사용 방법',
+          tabClient: '데스크톱',
+          tabCli: 'CLI',
+          tabManual: '수동',
+          clientNote: '<a href="https://github.com/Licoy/fetch-github-hosts/releases" target="_blank" rel="noopener">Releases</a>에서 플랫폼 설치 파일을 받아 GUI를 실행하세요.',
+          shotClient: '클라이언트 모드',
+          shotStart: '시작 및 상태',
+          shotSelect: 'Hosts 소스 선택',
+          shotServer: '서버 모드',
+          cliNote: '<strong>참고:</strong> Linux 클라이언트 모드는 <code class="mono">sudo</code>가 필요합니다. Windows / macOS는 필요 시 권한을 상승합니다.',
+          startClient: '클라이언트 시작',
+          startServer: '서버 시작',
+          thFlag: '플래그',
+          thDefault: '기본값',
+          thDesc: '설명',
+          cliInterval: '가져오기 간격(분)',
+          cliPort: '서버 수신 포트',
+          cliUrl: '클라이언트 원격 hosts URL',
+          manualNote: '<a href="https://hosts.gitcdn.top/hosts.txt" target="_blank" rel="noopener">hosts.txt</a>를 열어 시스템 hosts에 붙여 넣은 뒤 DNS를 플러시하세요.',
+          flushDns: 'DNS 플러시',
+          copyWindows: 'Windows 복사',
+          deployNote: '사설 배포: <code class="mono">fetch-github-hosts -m server -p 9898</code> 실행 후 <code class="mono">http://127.0.0.1:9898</code> 접속. 해외 노드 권장. 자세한 내용은 <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">GitHub README</a> 참고.',
+          downloadTitle: 'download — 다운로드',
+          downloadDesc: 'GitHub Releases에서 최신 데스크톱 패키지를 받으세요.',
+          desktopClient: '데스크톱 클라이언트',
+          desktopClientDesc: 'GUI · 클라이언트 / 서버 · 트레이 · 다국어',
+          goReleases: 'Releases로 이동',
+          poweredBy: 'Powered by <a href="https://github.com/Licoy/fetch-github-hosts" target="_blank" rel="noopener">Fetch GitHub Hosts</a>'
+        }
+      };
+
+      var root = document.documentElement;
+      var nav = document.getElementById('nav');
+      var navToggle = document.getElementById('navToggle');
+      var navLinks = document.getElementById('navLinks');
+      var langSelect = document.getElementById('langSelect');
+      var themeSelect = document.getElementById('themeSelect');
+      var mql = window.matchMedia('(prefers-color-scheme: dark)');
+      var compactMql = window.matchMedia('(max-width: 900px)');
+      var currentLang = FALLBACK;
+
+      var LANG_META = {
+        'zh-CN': { emoji: '🇨🇳', name: '简体中文' },
+        'zh-TW': { emoji: '🇭🇰', name: '繁體中文' },
+        en: { emoji: '🇺🇸', name: 'English' },
+        ja: { emoji: '🇯🇵', name: '日本語' },
+        ko: { emoji: '🇰🇷', name: '한국어' }
+      };
+
+      function t(key) {
+        var pack = i18n[currentLang] || i18n[FALLBACK];
+        if (pack[key] != null) return pack[key];
+        return i18n[FALLBACK][key] != null ? i18n[FALLBACK][key] : key;
+      }
+
+      function detectLang() {
+        var list = [];
+        if (navigator.languages && navigator.languages.length) {
+          for (var i = 0; i < navigator.languages.length; i++) list.push(navigator.languages[i]);
+        }
+        if (navigator.language) list.push(navigator.language);
+        if (navigator.userLanguage) list.push(navigator.userLanguage);
+
+        for (var j = 0; j < list.length; j++) {
+          var raw = (list[j] || '').replace(/_/g, '-');
+          if (!raw) continue;
+          var lower = raw.toLowerCase();
+          var base = lower.split('-')[0];
+          var region = lower.split('-')[1] || '';
+
+          if (base === 'zh') {
+            if (region === 'tw' || region === 'hk' || region === 'mo' || lower.indexOf('hant') !== -1) {
+              return 'zh-TW';
+            }
+            return 'zh-CN';
+          }
+          if (base === 'ja') return 'ja';
+          if (base === 'ko') return 'ko';
+          if (base === 'en') return 'en';
+        }
+        return FALLBACK;
+      }
+
+      function getStoredLang() {
+        try {
+          var stored = localStorage.getItem(LANG_KEY);
+          if (stored && SUPPORTED.indexOf(stored) !== -1) return stored;
+        } catch (e) {}
+        return null;
+      }
+
+      function isCompactNav() {
+        return compactMql.matches;
+      }
+
+      function refreshLangOptions() {
+        if (!langSelect) return;
+        var compact = isCompactNav();
+        var selected = langSelect.value;
+        Array.prototype.forEach.call(langSelect.options, function (opt) {
+          var meta = LANG_META[opt.value];
+          if (!meta) return;
+          opt.textContent = compact ? meta.emoji : meta.emoji + ' ' + meta.name;
+        });
+        langSelect.value = selected;
+        langSelect.classList.toggle('lang-select--emoji', compact);
+      }
+
+      function applyLang(lang) {
+        if (SUPPORTED.indexOf(lang) === -1) lang = FALLBACK;
+        currentLang = lang;
+        root.setAttribute('lang', lang === 'zh-CN' ? 'zh-CN' : lang === 'zh-TW' ? 'zh-TW' : lang);
+        try {
+          localStorage.setItem(LANG_KEY, lang);
+        } catch (e) {}
+        if (langSelect) langSelect.value = lang;
+        refreshLangOptions();
+
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n');
+          var val = t(key);
+          if (val != null) el.textContent = val;
+        });
+        document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n-html');
+          var val = t(key);
+          if (val != null) el.innerHTML = val;
+        });
+        document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n-title');
+          var val = t(key);
+          if (val != null) el.setAttribute('title', val);
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n-aria');
+          var val = t(key);
+          if (val != null) el.setAttribute('aria-label', val);
+        });
+        document.querySelectorAll('[data-i18n-alt]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n-alt');
+          var val = t(key);
+          if (val != null) el.setAttribute('alt', val);
+        });
+
+        var meta = document.querySelector('meta[name="description"]');
+        if (meta) meta.setAttribute('content', t('metaDesc'));
+
+        if (navToggle) {
+          var open = nav.classList.contains('open');
+          navToggle.setAttribute('aria-label', open ? t('menuClose') : t('menuOpen'));
+        }
+      }
+
+      /* Theme */
+      function getTheme() {
+        try {
+          return localStorage.getItem(THEME_KEY) || 'auto';
+        } catch (e) {
+          return 'auto';
+        }
+      }
+
+      function resolvedTheme(mode) {
+        if (mode === 'light' || mode === 'dark') return mode;
+        return mql.matches ? 'dark' : 'light';
+      }
+
+      function applyTheme(mode) {
+        if (mode !== 'light' && mode !== 'dark' && mode !== 'auto') mode = 'auto';
+        root.setAttribute('data-theme', mode);
+        try {
+          localStorage.setItem(THEME_KEY, mode);
+        } catch (e) {}
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+          meta.setAttribute('content', resolvedTheme(mode) === 'light' ? '#f4f7f4' : '#0b0f0c');
+        }
+        document.querySelectorAll('[data-theme-set]').forEach(function (btn) {
+          btn.setAttribute('aria-pressed', btn.getAttribute('data-theme-set') === mode ? 'true' : 'false');
+        });
+        if (themeSelect) themeSelect.value = mode;
+      }
+
+      applyTheme(getTheme());
+      applyLang(getStoredLang() || detectLang());
+
+      document.querySelectorAll('[data-theme-set]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          applyTheme(btn.getAttribute('data-theme-set'));
+        });
+      });
+
+      if (themeSelect) {
+        themeSelect.addEventListener('change', function () {
+          applyTheme(themeSelect.value);
+        });
+      }
+
+      if (langSelect) {
+        langSelect.addEventListener('change', function () {
+          applyLang(langSelect.value);
+        });
+      }
+
+      function onSchemeChange() {
+        if (getTheme() === 'auto') applyTheme('auto');
+      }
+      if (mql.addEventListener) mql.addEventListener('change', onSchemeChange);
+      else if (mql.addListener) mql.addListener(onSchemeChange);
+
+      function onCompactChange() {
+        refreshLangOptions();
+      }
+      if (compactMql.addEventListener) compactMql.addEventListener('change', onCompactChange);
+      else if (compactMql.addListener) compactMql.addListener(onCompactChange);
+
+      /* Mobile nav */
+      if (navToggle) {
+        navToggle.addEventListener('click', function () {
+          var open = nav.classList.toggle('open');
+          navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          navToggle.setAttribute('aria-label', open ? t('menuClose') : t('menuOpen'));
+        });
+        navLinks.querySelectorAll('a').forEach(function (a) {
+          a.addEventListener('click', function () {
+            nav.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+            navToggle.setAttribute('aria-label', t('menuOpen'));
+          });
+        });
+      }
+
+      /* Tabs */
+      var tabs = document.querySelectorAll('.tab-btn');
+      var panels = {
+        client: document.getElementById('panel-client'),
+        cli: document.getElementById('panel-cli'),
+        manual: document.getElementById('panel-manual')
+      };
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var name = tab.getAttribute('data-tab');
+          tabs.forEach(function (tb) {
+            tb.setAttribute('aria-selected', tb === tab ? 'true' : 'false');
+          });
+          Object.keys(panels).forEach(function (key) {
+            var panel = panels[key];
+            var on = key === name;
+            panel.classList.toggle('active', on);
+            if (on) panel.removeAttribute('hidden');
+            else panel.setAttribute('hidden', '');
+          });
+        });
+      });
+
+      /* Copy */
+      function fallbackCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+        } catch (e) {}
+        document.body.removeChild(ta);
+      }
+
+      function copyText(text, el) {
+        var done = function () {
+          if (!el) return;
+          var prev = el.textContent;
+          el.textContent = t('copied');
+          el.classList.add('copied');
+          setTimeout(function () {
+            el.textContent = prev;
+            el.classList.remove('copied');
+          }, 1400);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () {
+            fallbackCopy(text);
+            done();
+          });
+        } else {
+          fallbackCopy(text);
+          done();
+        }
+      }
+
+      document.querySelectorAll('[data-copy]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          copyText(el.getAttribute('data-copy') || '', el);
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
