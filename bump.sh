@@ -157,9 +157,20 @@ if git diff --cached --quiet; then
   exit 1
 fi
 
-MSG="chore: bump version to ${VERSION}"
-git commit -m "$MSG"
-git tag -a "$TAG" -m "Release ${TAG}"
+# Non-interactive: never open $EDITOR / commit template UI
+export GIT_EDITOR=true
+export GIT_SEQUENCE_EDITOR=true
+export GIT_PAGER=cat
+export PAGER=cat
+
+git -c core.editor=true commit -F - <<EOF
+chore: bump version to ${VERSION}
+EOF
+
+# -F - reads tag message from stdin; avoids editor even if -m is ignored by config/hooks
+git -c core.editor=true tag -a "$TAG" -F - <<EOF
+Release ${TAG}
+EOF
 
 echo "==> Created commit and tag ${TAG}"
 
