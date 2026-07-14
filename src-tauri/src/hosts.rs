@@ -76,13 +76,55 @@ pub fn hosts_path() -> String {
     }
 }
 
+/// Strip UTF-8 BOM if present.
+fn strip_utf8_bom(bytes: &[u8]) -> &[u8] {
+    if bytes.starts_with(&[0xEF, 0xBB, 0xBF]) {
+        &bytes[3..]
+    } else {
+        bytes
+    }
+}
+
+/// Decode hosts file bytes into a String.
+///
+/// Never fails solely due to non-UTF-8 encoding. Order:
+/// 1. Strict UTF-8
+/// 2. GB18030 (common on Chinese Windows ANSI / CP936 hosts)
+/// 3. Lossy UTF-8 (last resort so sync is never blocked by encoding)
+fn decode_hosts_bytes(bytes: &[u8]) -> String {
+    let bytes = strip_utf8_bom(bytes);
+
+    if let Ok(s) = std::str::from_utf8(bytes) {
+        return s.to_string();
+    }
+
+    // Chinese Windows often saves hosts as system ANSI (CP936 / GBK).
+    // GB18030 is a superset of GBK and covers this case correctly.
+    let (decoded, _, had_errors) = encoding_rs::GB18030.decode(bytes);
+    if !had_errors {
+        return decoded.into_owned();
+    }
+
+    // Last resort: never block hosts sync on encoding.
+    // ASCII IP/domain lines remain intact; invalid comment bytes become U+FFFD.
+    String::from_utf8_lossy(bytes).into_owned()
+}
+
+/// Read system hosts file and decode to String.
+/// I/O errors are still reported; encoding errors are not.
+fn read_hosts_content(path: &str) -> Result<String, String> {
+    let bytes = fs::read(path).map_err(|e| format!("读取hosts文件失败: {}", e))?;
+    Ok(decode_hosts_bytes(&bytes))
+}
+
 /// Read the hosts file and remove any existing fetch-github-hosts entries
 pub fn get_clean_hosts() -> Result<String, String> {
     let path = hosts_path();
-    let content = fs::read_to_string(&path).map_err(|e| format!("读取hosts文件失败: {}", e))?;
+    let content = read_hosts_content(&path)?;
 
     let mut result = String::new();
     let mut in_block = false;
+    let newline = newline_char();
 
     for line in content.lines() {
         let trimmed = line.trim();
@@ -98,7 +140,7 @@ pub fn get_clean_hosts() -> Result<String, String> {
             continue;
         }
         result.push_str(line);
-        result.push('\n');
+        result.push_str(newline);
     }
 
     Ok(result)
@@ -300,5 +342,64 @@ pub fn flush_dns_cache() -> Result<String, String> {
             let stderr = String::from_utf8_lossy(&output.stderr);
             Err(format!("Failed to flush DNS: {}", stderr))
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn decode_utf8_ascii() {
+        let input = b"127.0.0.1 localhost\n";
+        assert_eq!(decode_hosts_bytes(input), "127.0.0.1 localhost\n");
+    }
+
+    #[test]
+    fn decode_strips_utf8_bom() {
+        let mut input = vec![0xEF, 0xBB, 0xBF];
+        input.extend_from_slice(b"127.0.0.1 localhost\n");
+        assert_eq!(decode_hosts_bytes(&input), "127.0.0.1 localhost\n");
+    }
+
+    #[test]
+    fn decode_utf8_chinese_comments() {
+        let input = "127.0.0.1 example.com # 测试\n".as_bytes();
+        assert_eq!(decode_hosts_bytes(input), "127.0.0.1 example.com # 测试\n");
+    }
+
+    #[test]
+    fn decode_gbk_chinese_comments() {
+        // "测试" in GBK is B2 E2 CA D4
+        let mut input = b"127.0.0.1 example.com # ".to_vec();
+        input.extend_from_slice(&[0xB2, 0xE2, 0xCA, 0xD4]);
+        input.push(b'\n');
+
+        let decoded = decode_hosts_bytes(&input);
+        assert!(
+            decoded.contains("127.0.0.1 example.com"),
+            "ASCII host line must be preserved: {}",
+            decoded
+        );
+        assert!(
+            decoded.contains("测试"),
+            "GBK Chinese comment must decode correctly: {}",
+            decoded
+        );
+    }
+
+    #[test]
+    fn decode_invalid_utf8_never_panics() {
+        // Lone continuation / invalid sequence — must still return a String
+        let input = b"127.0.0.1 localhost # \xFF\xFE bad\n";
+        let decoded = decode_hosts_bytes(input);
+        assert!(decoded.contains("127.0.0.1 localhost"));
+    }
+
+    #[test]
+    fn strip_bom_helper() {
+        assert_eq!(strip_utf8_bom(&[0xEF, 0xBB, 0xBF, b'a']), b"a");
+        assert_eq!(strip_utf8_bom(b"abc"), b"abc");
+        assert_eq!(strip_utf8_bom(&[]), &[] as &[u8]);
     }
 }
