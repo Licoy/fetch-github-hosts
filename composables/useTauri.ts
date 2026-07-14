@@ -67,7 +67,9 @@ export function useTauri() {
   }
 
   /**
-   * Window control: close (will be intercepted by backend to hide on macOS)
+   * Window control: close.
+   * Backend CloseRequested respects config.close_to_tray:
+   * true → prevent close and hide to tray; false → allow quit.
    */
   async function windowClose(): Promise<void> {
     if (!isTauri()) return
@@ -78,7 +80,7 @@ export function useTauri() {
   }
 
   /**
-   * Window control: hide to tray
+   * Window control: hide to tray (does not destroy the window)
    */
   async function windowHide(): Promise<void> {
     if (!isTauri()) return

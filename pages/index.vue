@@ -10,7 +10,7 @@
         <div class="flex items-center gap-[7px] group mr-2">
           <button
             class="window-btn window-btn-close"
-            title="Close"
+            :title="closeButtonTip"
             @click="handleClose"
           >
             <svg class="window-btn-icon" viewBox="0 0 12 12"><path d="M3.5 3.5l5 5M8.5 3.5l-5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
@@ -109,13 +109,20 @@
 <script setup lang="ts">
 const { t, locale, setLocale } = useI18n()
 const colorMode = useColorMode()
-const { safeOpenUrl, windowMinimize, windowToggleMaximize, windowClose } = useTauri()
+const toast = useToast()
+const { safeOpenUrl, windowMinimize, windowToggleMaximize, windowClose, windowHide } = useTauri()
 const { versionLabel, loadVersion } = useAppVersion()
+const { config, loadConfig } = useConfig()
 
 const activeTab = ref('client')
 
+const closeButtonTip = computed(() =>
+  config.value.close_to_tray ? t('window.closeToTrayTip') : t('window.closeQuitTip'),
+)
+
 onMounted(() => {
   loadVersion()
+  loadConfig()
 })
 
 const isDark = computed(() => colorMode.value === 'dark')
@@ -184,7 +191,18 @@ async function openGithub() {
 }
 
 async function handleClose() {
-  await windowClose()
+  if (config.value.close_to_tray) {
+    // Once per session: tip before hide so users know how to fully quit
+    if (typeof sessionStorage !== 'undefined' && !sessionStorage.getItem('fgh_close_tip')) {
+      toast.add({ title: t('window.closedToTray'), color: 'info' })
+      sessionStorage.setItem('fgh_close_tip', '1')
+      await new Promise((r) => setTimeout(r, 600))
+    }
+    await windowHide()
+  } else {
+    // Backend CloseRequested will allow real quit when close_to_tray is false
+    await windowClose()
+  }
 }
 
 async function handleMinimize() {

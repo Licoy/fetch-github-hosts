@@ -16,6 +16,17 @@
       </div>
     </div>
 
+    <!-- App preferences -->
+    <div class="w-full max-w-md bg-[var(--fgh-card-bg)] rounded-lg p-4 border border-[var(--fgh-border)]">
+      <div class="flex items-center gap-4">
+        <label class="text-sm opacity-70 flex-1 text-left">{{ $t('window.closeToTray') }}</label>
+        <USwitch
+          :model-value="config.close_to_tray"
+          @update:model-value="onCloseToTrayChange"
+        />
+      </div>
+    </div>
+
     <!-- Actions -->
     <div class="flex items-center gap-3 flex-wrap justify-center">
       <UButton
@@ -51,8 +62,18 @@ const { safeInvoke, safeOpenUrl } = useTauri()
 const { t } = useI18n()
 const toast = useToast()
 const { versionLabel } = useAppVersion()
+const { config, loadConfig, updateApp } = useConfig()
 
 const checking = ref(false)
+
+onMounted(() => {
+  loadConfig()
+})
+
+async function onCloseToTrayChange(value: boolean) {
+  await updateApp({ close_to_tray: value })
+  toast.add({ title: t('window.closeToTrayChanged'), color: 'info' })
+}
 
 async function openUrl(url: string) {
   await safeOpenUrl(url)

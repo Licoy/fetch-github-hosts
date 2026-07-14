@@ -79,6 +79,13 @@
     "versionParseFail": "バージョン番号の解析に失敗しました",
     "langChange": "言語が{lang}に切り替わりました。次回起動時に有効になります！"
   },
+  "window": {
+    "closeToTray": "ウィンドウを閉じる時にトレイへ最小化",
+    "closeToTrayTip": "トレイへ閉じる",
+    "closeQuitTip": "アプリを終了",
+    "closedToTray": "システムトレイに最小化しました。トレイアイコンを右クリックして終了できます",
+    "closeToTrayChanged": "閉じる動作を更新しました"
+  },
   "colorMode": {
     "system": "システムに従う",
     "light": "ライトモード",

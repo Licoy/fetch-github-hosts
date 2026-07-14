@@ -4,6 +4,10 @@ use serde::{Deserialize, Serialize};
 pub struct AppConfig {
     #[serde(default = "default_lang")]
     pub lang: String,
+    /// When true (default), closing the main window hides to tray.
+    /// When false, closing the main window quits the app.
+    #[serde(default = "default_close_to_tray")]
+    pub close_to_tray: bool,
     #[serde(default)]
     pub client: ClientConfig,
     #[serde(default)]
@@ -38,6 +42,7 @@ impl Default for AppConfig {
     fn default() -> Self {
         Self {
             lang: default_lang(),
+            close_to_tray: default_close_to_tray(),
             client: ClientConfig::default(),
             server: ServerConfig::default(),
         }
@@ -68,6 +73,10 @@ impl Default for ServerConfig {
 
 fn default_lang() -> String {
     "zh-CN".to_string()
+}
+
+fn default_close_to_tray() -> bool {
+    true
 }
 
 fn default_interval() -> u32 {

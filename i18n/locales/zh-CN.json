@@ -79,6 +79,13 @@
     "versionParseFail": "版本号解析失败",
     "langChange": "语言已经切换为 {lang}，将会在下次启动程序时生效！"
   },
+  "window": {
+    "closeToTray": "关闭窗口时最小化到托盘",
+    "closeToTrayTip": "关闭到托盘",
+    "closeQuitTip": "退出程序",
+    "closedToTray": "已最小化到系统托盘，右键托盘图标可退出",
+    "closeToTrayChanged": "关闭行为已更新"
+  },
   "colorMode": {
     "system": "跟随系统",
     "light": "日光模式",

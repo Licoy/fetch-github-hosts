@@ -20,12 +20,15 @@ interface ServerConfig {
 
 interface AppConfig {
   lang: string
+  /** When true (default), closing the main window hides to tray. */
+  close_to_tray: boolean
   client: ClientConfig
   server: ServerConfig
 }
 
 const _config = ref<AppConfig>({
   lang: 'zh-CN',
+  close_to_tray: true,
   client: {
     interval: 60,
     method: 'official',
@@ -52,6 +55,7 @@ export function useConfig() {
       if (cfg) {
         _config.value = {
           lang: cfg.lang || 'zh-CN',
+          close_to_tray: cfg.close_to_tray ?? true,
           client: {
             interval: cfg.client?.interval ?? 60,
             method: cfg.client?.method ?? 'official',
@@ -92,6 +96,12 @@ export function useConfig() {
     await saveConfig()
   }
 
+  /** Update top-level app config fields and save */
+  async function updateApp(partial: Partial<Pick<AppConfig, 'close_to_tray' | 'lang'>>) {
+    Object.assign(_config.value, partial)
+    await saveConfig()
+  }
+
   return {
     config: _config,
     loaded: _loaded,
@@ -99,5 +109,6 @@ export function useConfig() {
     saveConfig,
     updateClient,
     updateServer,
+    updateApp,
   }
 }

@@ -137,8 +137,12 @@ pub fn run() {
         ])
         .on_window_event(|window, event| {
             if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                api.prevent_close();
-                let _ = window.hide();
+                // Configurable: hide to tray (default) or allow real quit
+                if config::load_config().close_to_tray {
+                    api.prevent_close();
+                    let _ = window.hide();
+                }
+                // else: do not prevent_close → window destroys → app exits
             }
         })
         .setup(|app| {

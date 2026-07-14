@@ -79,6 +79,13 @@
     "versionParseFail": "Version number parsing failed",
     "langChange": "Language changed to {lang}, will take effect on next startup!"
   },
+  "window": {
+    "closeToTray": "Minimize to tray when closing window",
+    "closeToTrayTip": "Close to tray",
+    "closeQuitTip": "Quit application",
+    "closedToTray": "Minimized to system tray. Right-click the tray icon to quit",
+    "closeToTrayChanged": "Close behavior updated"
+  },
   "colorMode": {
     "system": "System",
     "light": "Light",
