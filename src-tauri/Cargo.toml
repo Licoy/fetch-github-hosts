@@ -1,6 +1,6 @@
 [package]
 name = "fetch-github-hosts"
-version = "4.0.4"
+version = "4.0.5"
 description = "Github Hosts synchronization tool"
 authors = ["Licoy"]
 license = "GPL-3.0"

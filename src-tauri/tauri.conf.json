@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Fetch Github Hosts",
   "mainBinaryName": "fetch-github-hosts",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "identifier": "top.gitcdn.fetch-github-hosts",
   "build": {
     "frontendDist": "../.output/public",

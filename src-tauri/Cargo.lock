@@ -990,7 +990,7 @@ dependencies = [
 
 [[package]]
 name = "fetch-github-hosts"
-version = "4.0.4"
+version = "4.0.5"
 dependencies = [
  "arboard",
  "chrono",
