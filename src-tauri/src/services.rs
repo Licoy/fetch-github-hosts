@@ -83,6 +83,8 @@ pub async fn client_fetch_hosts(url: &str) -> Result<(), String> {
     let newline = hosts::newline_char();
     let mut result = clean_hosts;
 
+    result.push_str("# fetch-github-hosts begin");
+    result.push_str(newline);
     for line in fetch_hosts.lines() {
         let trimmed = line.trim();
         if trimmed.is_empty() || trimmed.starts_with('#') {
@@ -91,6 +93,8 @@ pub async fn client_fetch_hosts(url: &str) -> Result<(), String> {
         result.push_str(line);
         result.push_str(newline);
     }
+    result.push_str("# fetch-github-hosts end");
+    result.push_str(newline);
 
     hosts::write_hosts(&result)?;
 
