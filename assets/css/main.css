@@ -52,7 +52,7 @@ html {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: transparent;
+  background-color: var(--fgh-bg);
   font-family: 'ZCOOLCuiYuan', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -64,13 +64,38 @@ body, #__nuxt {
   background-color: var(--fgh-bg);
   color: var(--fgh-text);
   font-family: 'ZCOOLCuiYuan', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  border-radius: 10px;
 }
 
-/* Window rounded corners (for Tauri frameless window) */
 #__nuxt > div {
-  border-radius: 10px;
+  height: 100%;
   overflow: hidden;
+}
+
+/* Replaces the native frame after decorations are disabled. */
+html[data-os="windows"] #__nuxt > div,
+html[data-os="linux"] #__nuxt > div {
+  box-sizing: border-box;
+  border: 1px solid var(--fgh-border);
+}
+
+.title-bar-drag {
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+
+/* Overlay traffic lights take ~72px; native fullscreen hides them. */
+html[data-os="macos"] .title-bar-drag {
+  padding-left: 72px;
+}
+html[data-os="macos"][data-window-fullscreen] .title-bar-drag {
+  padding-left: 12px;
+}
+
+.title-bar-drag button,
+.title-bar-drag a,
+.title-bar-nodrag {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
 }
 
 /* Custom scrollbar */

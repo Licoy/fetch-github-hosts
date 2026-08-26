@@ -85,7 +85,11 @@
     "closeToTrayTip": "Close to tray",
     "closeQuitTip": "Quit application",
     "closedToTray": "Minimized to system tray. Right-click the tray icon to quit",
-    "closeToTrayChanged": "Close behavior updated"
+    "closeToTrayChanged": "Close behavior updated",
+    "minimize": "Minimize",
+    "maximize": "Maximize",
+    "restore": "Restore",
+    "close": "Close"
   },
   "colorMode": {
     "system": "System",

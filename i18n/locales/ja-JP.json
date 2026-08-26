@@ -85,7 +85,11 @@
     "closeToTrayTip": "トレイへ閉じる",
     "closeQuitTip": "アプリを終了",
     "closedToTray": "システムトレイに最小化しました。トレイアイコンを右クリックして終了できます",
-    "closeToTrayChanged": "閉じる動作を更新しました"
+    "closeToTrayChanged": "閉じる動作を更新しました",
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "元に戻す",
+    "close": "閉じる"
   },
   "colorMode": {
     "system": "システムに従う",

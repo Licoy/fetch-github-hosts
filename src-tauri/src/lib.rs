@@ -1,6 +1,8 @@
 pub mod cli;
 #[cfg(feature = "gui")]
 mod commands;
+#[cfg(feature = "gui")]
+mod window_chrome;
 pub(crate) mod config;
 pub(crate) mod dns;
 pub(crate) mod hosts;
@@ -186,18 +188,44 @@ pub fn run() {
             commands::export_default_template,
             commands::copy_to_clipboard,
             commands::quit_app,
+            window_chrome::sync_windows_chrome,
         ])
         .on_window_event(|window, event| {
-            if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                // Configurable: hide to tray (default) or allow real quit
-                if config::load_config().close_to_tray {
-                    api.prevent_close();
-                    let _ = window.hide();
+            match event {
+                tauri::WindowEvent::Resized(_) => {
+                    // macOS sets the fullscreen flag after the resize event.
+                    let window = window.clone();
+                    tauri::async_runtime::spawn(async move {
+                        for delay_ms in [0_u64, 80, 250] {
+                            if delay_ms > 0 {
+                                tokio::time::sleep(std::time::Duration::from_millis(delay_ms))
+                                    .await;
+                            }
+                            if let Ok(fullscreen) = window.is_fullscreen() {
+                                let _ = window.emit("window-fullscreen-changed", fullscreen);
+                            }
+                        }
+                    });
                 }
-                // else: do not prevent_close → window destroys → app exits
+                tauri::WindowEvent::CloseRequested { api, .. } => {
+                    // Configurable: hide to tray (default) or allow real quit
+                    if config::load_config().close_to_tray {
+                        api.prevent_close();
+                        let _ = window.emit("window-closed-to-tray", ());
+                        let window = window.clone();
+                        tauri::async_runtime::spawn(async move {
+                            tokio::time::sleep(std::time::Duration::from_millis(600)).await;
+                            let _ = window.hide();
+                        });
+                    }
+                    // else: do not prevent_close → window destroys → app exits
+                }
+                _ => {}
             }
         })
         .setup(|app| {
+            window_chrome::apply_platform_window_chrome(app);
+
             // Logger plugin (debug only)
             if cfg!(debug_assertions) {
                 app.handle().plugin(

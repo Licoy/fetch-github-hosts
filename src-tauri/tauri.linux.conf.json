@@ -1,0 +1,21 @@
+{
+  "app": {
+    "windows": [
+      {
+        "title": "Fetch Github Hosts",
+        "width": 860,
+        "height": 640,
+        "minWidth": 700,
+        "minHeight": 500,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true,
+        "titleBarStyle": "Visible",
+        "hiddenTitle": true,
+        "decorations": false,
+        "transparent": false,
+        "shadow": true
+      }
+    ]
+  }
+}

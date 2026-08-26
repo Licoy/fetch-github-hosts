@@ -1,6 +1,5 @@
-/**
- * Check if we're running inside a Tauri webview
- */
+import { coversMonitor } from './usePlatform'
+
 function isTauri(): boolean {
   return typeof window !== 'undefined' && !!(window as any).__TAURI_INTERNALS__
 }
@@ -94,5 +93,103 @@ export function useTauri() {
     await safeInvoke('quit_app')
   }
 
-  return { isTauri: isTauri(), safeInvoke, safeListen, safeOpenUrl, windowMinimize, windowToggleMaximize, windowClose, windowHide, quitApp }
+  async function windowStartDragging(): Promise<void> {
+    if (!isTauri()) return
+    try {
+      const { getCurrentWindow } = await import('@tauri-apps/api/window')
+      await getCurrentWindow().startDragging()
+    } catch {}
+  }
+
+  async function windowIsMaximized(): Promise<boolean> {
+    if (!isTauri()) return false
+    try {
+      const { getCurrentWindow } = await import('@tauri-apps/api/window')
+      return await getCurrentWindow().isMaximized()
+    } catch {
+      return false
+    }
+  }
+
+  async function windowIsFullscreen(): Promise<boolean> {
+    if (!isTauri()) return false
+    try {
+      const { getCurrentWindow } = await import('@tauri-apps/api/window')
+      return await getCurrentWindow().isFullscreen()
+    } catch {
+      return false
+    }
+  }
+
+  /**
+   * macOS Overlay windows can report isFullscreen()=false for a beat
+   * (or entirely) while already in a native fullscreen Space. Fall back
+   * to comparing the outer size against the current monitor.
+   */
+  async function windowLooksFullscreen(): Promise<boolean> {
+    if (!isTauri()) return false
+    try {
+      const { getCurrentWindow, currentMonitor } = await import('@tauri-apps/api/window')
+      const win = getCurrentWindow()
+      if (await win.isFullscreen()) return true
+      const [outer, inner, monitor] = await Promise.all([
+        win.outerSize(),
+        win.innerSize(),
+        currentMonitor(),
+      ])
+      if (monitor && (coversMonitor(outer, monitor.size) || coversMonitor(inner, monitor.size))) {
+        return true
+      }
+      if (typeof screen !== 'undefined' && screen.width > 0 && screen.height > 0) {
+        return (
+          Math.abs(window.innerWidth - screen.width) <= 8
+          && Math.abs(window.innerHeight - screen.height) <= 8
+        ) || (
+          Math.abs(window.outerWidth - screen.width) <= 8
+          && Math.abs(window.outerHeight - screen.height) <= 8
+        )
+      }
+      return false
+    } catch {
+      if (typeof screen !== 'undefined' && screen.width > 0 && screen.height > 0) {
+        return Math.abs(window.innerWidth - screen.width) <= 8
+          && Math.abs(window.innerHeight - screen.height) <= 8
+      }
+      return false
+    }
+  }
+
+  async function listenWindowResized(handler: () => void): Promise<() => void> {
+    if (!isTauri()) return () => {}
+    try {
+      const { getCurrentWindow } = await import('@tauri-apps/api/window')
+      return await getCurrentWindow().onResized(() => {
+        handler()
+      })
+    } catch {
+      return () => {}
+    }
+  }
+
+  async function syncWindowsChrome(dark: boolean, bg: string): Promise<void> {
+    await safeInvoke('sync_windows_chrome', { dark, bg })
+  }
+
+  return {
+    isTauri: isTauri(),
+    safeInvoke,
+    safeListen,
+    safeOpenUrl,
+    windowMinimize,
+    windowToggleMaximize,
+    windowClose,
+    windowHide,
+    windowStartDragging,
+    windowIsMaximized,
+    windowIsFullscreen,
+    windowLooksFullscreen,
+    listenWindowResized,
+    syncWindowsChrome,
+    quitApp,
+  }
 }

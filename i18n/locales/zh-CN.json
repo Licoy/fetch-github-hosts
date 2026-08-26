@@ -85,7 +85,11 @@
     "closeToTrayTip": "关闭到托盘",
     "closeQuitTip": "退出程序",
     "closedToTray": "已最小化到系统托盘，右键托盘图标可退出",
-    "closeToTrayChanged": "关闭行为已更新"
+    "closeToTrayChanged": "关闭行为已更新",
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "还原",
+    "close": "关闭"
   },
   "colorMode": {
     "system": "跟随系统",
