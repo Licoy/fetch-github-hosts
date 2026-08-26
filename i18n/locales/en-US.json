@@ -77,7 +77,8 @@
     "readResponseFail": "Failed to read update response",
     "parseResponseFail": "Failed to parse update response",
     "versionParseFail": "Version number parsing failed",
-    "langChange": "Language changed to {lang}, will take effect on next startup!"
+    "langChange": "Language changed to {lang}, will take effect on next startup!",
+    "quitApp": "Quit App"
   },
   "window": {
     "closeToTray": "Minimize to tray when closing window",

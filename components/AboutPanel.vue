@@ -53,12 +53,20 @@
         :loading="checking"
         @click="checkUpdate"
       />
+
+      <UButton
+        :label="$t('about.quitApp')"
+        icon="i-heroicons-arrow-right-on-rectangle"
+        color="neutral"
+        variant="outline"
+        @click="quitApp"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const { safeInvoke, safeOpenUrl } = useTauri()
+const { safeInvoke, safeOpenUrl, quitApp } = useTauri()
 const { t } = useI18n()
 const toast = useToast()
 const { versionLabel } = useAppVersion()

@@ -192,3 +192,9 @@ pub fn copy_to_clipboard(text: String) -> Result<(), String> {
     let mut clipboard = arboard::Clipboard::new().map_err(|e| e.to_string())?;
     clipboard.set_text(&text).map_err(|e| e.to_string())
 }
+
+/// Quit from the UI (About panel). Same path as the tray Quit item.
+#[tauri::command]
+pub fn quit_app(app: AppHandle) {
+    crate::quit_app(&app);
+}

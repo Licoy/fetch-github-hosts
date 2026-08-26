@@ -77,7 +77,8 @@
     "readResponseFail": "更新レスポンスの読み取りに失敗しました",
     "parseResponseFail": "更新レスポンスの解析に失敗しました",
     "versionParseFail": "バージョン番号の解析に失敗しました",
-    "langChange": "言語が{lang}に切り替わりました。次回起動時に有効になります！"
+    "langChange": "言語が{lang}に切り替わりました。次回起動時に有効になります！",
+    "quitApp": "アプリを終了"
   },
   "window": {
     "closeToTray": "ウィンドウを閉じる時にトレイへ最小化",

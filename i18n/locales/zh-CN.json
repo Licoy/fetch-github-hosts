@@ -77,7 +77,8 @@
     "readResponseFail": "读取更新响应内容失败",
     "parseResponseFail": "解析更新响应内容失败",
     "versionParseFail": "版本号解析失败",
-    "langChange": "语言已经切换为 {lang}，将会在下次启动程序时生效！"
+    "langChange": "语言已经切换为 {lang}，将会在下次启动程序时生效！",
+    "quitApp": "退出应用"
   },
   "window": {
     "closeToTray": "关闭窗口时最小化到托盘",

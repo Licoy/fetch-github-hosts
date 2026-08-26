@@ -90,5 +90,9 @@ export function useTauri() {
     } catch {}
   }
 
-  return { isTauri: isTauri(), safeInvoke, safeListen, safeOpenUrl, windowMinimize, windowToggleMaximize, windowClose, windowHide }
+  async function quitApp(): Promise<void> {
+    await safeInvoke('quit_app')
+  }
+
+  return { isTauri: isTauri(), safeInvoke, safeListen, safeOpenUrl, windowMinimize, windowToggleMaximize, windowClose, windowHide, quitApp }
 }

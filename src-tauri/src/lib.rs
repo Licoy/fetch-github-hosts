@@ -109,6 +109,57 @@ fn tray_text(key: &str, lang: &str) -> &'static str {
     }
 }
 
+/// Whether a tray icon click should show/focus the main window.
+/// Only left-button release counts: right-click must not steal focus from
+/// the native tray menu (Windows dismisses TrackPopupMenu on focus loss).
+#[cfg(feature = "gui")]
+pub(crate) fn should_show_window_on_tray_click(
+    button: tauri::tray::MouseButton,
+    button_state: tauri::tray::MouseButtonState,
+) -> bool {
+    matches!(
+        (button, button_state),
+        (
+            tauri::tray::MouseButton::Left,
+            tauri::tray::MouseButtonState::Up
+        )
+    )
+}
+
+#[cfg(feature = "gui")]
+const TRAY_ID: &str = "main-tray";
+
+#[cfg(feature = "gui")]
+fn show_main_window(app: &tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.unminimize();
+        let _ = window.show();
+        let _ = window.set_focus();
+    }
+}
+
+/// Stop background tasks, remove the tray icon, then exit.
+/// `AppHandle::exit` does not return from `run()`, so cleanup must happen first.
+#[cfg(feature = "gui")]
+pub(crate) fn quit_app(app: &tauri::AppHandle) {
+    if let Ok(mut s) = app.state::<Mutex<ClientState>>().lock() {
+        if let Some(tx) = s.stop_tx.take() {
+            let _ = tx.send(());
+        }
+    }
+    if let Ok(mut s) = app.state::<Mutex<ServerState>>().lock() {
+        if let Some(tx) = s.stop_tx.take() {
+            let _ = tx.send(());
+        }
+    }
+    if let Some(tray) = app.tray_by_id(TRAY_ID) {
+        let _ = tray.set_visible(false);
+    }
+    #[cfg(target_os = "macos")]
+    hosts::cleanup_privileges();
+    app.exit(0);
+}
+
 #[cfg(feature = "gui")]
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -134,6 +185,7 @@ pub fn run() {
             commands::get_default_template,
             commands::export_default_template,
             commands::copy_to_clipboard,
+            commands::quit_app,
         ])
         .on_window_event(|window, event| {
             if let tauri::WindowEvent::CloseRequested { api, .. } = event {
@@ -197,7 +249,7 @@ pub fn run() {
             let tray_icon = tauri::image::Image::from_bytes(include_bytes!("../icons/tray-icon@2x.png"))
                 .expect("Failed to load tray icon");
 
-            let _tray = TrayIconBuilder::new()
+            let _tray = TrayIconBuilder::with_id(TRAY_ID)
                 .icon(tray_icon)
                 .icon_as_template(false)
                 .menu(&menu)
@@ -206,10 +258,7 @@ pub fn run() {
                 .on_menu_event(|app, event| {
                     match event.id().as_ref() {
                         "show" => {
-                            if let Some(window) = app.get_webview_window("main") {
-                                let _ = window.show();
-                                let _ = window.set_focus();
-                            }
+                            show_main_window(app);
                         }
                         "start_client" => {
                             let app = app.clone();
@@ -300,19 +349,23 @@ pub fn run() {
                             });
                         }
                         "quit" => {
-                            app.exit(0);
+                            quit_app(app);
                         }
                         _ => {}
                     }
                 })
                 .on_tray_icon_event(|tray, event| {
-                    use tauri::tray::MouseButton;
-                    if let tauri::tray::TrayIconEvent::Click { button: MouseButton::Left, .. } = event {
-                        let app = tray.app_handle();
-                        if let Some(window) = app.get_webview_window("main") {
-                            let _ = window.show();
-                            let _ = window.set_focus();
+                    use tauri::tray::TrayIconEvent;
+                    if let TrayIconEvent::Click {
+                        button,
+                        button_state,
+                        ..
+                    } = event
+                    {
+                        if !should_show_window_on_tray_click(button, button_state) {
+                            return;
                         }
+                        show_main_window(tray.app_handle());
                     }
                 })
                 .build(app)?;
@@ -325,4 +378,38 @@ pub fn run() {
     // Clean up temporary sudoers entry on exit
     #[cfg(target_os = "macos")]
     hosts::cleanup_privileges();
+}
+
+#[cfg(all(test, feature = "gui"))]
+mod tray_click_tests {
+    use super::should_show_window_on_tray_click;
+    use tauri::tray::{MouseButton, MouseButtonState};
+
+    #[test]
+    fn left_up_shows_window() {
+        assert!(should_show_window_on_tray_click(
+            MouseButton::Left,
+            MouseButtonState::Up
+        ));
+    }
+
+    #[test]
+    fn right_click_does_not_show_window() {
+        assert!(!should_show_window_on_tray_click(
+            MouseButton::Right,
+            MouseButtonState::Up
+        ));
+        assert!(!should_show_window_on_tray_click(
+            MouseButton::Right,
+            MouseButtonState::Down
+        ));
+    }
+
+    #[test]
+    fn left_down_does_not_show_window() {
+        assert!(!should_show_window_on_tray_click(
+            MouseButton::Left,
+            MouseButtonState::Down
+        ));
+    }
 }
